@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:planto_iot_flutter/components/planto_iot_background_builder.dart';
 import 'package:planto_iot_flutter/components/planto_iot_title_component.dart';
 import 'package:planto_iot_flutter/services/firebase_auth_service.dart';
@@ -35,8 +36,8 @@ class LoginScreen extends StatelessWidget {
             width: double.infinity,
             decoration: PlantoIoTBackgroundBuilder()
                 .buildPlantoIoTAppBackGround(
-                    firstRadialColor: 0xFF083D07,
-                    secondRadialColor: 0xFF031802),
+                firstRadialColor: 0xFF083D07,
+                secondRadialColor: 0xFF031802),
             child: Align(
                 alignment: Alignment.center,
                 child: Column(
@@ -77,17 +78,21 @@ class LoginScreen extends StatelessWidget {
                 },
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: const [
-                    Icon(
-                      Icons.g_mobiledata_outlined,
+                    FaIcon(
+                      FontAwesomeIcons.google,
                       color: Colors.white,
                     ),
-                    Text(
-                      "Entrar com Google",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'FredokaOne',
-                          fontSize: 18),
+                    Padding(
+                      padding: EdgeInsets.only(left: 16.0),
+                      child: Text(
+                        "Entrar com Google",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'FredokaOne',
+                            fontSize: 18),
+                      ),
                     ),
                   ],
                 ),
@@ -101,8 +106,8 @@ class LoginScreen extends StatelessWidget {
               "2023, Centro Universitário de Brasília",
               style: TextStyle(
                   color: Colors.white,
-                  fontFamily: 'FredokaOne',
-                  fontSize: 18,
+                  fontFamily: 'Josefin Sans',
+                  fontSize: 16,
                   decoration: TextDecoration.none),
             ),
           ),

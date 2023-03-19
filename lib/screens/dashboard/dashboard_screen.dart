@@ -32,49 +32,75 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           flexibleSpace: const PlantoIOTAppBarBackground()),
       body: Container(
-        width: double.infinity,
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
         decoration: PlantoIoTBackgroundBuilder().buildPlantoIoTAppBackGround(
             firstRadialColor: 0xFF0D6D0B, secondRadialColor: 0xFF0B3904),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
+        child: Stack(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                'Bem vindo(a), ${loggedInUser?.displayName}!',
-                style: const TextStyle(
-                    fontFamily: 'Josefin Sans',
+            SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      'Bem vindo(a), ${loggedInUser?.displayName}!',
+                      style: const TextStyle(
+                          fontFamily: 'Josefin Sans',
+                          color: Colors.white,
+                          fontSize: 18.0),
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text(
+                      'Selecione a opção desejada abaixo:',
+                      style: TextStyle(
+                          fontFamily: 'Josefin Sans',
+                          color: Colors.white,
+                          fontSize: 18.0),
+                    ),
+                  ),
+                  const Divider(
                     color: Colors.white,
-                    fontSize: 18.0),
+                    thickness: 2.0,
+                    indent: 16, // Left padding
+                    endIndent: 16, // Right padding
+                  ),
+                  Wrap(alignment: WrapAlignment.spaceBetween, children: [
+                    DashboardButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/sensores');
+                        },
+                        title: 'Sensores',
+                        icon: Icons.sensors),
+                    DashboardButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/sobre');
+                        },
+                        title: 'Sobre',
+                        icon: Icons.info_rounded),
+                    DashboardButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/configuracoes');
+                        },
+                        title: 'Configurações',
+                        icon: Icons.settings_rounded),
+                    DashboardButton(
+                        onPressed: () => FirebaseAuthService.signOut(),
+                        onLongPress: () =>
+                            FirebaseAuthService.signOutSocialProviders(),
+                        title: 'Sair',
+                        icon: Icons.logout_rounded),
+                  ]),
+                ],
               ),
             ),
             const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'Selecione a opção desejada abaixo:',
-                style: TextStyle(
-                    fontFamily: 'Josefin Sans',
-                    color: Colors.white,
-                    fontSize: 18.0),
-              ),
-            ),
-            const Divider(
-              color: Colors.white,
-              thickness: 2.0,
-              indent: 16, // Left padding
-              endIndent: 16, // Right padding
-            ),
-            Wrap(alignment: WrapAlignment.spaceBetween, children: [
-              DashboardButton(
-                  onPressed: () {}, title: 'Sensores', icon: Icons.sensors),
-              DashboardButton(
-                  onPressed: () {}, title: 'Sobre', icon: Icons.info_rounded),
-              DashboardButton(
-                  onPressed: () => FirebaseAuthService.signOut(),
-                  onLongPress: () => FirebaseAuthService.signOutSocialProviders(),
-                  title: 'Sair',
-                  icon: Icons.logout_rounded),
-            ])
+              padding: EdgeInsets.all(8.0),
+              child: Align(alignment: Alignment.bottomRight, child: Text("Versão 0.1.0", style: TextStyle(color: Colors.white, fontSize: 18.0, fontFamily: 'Josefin Sans'))),
+            )
           ],
         ),
       ),

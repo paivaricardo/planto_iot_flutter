@@ -19,8 +19,12 @@ class DashboardButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SizedBox(
-        width: 150,
-        height: 150,
+        width: MediaQuery.of(context).size.height * 0.3 > 150
+            ? 150
+            : MediaQuery.of(context).size.height * 0.3,
+        height: MediaQuery.of(context).size.height * 0.3 > 150
+            ? 150
+            : MediaQuery.of(context).size.height * 0.3,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             elevation: 4,
