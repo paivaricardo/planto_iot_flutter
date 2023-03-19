@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.sempreceub.plantoiot" "\0"
-            VALUE "FileDescription", "planto_iot_flutter" "\0"
+            VALUE "FileDescription", "Planto IoT" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "planto_iot_flutter" "\0"
+            VALUE "InternalName", "Planto IoT" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2023 com.sempreceub.plantoiot. All rights reserved." "\0"
             VALUE "OriginalFilename", "planto_iot_flutter.exe" "\0"
-            VALUE "ProductName", "planto_iot_flutter" "\0"
+            VALUE "ProductName", "Planto IoT" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

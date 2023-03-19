@@ -5,7 +5,7 @@
 // 'flutter create' template.
 
 // The application's name. By default this is also the title of the Flutter window.
-PRODUCT_NAME = planto_iot_flutter
+PRODUCT_NAME = Planto IoT;
 
 // The application's bundle identifier
 PRODUCT_BUNDLE_IDENTIFIER = com.sempreceub.plantoiot.plantoIotFlutter
