@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:planto_iot_flutter/screens/configuracoes/configuracoes_screen.dart';
+import 'package:planto_iot_flutter/screens/dashboard/dashboard_screen.dart';
 import 'package:planto_iot_flutter/screens/sensores/sensores_screen.dart';
 import 'package:planto_iot_flutter/screens/sobre/sobre_screen.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +26,7 @@ class PlantoIoTApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         home: const AuthWrapperComponent(),
         routes: {
+          '/dashboard': (context) => const DashboardScreen(),
           '/sensores': (context) => const SensoresScreen(),
           '/sobre': (context) => const SobreScreen(),
           '/configuracoes': (context) => const ConfiguracoesScreen(),

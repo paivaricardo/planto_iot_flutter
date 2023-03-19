@@ -21,10 +21,14 @@ class _ConfiguracoesScreenState extends State<ConfiguracoesScreen> {
       appBar: AppBar(
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              PlantoIOTTitleComponent(size: 18),
-              Text("Configurações",
+            children: [
+              const PlantoIOTTitleComponent(size: 18),
+              const Text("Configurações",
                   style: TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
+              IconButton(
+                  onPressed: () => _showHelpDialog(context),
+                  icon: const Icon(Icons.help_outline_rounded,
+                      color: Colors.white, size: 24))
             ],
           ),
           flexibleSpace: const PlantoIOTAppBarBackground()),
@@ -54,5 +58,39 @@ class _ConfiguracoesScreenState extends State<ConfiguracoesScreen> {
         ),
       ),
     );
+  }
+
+  void _showHelpDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            alignment: Alignment.center,
+            title: const Text(
+              'Sobre',
+              style: TextStyle(fontFamily: "FredokaOne", fontSize: 24.0),
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Text(
+                    'Esta tela permite que você ajuste configurações gerais para a aplicação Planto IoT. Ainda está em construção. Volte em breve para novidades.',
+                    textAlign: TextAlign.justify,
+                    style:
+                        TextStyle(fontFamily: "Josefin Sans", fontSize: 16.0),
+                  )
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'))
+            ],
+          );
+        });
   }
 }

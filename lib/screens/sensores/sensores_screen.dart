@@ -19,12 +19,26 @@ class _SensoresScreenState extends State<SensoresScreen> {
 
     return Scaffold(
       appBar: AppBar(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              PlantoIOTTitleComponent(size: 18),
-              Text("Sensores",
-                  style: TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
+          title: Stack(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const PlantoIOTTitleComponent(size: 18),
+                  IconButton(
+                      onPressed: () => _showHelpDialog(context),
+                      icon: const Icon(Icons.help_outline_rounded,
+                          color: Colors.white, size: 24))
+                ],
+              ),
+              const Positioned.fill(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text("Sensores",
+                      style:
+                      TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
+                ),
+              ),
             ],
           ),
           flexibleSpace: const PlantoIOTAppBarBackground()),
@@ -54,5 +68,35 @@ class _SensoresScreenState extends State<SensoresScreen> {
         ),
       ),
     );
+  }
+
+  void _showHelpDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            alignment: Alignment.center,
+            title: const Text('Sobre', style: TextStyle(fontFamily: "FredokaOne", fontSize: 24.0),),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Text(
+                    'Esta tela permite que você cadastre, monitore e controle seus sensores e atuadores para uso agrícola. Ainda está em construção. Volte em breve para novidades.',
+                    textAlign: TextAlign.justify,
+                    style: TextStyle(fontFamily: "Josefin Sans", fontSize: 16.0),
+                  )
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'))
+            ],
+          );
+        });
   }
 }

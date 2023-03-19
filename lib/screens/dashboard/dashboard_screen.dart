@@ -22,12 +22,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     return Scaffold(
       appBar: AppBar(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              PlantoIOTTitleComponent(size: 18),
-              Text("Dashboard",
-                  style: TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
+          title: Stack(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const PlantoIOTTitleComponent(size: 18),
+                  IconButton(
+                      onPressed: () => _showHelpDialog(context),
+                      icon: const Icon(Icons.help_outline_rounded,
+                          color: Colors.white, size: 24))
+                ],
+              ),
+              const Positioned.fill(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text("Dashboard",
+                      style:
+                          TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
+                ),
+              ),
             ],
           ),
           flexibleSpace: const PlantoIOTAppBarBackground()),
@@ -99,11 +113,51 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
             const Padding(
               padding: EdgeInsets.all(8.0),
-              child: Align(alignment: Alignment.bottomRight, child: Text("Versão 0.1.0", style: TextStyle(color: Colors.white, fontSize: 18.0, fontFamily: 'Josefin Sans'))),
+              child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: Text("Versão 0.1.0",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.0,
+                          fontFamily: 'Josefin Sans'))),
             )
           ],
         ),
       ),
     );
+  }
+
+  void _showHelpDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            alignment: Alignment.center,
+            title: const Text('Dashboard', style: TextStyle(fontFamily: "FredokaOne", fontSize: 24.0),),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Text(
+                    'Bem-vindo ao Planto IoT! Esta é a tela inicial do aplicativo, na qual você poderá acessar as principais funcionalidades da aplicação. A seção "sensores" permite você cadastrar novos sensores, bem como monitorar e controlar os existentes. A seção "sobre" contém informações gerais sobre o aplicativo e o projeto Planto IoT, assim como sobre a equipe de desenvolvimento. A seção "configurações" permite que você altere as configurações do aplicativo, como notificações. A seção "sair" permite que você encerre a sua sessão e retorne à tela de login.',
+                    textAlign: TextAlign.justify,
+                    style: TextStyle(fontFamily: "Josefin Sans", fontSize: 16.0),
+                  ),
+                  Text(
+                    'Dica: pressione longamente o botão "sair" para que você encerre a sua sessão em todas as plataformas de redes sociais.',
+                    style: TextStyle(fontFamily: "Josefin Sans", fontSize: 16.0),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'))
+            ],
+          );
+        });
   }
 }

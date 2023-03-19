@@ -10,12 +10,26 @@ class SobreScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              PlantoIOTTitleComponent(size: 18),
-              Text("Sobre",
-                  style: TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
+          title: Stack(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const PlantoIOTTitleComponent(size: 18),
+                  IconButton(
+                      onPressed: () => _showHelpDialog(context),
+                      icon: const Icon(Icons.help_outline_rounded,
+                          color: Colors.white, size: 24))
+                ],
+              ),
+              const Positioned.fill(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text("Sobre",
+                      style:
+                      TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
+                ),
+              ),
             ],
           ),
           flexibleSpace: const PlantoIOTAppBarBackground()),
@@ -172,5 +186,35 @@ class SobreScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _showHelpDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            alignment: Alignment.center,
+            title: const Text('Sobre', style: TextStyle(fontFamily: "FredokaOne", fontSize: 24.0),),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Text(
+                    'Esta tela contém informações gerais sobre o aplicativo e o projeto Planto IoT, assim como sobre a equipe de desenvolvimento. Também possui o histórico de versões do aplicativo.',
+                    textAlign: TextAlign.justify,
+                    style: TextStyle(fontFamily: "Josefin Sans", fontSize: 16.0),
+                  )
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'))
+            ],
+          );
+        });
   }
 }
