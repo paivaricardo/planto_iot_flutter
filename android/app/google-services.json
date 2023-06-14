@@ -14,6 +14,30 @@
       },
       "oauth_client": [
         {
+          "client_id": "392869690067-48derfns5q2rkde1qfnp14ksmakr86ap.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sempreceub.plantoiot.planto_iot_flutter",
+            "certificate_hash": "afe17b09b6a728c387dd0e8a748cfcc838bf1d2a"
+          }
+        },
+        {
+          "client_id": "392869690067-5ugabl6iuve46etdaesmicufoap3tckg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sempreceub.plantoiot.planto_iot_flutter",
+            "certificate_hash": "910cc1ba0ac35f5584c69fb43db494453c135b83"
+          }
+        },
+        {
+          "client_id": "392869690067-dvnd4ssgqo1mcnr1ppcfru13eortp35p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sempreceub.plantoiot.planto_iot_flutter",
+            "certificate_hash": "c14f0b467c12adb15bb278052c6314af4c18ef53"
+          }
+        },
+        {
           "client_id": "392869690067-u0llntka5bo5d63ai6ahknkdhlondnr1.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
