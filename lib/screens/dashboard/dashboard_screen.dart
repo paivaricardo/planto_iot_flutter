@@ -7,6 +7,7 @@ import 'package:planto_iot_flutter/services/firebase_auth_service.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/dashboard_button.dart';
+import '../../model/usuario_model.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -18,7 +19,7 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
-    final User? loggedInUser = Provider.of<User?>(context);
+    final UsuarioModel loggedInUser = Provider.of<UsuarioModel>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -59,7 +60,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Text(
-                      'Bem vindo(a), ${loggedInUser?.displayName}!',
+                      'Bem vindo(a), ${loggedInUser.nomeUsuario}!',
                       style: const TextStyle(
                           fontFamily: 'Josefin Sans',
                           color: Colors.white,

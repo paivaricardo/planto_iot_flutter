@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:planto_iot_flutter/components/user_info_wrapper/user_info_wrapper.dart';
 import 'package:planto_iot_flutter/screens/dashboard/dashboard_screen.dart';
 import 'package:planto_iot_flutter/screens/login/login_screen.dart';
 import 'package:provider/provider.dart';
@@ -17,8 +18,8 @@ class AuthWrapperComponent extends StatelessWidget {
       // Se o usuário não estiver logado, retorna o widget de login
       return const LoginScreen();
     } else {
-     // Se o usuário estiver logado, retorna o widget de dashboard
-        return const DashboardScreen();
+     // Se o usuário estiver logado, retorna o UserInfoWrapper, widget the buscará informações sobre o usuário na base de dados do Planto IoT
+        return const UserInfoWrapper();
     }
   }
 }
