@@ -19,40 +19,25 @@ class PlantoIoTApp extends StatefulWidget {
 }
 
 class _PlantoIoTAppState extends State<PlantoIoTApp> {
-  late Future<dynamic> _checkUserFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkUserFuture = BackendService.checkUser();
-  }
-
   @override
   Widget build(BuildContext context) {
     // O StreamProvider é um wiget gerenciador de estado que fornece o usuário que está logado no Firebase para qualquer Widget filho
     return StreamProvider<User?>.value(
-        value: FirebaseAuthService.authStateChanges,
-        initialData: null,
-        child: FutureProvider<UsuarioModel?>(
-          initialData: null,
-          catchError: (context, error) {
-            print(error);
-            return null;
-          },
-          create: (_) => BackendService.checkUser(),
-          child: MaterialApp(
-              title: 'Planto App',
-              theme: ThemeData(
-                primarySwatch: Colors.green,
-              ),
-              debugShowCheckedModeBanner: false,
-              home: const AuthWrapperComponent(),
-              routes: {
-                '/dashboard': (context) => const DashboardScreen(),
-                '/sensores': (context) => const SensoresScreen(),
-                '/sobre': (context) => const SobreScreen(),
-                '/configuracoes': (context) => const ConfiguracoesScreen(),
-              }),
-        ));
+      value: FirebaseAuthService.authStateChanges,
+      initialData: null,
+      child: MaterialApp(
+          title: 'Planto App',
+          theme: ThemeData(
+            primarySwatch: Colors.green,
+          ),
+          debugShowCheckedModeBanner: false,
+          home: const AuthWrapperComponent(),
+          routes: {
+            '/dashboard': (context) => const DashboardScreen(),
+            '/sensores': (context) => const SensoresScreen(),
+            '/sobre': (context) => const SobreScreen(),
+            '/configuracoes': (context) => const ConfiguracoesScreen(),
+          }),
+    );
   }
 }

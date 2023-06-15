@@ -1,9 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:planto_iot_flutter/components/planto_iot_appbar_background.dart';
 import 'package:planto_iot_flutter/components/planto_iot_background_builder.dart';
 import 'package:planto_iot_flutter/components/planto_iot_title_component.dart';
 import 'package:planto_iot_flutter/model/sensor_atuador_model.dart';
-import 'package:planto_iot_flutter/model/usuario_model.dart';
 import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
 import 'package:provider/provider.dart';
 
@@ -17,7 +17,7 @@ class SensoresScreen extends StatefulWidget {
 class _SensoresScreenState extends State<SensoresScreen> {
   @override
   Widget build(BuildContext context) {
-    final UsuarioModel loggedInUser = Provider.of<UsuarioModel?>(context)!;
+    final User loggedInUser = Provider.of<User?>(context)!;
 
     return Scaffold(
       appBar: AppBar(
@@ -52,7 +52,7 @@ class _SensoresScreenState extends State<SensoresScreen> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: FutureBuilder(
-            future: BackendService.listarSensoresAtuadoresConectadosUsuario(loggedInUser.idUsuario),
+            future: BackendService.listarSensoresAtuadoresConectadosUsuario(loggedInUser.email!),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: Column(

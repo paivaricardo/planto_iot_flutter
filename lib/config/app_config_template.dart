@@ -1,7 +1,7 @@
 class AppConfig {
   static const bool isDebug = bool.fromEnvironment('dart.vm.product') == false;
 
-  static String get backendUri {
-    return isDebug ? 'http://<debug_url>:<debug_port>' : 'http://<release_url>:<release_port>';
+  static String get backendAuthority {
+    return isDebug ? '<debug_host>:<debug_port>' : '<release_host>:<release_port>';
   }
 }
