@@ -109,6 +109,7 @@ class ConectarSensorAtuadorForm extends StatefulWidget {
 class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
   TextEditingController _qrCodeFieldController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _isConnecting = false;
 
   @override
   void dispose() {
@@ -126,7 +127,6 @@ class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
       Uuid.parse(value);
 
       return null;
-
     } catch (e) {
       return "UUID inválido.";
     }
@@ -156,58 +156,84 @@ class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
                   color: Colors.white),
             ),
           ),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           ElevatedButton.icon(
             onPressed: () {
               // Implementar a lógica de escaneamento do QR Code aqui
             },
-            icon: Icon(Icons.qr_code),
-            label: Text('Escanear QR Code'),
+            icon: const Icon(Icons.qr_code),
+            label: const Text('Escanear QR Code'),
           ),
-          Spacer(),
+          const Spacer(),
           ElevatedButton(
             onPressed: () async {
-              if (_formKey.currentState!.validate()) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Processando dados...')),
-                );
+              if (_formKey.currentState!.validate() && !_isConnecting) {
+                setState(() {
+                  _isConnecting = true;
+                });
 
                 String uuid = _qrCodeFieldController.text;
                 // Use the 'uuid' variable for further processing
                 print('UUID: $uuid');
 
-              //  Chamar o backend para verificar o uuid do sensor ou atuador que foi inserido.
-                Map<String, dynamic> result = await BackendService.verificarSensorAtuador(uuid: uuid, email: widget.loggedInUseremail);
+                //  Chamar o backend para verificar o uuid do sensor ou atuador que foi inserido.
+                Map<String, dynamic> result =
+                    await BackendService.verificarSensorAtuador(
+                        uuid: uuid, email: widget.loggedInUseremail);
 
                 switch (result['status']) {
                   // 1 - Sensor/atuador não encontrado na base de dados
                   case 1:
-                    mostraDialogoInfo(context, titleMessage: 'O sensor/atuador não foi localizado na base de dados.', contentMessage: 'Após busca em nossa base de dados, não localizamos o sensor ou atuador com o UUID informado. Verifique se o UUID foi digitado corretamente ou procure a equipe do Planto IoT para resolver o problema. A depender do caso, pode ser necessário realizar pré-cadastro do sensor/atuador desejado.');
+                    mostraDialogoInfo(context,
+                        titleMessage:
+                            'O sensor/atuador não foi localizado na base de dados.',
+                        contentMessage:
+                            'Após busca em nossa base de dados, não localizamos o sensor ou atuador com o UUID informado. Verifique se o UUID foi digitado corretamente ou procure a equipe do Planto IoT para resolver o problema. A depender do caso, pode ser necessário realizar pré-cadastro do sensor/atuador desejado.');
                     break;
                   // 2 - Sensor/atuador encontrado, mas o usuário não possui permissão para acessá-lo
                   case 2:
-                    mostraDialogoInfo(context, titleMessage: 'Autorização negada.', contentMessage: 'O sensor ou atuador existe na nossa base de dados, mas o usuário não possui permissão para acessá-lo. No caso, é necessário que o administrador do sensor/atuador habilite seu e-mail para acesso ao dispositivo.');
+                    mostraDialogoInfo(context,
+                        titleMessage: 'Autorização negada.',
+                        contentMessage:
+                            'O sensor ou atuador existe na nossa base de dados, mas o usuário não possui permissão para acessá-lo. No caso, é necessário que o administrador do sensor/atuador habilite seu e-mail para acesso ao dispositivo.');
                     break;
                   // 3 - Sensor/atuador encontrado e o usuário possui permissão para acessá-lo, mas o cadastro não está completo. Redireciona para completar o cadastro do sensor
                   case 3:
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Sensor/atuador não encontrado.')),
+                      const SnackBar(
+                          content: Text('Sensor/atuador não encontrado.')),
                     );
                     break;
                   // 4 - Sensor/atuador encontrado e o usuário possui permissão para acessá-lo, e o cadastro está completo. Realiza a conexão com o sensor imediatamente. Se uma conexão com o sensor já existe, não haverá alterações na aplicação.
                   default:
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Erro ao cadastrar sensor/atuador.')),
+                      const SnackBar(
+                          content: Text('Erro ao cadastrar sensor/atuador.')),
                     );
                 }
 
+                setState(() {
+                  _isConnecting = false;
+                });
 
                 print(result);
               }
-
-
             },
-            child: Text('Conectar'),
+            child: _isConnecting
+                ? Row(mainAxisSize: MainAxisSize.min, children: const [
+                    SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 16.0),
+                      child: Text('Conectando...'),
+                    )
+                  ]) // Show CircularProgressIndicator when connecting
+                : const Text('Conectar'),
           ),
         ],
       ),

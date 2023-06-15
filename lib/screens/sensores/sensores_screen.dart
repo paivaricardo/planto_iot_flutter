@@ -66,7 +66,7 @@ class _SensoresScreenState extends State<SensoresScreen> {
                       padding: EdgeInsets.only(top: 16.0),
                       child: Text(
                         "Carregando dados de sensores...",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(fontFamily: 'Josefin Sans', fontSize: 16.0, color: Colors.white),
                       ),
                     )
                   ],
@@ -153,7 +153,22 @@ class ListaSensoresAtuadores extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return listaSensoresAtuadores.isEmpty ?
+    Padding(
+      padding: const EdgeInsets.only(top: 64.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
+        children: const [
+          Icon(Icons.eco_rounded, size: 128.0, color: Colors.white),
+          Text(
+            'Você ainda não possui sensores ou atuadores conectados. Clique no botão + para adicionar.',
+            style: TextStyle(fontFamily: 'Josefin Sans', fontSize: 32, color: Colors.white),
+          ),
+        ],
+      ),
+    )
+    : ListView.builder(
         itemCount: listaSensoresAtuadores.length,
         itemBuilder: (context, index) {
           final sensorAtuador = listaSensoresAtuadores[index];
