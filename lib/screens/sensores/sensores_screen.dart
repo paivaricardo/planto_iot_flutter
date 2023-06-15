@@ -7,6 +7,8 @@ import 'package:planto_iot_flutter/model/sensor_atuador_model.dart';
 import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
 import 'package:provider/provider.dart';
 
+import 'conectar_sensores_screen.dart';
+
 class SensoresScreen extends StatefulWidget {
   const SensoresScreen({Key? key}) : super(key: key);
 
@@ -38,7 +40,7 @@ class _SensoresScreenState extends State<SensoresScreen> {
                   alignment: Alignment.center,
                   child: Text("Sensores",
                       style:
-                      TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
+                          TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
                 ),
               ),
             ],
@@ -52,28 +54,45 @@ class _SensoresScreenState extends State<SensoresScreen> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: FutureBuilder(
-            future: BackendService.listarSensoresAtuadoresConectadosUsuario(loggedInUser.email!),
+            future: BackendService.listarSensoresAtuadoresConectadosUsuario(
+                loggedInUser.email!),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: Column(
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
                     CircularProgressIndicator(),
-                    Text("Carregando dados de sensores...")
+                    Padding(
+                      padding: EdgeInsets.only(top: 16.0),
+                      child: Text(
+                        "Carregando dados de sensores...",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    )
                   ],
-                ));
+                );
               } else if (snapshot.hasError) {
                 return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Error: ${snapshot.error}'),
+                    Text(
+                      'Erro ao carregar dados de sensores: ${snapshot.error}',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ],
                 );
               } else if (snapshot.hasData) {
                 final listaSensoresAtuadores = snapshot.data!;
-                return ListaSensoresAtuadores(listaSensoresAtuadores: listaSensoresAtuadores);
+                return ListaSensoresAtuadores(
+                    listaSensoresAtuadores: listaSensoresAtuadores);
               } else {
                 return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('No data available'),
+                    Text(
+                      'Erro ao carregar dados de sensores: ${snapshot.error}',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ],
                 );
               }
@@ -84,6 +103,7 @@ class _SensoresScreenState extends State<SensoresScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Chamar a tela para conexão a novos sensores e atuadores
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ConectarSensoresScreen()));
         },
         child: Icon(Icons.add),
       ),
@@ -96,7 +116,10 @@ class _SensoresScreenState extends State<SensoresScreen> {
         builder: (BuildContext context) {
           return AlertDialog(
             alignment: Alignment.center,
-            title: const Text('Sobre', style: TextStyle(fontFamily: "FredokaOne", fontSize: 24.0),),
+            title: const Text(
+              'Sobre',
+              style: TextStyle(fontFamily: "FredokaOne", fontSize: 24.0),
+            ),
             content: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -104,7 +127,8 @@ class _SensoresScreenState extends State<SensoresScreen> {
                   Text(
                     'Esta tela permite que você cadastre, monitore e controle seus sensores e atuadores para uso agrícola. Ainda está em construção. Volte em breve para novidades.',
                     textAlign: TextAlign.justify,
-                    style: TextStyle(fontFamily: "Josefin Sans", fontSize: 16.0),
+                    style:
+                        TextStyle(fontFamily: "Josefin Sans", fontSize: 16.0),
                   )
                 ],
               ),
@@ -124,7 +148,8 @@ class _SensoresScreenState extends State<SensoresScreen> {
 class ListaSensoresAtuadores extends StatelessWidget {
   final List<SensorAtuadorModel> listaSensoresAtuadores;
 
-  const ListaSensoresAtuadores({super.key, required this.listaSensoresAtuadores});
+  const ListaSensoresAtuadores(
+      {super.key, required this.listaSensoresAtuadores});
 
   @override
   Widget build(BuildContext context) {
@@ -134,17 +159,25 @@ class ListaSensoresAtuadores extends StatelessWidget {
           final sensorAtuador = listaSensoresAtuadores[index];
           return Card(
             child: ListTile(
-              leading: Icon(Icons.sensors),
+              leading: sensorAtuador.tipoSensor.idTipoSensor < 20000
+                  ? Icon(Icons.sensors)
+                  : Icon(Icons.settings_remote),
               title: Text(sensorAtuador.nomeSensor),
-              subtitle: Text(sensorAtuador.tipoSensor.nomeTipoSensor),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(sensorAtuador.uuidSensorAtuador),
+                  Text(sensorAtuador.tipoSensor.nomeTipoSensor),
+                  Text(sensorAtuador.area.nomeArea),
+                  Text(sensorAtuador.cultura.nomeCultura),
+                ],
+              ),
               trailing: Icon(Icons.arrow_forward_ios),
               onTap: () {
                 // Chamar a tela de detalhes do sensor
               },
             ),
           );
-        }
-    );
+        });
   }
 }
-
