@@ -44,4 +44,4 @@ app.*.map.json
 /android/app/release
 
 # Exclude AppConfig
-/lib/app_config.dart
+/lib/config/app_config.dart

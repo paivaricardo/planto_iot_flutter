@@ -1,8 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:planto_iot_flutter/components/planto_iot_appbar_background.dart';
 import 'package:planto_iot_flutter/components/planto_iot_background_builder.dart';
 import 'package:planto_iot_flutter/components/planto_iot_title_component.dart';
+import 'package:planto_iot_flutter/model/sensor_atuador_model.dart';
+import 'package:planto_iot_flutter/model/usuario_model.dart';
+import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
 import 'package:provider/provider.dart';
 
 class SensoresScreen extends StatefulWidget {
@@ -15,7 +17,7 @@ class SensoresScreen extends StatefulWidget {
 class _SensoresScreenState extends State<SensoresScreen> {
   @override
   Widget build(BuildContext context) {
-    final User? loggedInUser = Provider.of<User?>(context);
+    final UsuarioModel loggedInUser = Provider.of<UsuarioModel?>(context)!;
 
     return Scaffold(
       appBar: AppBar(
@@ -44,28 +46,46 @@ class _SensoresScreenState extends State<SensoresScreen> {
           flexibleSpace: const PlantoIOTAppBarBackground()),
       body: Container(
         width: double.infinity,
+        height: MediaQuery.of(context).size.height,
         decoration: PlantoIoTBackgroundBuilder().buildPlantoIoTAppBackGround(
             firstRadialColor: 0xFF0D6D0B, secondRadialColor: 0xFF0B3904),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              const Text(
-                  "Esta funcionalidade ainda não está disponível em nossa aplicação! Volte em breve para mais novidades 😉",
-                  style: TextStyle(
-                      fontFamily: 'Josefin Sans',
-                      color: Colors.white,
-                      fontSize: 18.0)),
-              Padding(
-                padding: const EdgeInsets.only(top: 32.0),
-                child: ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text("Voltar")),
-              )
-            ],
+          child: FutureBuilder(
+            future: BackendService.listarSensoresAtuadoresConectadosUsuario(loggedInUser.idUsuario),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: Column(
+                  children: const [
+                    CircularProgressIndicator(),
+                    Text("Carregando dados de sensores...")
+                  ],
+                ));
+              } else if (snapshot.hasError) {
+                return Column(
+                  children: [
+                    Text('Error: ${snapshot.error}'),
+                  ],
+                );
+              } else if (snapshot.hasData) {
+                final listaSensoresAtuadores = snapshot.data!;
+                return ListaSensoresAtuadores(listaSensoresAtuadores: listaSensoresAtuadores);
+              } else {
+                return Column(
+                  children: [
+                    Text('No data available'),
+                  ],
+                );
+              }
+            },
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Chamar a tela para conexão a novos sensores e atuadores
+        },
+        child: Icon(Icons.add),
       ),
     );
   }
@@ -100,3 +120,31 @@ class _SensoresScreenState extends State<SensoresScreen> {
         });
   }
 }
+
+class ListaSensoresAtuadores extends StatelessWidget {
+  final List<SensorAtuadorModel> listaSensoresAtuadores;
+
+  const ListaSensoresAtuadores({super.key, required this.listaSensoresAtuadores});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+        itemCount: listaSensoresAtuadores.length,
+        itemBuilder: (context, index) {
+          final sensorAtuador = listaSensoresAtuadores[index];
+          return Card(
+            child: ListTile(
+              leading: Icon(Icons.sensors),
+              title: Text(sensorAtuador.nomeSensor),
+              subtitle: Text(sensorAtuador.tipoSensor.nomeTipoSensor),
+              trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                // Chamar a tela de detalhes do sensor
+              },
+            ),
+          );
+        }
+    );
+  }
+}
+

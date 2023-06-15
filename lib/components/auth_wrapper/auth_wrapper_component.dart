@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:planto_iot_flutter/components/user_info_wrapper/user_info_wrapper.dart';
-import 'package:planto_iot_flutter/screens/dashboard/dashboard_screen.dart';
 import 'package:planto_iot_flutter/screens/login/login_screen.dart';
 import 'package:provider/provider.dart';
 

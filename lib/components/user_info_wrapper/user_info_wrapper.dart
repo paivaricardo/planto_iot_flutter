@@ -9,28 +9,28 @@ class UserInfoWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<UsuarioModel>(
-      future: BackendService.checkUser(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return const Text('Erro ao buscar informações do usuário.');
-        } else {
-          final usuarioDatabase = snapshot.data;
+    // Variável que armazena informações do usuário logado, oriundas do StreamProvider (Firebase Authentication).
+    final UsuarioModel? fetchedDatabaseUser = Provider.of<UsuarioModel?>(context);
 
-          if (usuarioDatabase != null) {
-
-            // Aqui, será configurado um Provider, que irá disponibilizar as informações do usuário cadastrado na base de dados para os widgets filhos.
-            return Provider<UsuarioModel>.value(
-              value: usuarioDatabase,
-              child: DashboardScreen(),
-            );
-          } else {
-            return const Text('Erro ao buscar informações do usuário.');
-          }
-        }
-      },
-    );
+    if (fetchedDatabaseUser == null) {
+      // Se o usuário não , retorna o widget de login
+      return Scaffold(
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          child: Center(
+            child: Column(
+              children: const [
+                CircularProgressIndicator(),
+                Text("Buscando informações do usuário..."),
+              ],
+            ),
+          ),
+        ),
+      );
+    } else {
+      // Se o usuário estiver logado, retorna o UserInfoWrapper, widget the buscará informações sobre o usuário na base de dados do Planto IoT
+      return const DashboardScreen();
+    }
   }
 }
