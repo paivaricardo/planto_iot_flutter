@@ -206,10 +206,37 @@ class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
                     break;
                   // 4 - Sensor/atuador encontrado e o usuário possui permissão para acessá-lo, e o cadastro está completo. Realiza a conexão com o sensor imediatamente. Se uma conexão com o sensor já existe, não haverá alterações na aplicação.
                   default:
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Erro ao cadastrar sensor/atuador.')),
-                    );
+                    Map<String, dynamic> conectarSensoresAtuadoresResposta =
+                        await BackendService.conectarSensorAtuadorUsuario(
+                            uuid: uuid, email: widget.loggedInUseremail);
+
+                    if (conectarSensoresAtuadoresResposta[
+                            'cod_status_conexao'] ==
+                        1) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text(
+                                'Sensor/atuador conectado com sucesso!')),
+                      );
+                      Navigator.of(context).pop();
+
+                    } else if (conectarSensoresAtuadoresResposta[
+                            'cod_status_conexao'] ==
+                        2) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text(
+                                'Sensor/atuador já está conectado ao usuário.')),
+                      );
+                      Navigator.of(context).pop();
+
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text(
+                                'Erro ao tentar conectar o sensor/atuador ao usuário.')),
+                      );
+                    }
                 }
 
                 setState(() {

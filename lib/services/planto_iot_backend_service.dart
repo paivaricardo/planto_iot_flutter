@@ -34,7 +34,8 @@ class BackendService {
       final usuario = UsuarioModel.fromJson(
           jsonResponse['usuario']); // Create UsuarioModel from JSON
 
-      print("Usuário verificado/cadastrado com sucesso na base de dados do Planto IoT! Dados: ${usuario.toString()}");
+      print(
+          "Usuário verificado/cadastrado com sucesso na base de dados do Planto IoT! Dados: ${usuario.toString()}");
 
       return usuario;
     } catch (e) {
@@ -66,10 +67,10 @@ class BackendService {
     }
   }
 
-  static Future<Map<String, dynamic>> verificarSensorAtuador({required uuid, required String email}) async {
-    final url = Uri.http(
-        AppConfig.backendAuthority,
-        "/verificar-sensor-atuador/$uuid");
+  static Future<Map<String, dynamic>> verificarSensorAtuador(
+      {required uuid, required String email}) async {
+    final url =
+        Uri.http(AppConfig.backendAuthority, "/verificar-sensor-atuador/$uuid");
 
     final response = await http.get(url);
 
@@ -95,7 +96,8 @@ class BackendService {
         };
       }
 
-      final sensorAtuadorFoiCadastrado = jsonResponse['sensor_atuador_foi_cadastrado'];
+      final sensorAtuadorFoiCadastrado =
+          jsonResponse['sensor_atuador_foi_cadastrado'];
       if (sensorAtuadorFoiCadastrado == false) {
         return {
           "status": 3,
@@ -110,7 +112,8 @@ class BackendService {
     } else if (response.statusCode == 400) {
       final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
       final error = jsonResponse['detail']['error'];
-      if (error == "O sensor ou atuador informado não existe na base de dados") {
+      if (error ==
+          "O sensor ou atuador informado não existe na base de dados") {
         return {
           "status": 1,
           "content": jsonResponse,
@@ -123,4 +126,18 @@ class BackendService {
     }
   }
 
+  static Future<Map<String, dynamic>> conectarSensorAtuadorUsuario(
+      {required String uuid, required String email}) async {
+    final url = Uri.http(AppConfig.backendAuthority,
+        "/conectar-sensor-atuador/$uuid", {"email_usuario": email});
+
+    final response = await http.put(url);
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      return jsonResponse;
+    } else {
+      throw Exception("Falha ao conectar com o sensor/atuador");
+    }
+  }
 }
