@@ -65,4 +65,62 @@ class BackendService {
       throw Exception("Falha ao listar sensores e atuadores conectados");
     }
   }
+
+  static Future<Map<String, dynamic>> verificarSensorAtuador({required uuid, required String email}) async {
+    final url = Uri.http(
+        AppConfig.backendAuthority,
+        "/verificar-sensor-atuador/$uuid");
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+
+      // Verificar se o usuário tem autorização para acessar o sensor
+      final autorizacoes = jsonResponse['autorizacoes'];
+      bool hasAuthorization = false;
+      for (var autorizacao in autorizacoes) {
+        final usuario = autorizacao['usuario'];
+        final emailUsuario = usuario['email_usuario'];
+        if (emailUsuario == email) {
+          hasAuthorization = true;
+          break;
+        }
+      }
+
+      if (!hasAuthorization) {
+        return {
+          "status": 2,
+          "content": jsonResponse,
+        };
+      }
+
+      final sensorAtuadorFoiCadastrado = jsonResponse['sensor_atuador_foi_cadastrado'];
+      if (sensorAtuadorFoiCadastrado == false) {
+        return {
+          "status": 3,
+          "content": jsonResponse,
+        };
+      } else {
+        return {
+          "status": 4,
+          "content": jsonResponse,
+        };
+      }
+    } else if (response.statusCode == 400) {
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      final error = jsonResponse['detail']['error'];
+      if (error == "O sensor ou atuador informado não existe na base de dados") {
+        return {
+          "status": 1,
+          "content": jsonResponse,
+        };
+      } else {
+        throw Exception("Falha ao verificar sensor e atuador");
+      }
+    } else {
+      throw Exception("Falha ao verificar sensor e atuador");
+    }
+  }
+
 }

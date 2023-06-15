@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:planto_iot_flutter/components/planto_iot_appbar_background.dart';
 import 'package:planto_iot_flutter/components/planto_iot_background_builder.dart';
 import 'package:planto_iot_flutter/components/planto_iot_title_component.dart';
+import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 class ConectarSensoresScreen extends StatefulWidget {
   const ConectarSensoresScreen({Key? key}) : super(key: key);
@@ -36,7 +38,7 @@ class _ConectarSensoresScreenState extends State<ConectarSensoresScreen> {
                   alignment: Alignment.center,
                   child: Text("Conectar sensores",
                       style:
-                      TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
+                          TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
                 ),
               ),
             ],
@@ -49,7 +51,8 @@ class _ConectarSensoresScreenState extends State<ConectarSensoresScreen> {
             firstRadialColor: 0xFF0D6D0B, secondRadialColor: 0xFF0B3904),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: ConectarSensorAtuadorForm(loggedInUseremail: loggedInUser.email!),
+          child:
+              ConectarSensorAtuadorForm(loggedInUseremail: loggedInUser.email!),
         ),
       ),
     );
@@ -61,7 +64,10 @@ class _ConectarSensoresScreenState extends State<ConectarSensoresScreen> {
         builder: (BuildContext context) {
           return AlertDialog(
             alignment: Alignment.center,
-            title: const Text('Sobre', style: TextStyle(fontFamily: "FredokaOne", fontSize: 24.0),),
+            title: const Text(
+              'Sobre',
+              style: TextStyle(fontFamily: "FredokaOne", fontSize: 24.0),
+            ),
             content: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -69,7 +75,8 @@ class _ConectarSensoresScreenState extends State<ConectarSensoresScreen> {
                   Text(
                     'Esta tela permite que você cadastre, monitore e controle seus sensores e atuadores para uso agrícola. Ainda está em construção. Volte em breve para novidades.',
                     textAlign: TextAlign.justify,
-                    style: TextStyle(fontFamily: "Josefin Sans", fontSize: 16.0),
+                    style:
+                        TextStyle(fontFamily: "Josefin Sans", fontSize: 16.0),
                   )
                 ],
               ),
@@ -101,6 +108,7 @@ class ConectarSensorAtuadorForm extends StatefulWidget {
 
 class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
   TextEditingController _qrCodeFieldController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
@@ -108,40 +116,124 @@ class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
     super.dispose();
   }
 
+  String? _validateUuid(String? value) {
+    try {
+      if (value == null || value.isEmpty) {
+        return "UUID não pode ser vazio.";
+      }
+
+      // Use the 'uuid' package to validate the UUID format
+      Uuid.parse(value);
+
+      return null;
+
+    } catch (e) {
+      return "UUID inválido.";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        TextField(
-          controller: _qrCodeFieldController,
-          decoration: const InputDecoration(
-            labelText: 'UUID do sensor',
-            hintText: 'Escaneie ou digite o UUID do sensor/atuador',
-            labelStyle: TextStyle(fontFamily: "Josefin Sans", fontSize: 16.0, color: Colors.white),
-            hintStyle: TextStyle(fontFamily: "Josefin Sans", fontSize: 16.0, color: Colors.white),
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TextFormField(
+            controller: _qrCodeFieldController,
+            validator: _validateUuid,
+            maxLength: 36,
+            decoration: const InputDecoration(
+              labelText: 'UUID do sensor',
+              hintText: 'Escaneie ou digite o UUID do sensor/atuador',
+              labelStyle: TextStyle(
+                  fontFamily: "Josefin Sans",
+                  fontSize: 16.0,
+                  color: Colors.white),
+              hintStyle: TextStyle(
+                  fontFamily: "Josefin Sans",
+                  fontSize: 16.0,
+                  color: Colors.white),
+            ),
           ),
-        ),
-        SizedBox(height: 16.0),
-        ElevatedButton.icon(
-          onPressed: () {
-            // Implementar a lógica de escaneamento do QR Code aqui
-          },
-          icon: Icon(Icons.qr_code),
-          label: Text('Escanear QR Code'),
-        ),
-        Spacer(),
-        ElevatedButton(
-          onPressed: () {
-            String uuid = _qrCodeFieldController.text;
-            // Use the 'uuid' variable for further processing
-            print('UUID: $uuid');
-          },
-          child: Text('Conectar'),
-        ),
-      ],
+          SizedBox(height: 16.0),
+          ElevatedButton.icon(
+            onPressed: () {
+              // Implementar a lógica de escaneamento do QR Code aqui
+            },
+            icon: Icon(Icons.qr_code),
+            label: Text('Escanear QR Code'),
+          ),
+          Spacer(),
+          ElevatedButton(
+            onPressed: () async {
+              if (_formKey.currentState!.validate()) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Processando dados...')),
+                );
+
+                String uuid = _qrCodeFieldController.text;
+                // Use the 'uuid' variable for further processing
+                print('UUID: $uuid');
+
+              //  Chamar o backend para verificar o uuid do sensor ou atuador que foi inserido.
+                Map<String, dynamic> result = await BackendService.verificarSensorAtuador(uuid: uuid, email: widget.loggedInUseremail);
+
+                switch (result['status']) {
+                  // 1 - Sensor/atuador não encontrado na base de dados
+                  case 1:
+                    mostraDialogoInfo(context, titleMessage: 'O sensor/atuador não foi localizado na base de dados.', contentMessage: 'Após busca em nossa base de dados, não localizamos o sensor ou atuador com o UUID informado. Verifique se o UUID foi digitado corretamente ou procure a equipe do Planto IoT para resolver o problema. A depender do caso, pode ser necessário realizar pré-cadastro do sensor/atuador desejado.');
+                    break;
+                  // 2 - Sensor/atuador encontrado, mas o usuário não possui permissão para acessá-lo
+                  case 2:
+                    mostraDialogoInfo(context, titleMessage: 'Autorização negada.', contentMessage: 'O sensor ou atuador existe na nossa base de dados, mas o usuário não possui permissão para acessá-lo. No caso, é necessário que o administrador do sensor/atuador habilite seu e-mail para acesso ao dispositivo.');
+                    break;
+                  // 3 - Sensor/atuador encontrado e o usuário possui permissão para acessá-lo, mas o cadastro não está completo. Redireciona para completar o cadastro do sensor
+                  case 3:
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Sensor/atuador não encontrado.')),
+                    );
+                    break;
+                  // 4 - Sensor/atuador encontrado e o usuário possui permissão para acessá-lo, e o cadastro está completo. Realiza a conexão com o sensor imediatamente. Se uma conexão com o sensor já existe, não haverá alterações na aplicação.
+                  default:
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Erro ao cadastrar sensor/atuador.')),
+                    );
+                }
+
+
+                print(result);
+              }
+
+
+            },
+            child: Text('Conectar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void mostraDialogoInfo(BuildContext context,
+      {required String titleMessage, required String contentMessage}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          icon: const Icon(Icons.info_outline_rounded,
+              color: Colors.green, size: 24),
+          title: Text(titleMessage),
+          content: Text(contentMessage),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
-
-
