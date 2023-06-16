@@ -80,11 +80,14 @@ class BackendService {
       // Verificar se o usuário tem autorização para acessar o sensor
       final autorizacoes = jsonResponse['autorizacoes'];
       bool hasAuthorization = false;
+      int idPerfilAutorizacao = 0;
+
       for (var autorizacao in autorizacoes) {
         final usuario = autorizacao['usuario'];
         final emailUsuario = usuario['email_usuario'];
         if (emailUsuario == email) {
           hasAuthorization = true;
+          idPerfilAutorizacao = autorizacao['perfil_autorizacao']['id_perfil_autorizacao'];
           break;
         }
       }
@@ -98,14 +101,19 @@ class BackendService {
 
       final sensorAtuadorFoiCadastrado =
           jsonResponse['sensor_atuador_foi_cadastrado'];
-      if (sensorAtuadorFoiCadastrado == false) {
+      if (sensorAtuadorFoiCadastrado == false && idPerfilAutorizacao == 2) {
         return {
           "status": 3,
           "content": jsonResponse,
         };
-      } else {
+      } else if (sensorAtuadorFoiCadastrado == false && idPerfilAutorizacao == 1) {
         return {
           "status": 4,
+          "content": jsonResponse,
+        };
+      } else {
+        return {
+          "status": 5,
           "content": jsonResponse,
         };
       }
