@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:planto_iot_flutter/model/sensor_atuador_model.dart';
 
 import '../config/app_config.dart';
+import '../model/area_model.dart';
+import '../model/cultura_model.dart';
 import '../model/usuario_model.dart';
 
 class BackendService {
@@ -148,4 +150,39 @@ class BackendService {
       throw Exception("Falha ao conectar com o sensor/atuador");
     }
   }
+
+  static Future<List<CulturaModel>> obterTodasCulturas() async {
+    final url = Uri.http(AppConfig.backendAuthority, "/culturas");
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+
+      final List<CulturaModel> culturas = List<CulturaModel>.from(jsonResponse.map(
+              (culturaObjetoJson) => CulturaModel.fromJson(culturaObjetoJson)));
+
+      return culturas;
+    } else {
+      throw Exception("Falha ao obter culturas do backend.");
+    }
+  }
+
+  static Future<List<AreaModel>> obterTodasAreas() async {
+    final url = Uri.http(AppConfig.backendAuthority, "/areas");
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+
+      final List<AreaModel> areas = List<AreaModel>.from(jsonResponse.map(
+              (areaObjetoJson) => AreaModel.fromJson(areaObjetoJson)));
+
+      return areas;
+    } else {
+      throw Exception("Falha ao obter áreas do backend");
+    }
+  }
+
 }

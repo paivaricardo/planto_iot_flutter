@@ -2,7 +2,7 @@ import 'package:planto_iot_flutter/model/tipo_sensor_model.dart';
 import 'package:planto_iot_flutter/model/usuario_model.dart';
 
 import 'area_model.dart';
-import 'cutura_model.dart';
+import 'cultura_model.dart';
 
 class SensorAtuadorModel {
   final int idSensorAtuador;
@@ -20,6 +20,7 @@ class SensorAtuadorModel {
   final UsuarioModel usuarioCadastrante;
   final TipoSensorModel tipoSensor;
   final AreaModel area;
+  final String? observacoes;
 
   SensorAtuadorModel({
     required this.idSensorAtuador,
@@ -37,6 +38,7 @@ class SensorAtuadorModel {
     required this.usuarioCadastrante,
     required this.tipoSensor,
     required this.area,
+    this.observacoes
   });
 
   factory SensorAtuadorModel.fromJson(Map<String, dynamic> json) {
@@ -56,6 +58,7 @@ class SensorAtuadorModel {
       usuarioCadastrante: UsuarioModel.fromJson(json['usuario_cadastrante']),
       tipoSensor: TipoSensorModel.fromJson(json['tipo_sensor']),
       area: AreaModel.fromJson(json['area']),
+      observacoes: json['observacoes']
     );
   }
 }

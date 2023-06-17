@@ -7,6 +7,8 @@ import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
+import 'cadastro_sensor_atuador_screen.dart';
+
 class ConectarSensoresScreen extends StatefulWidget {
   const ConectarSensoresScreen({Key? key}) : super(key: key);
 
@@ -182,6 +184,7 @@ class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
                         uuid: uuid, email: widget.loggedInUseremail);
 
                 switch (result['status']) {
+
                   // 1 - Sensor/atuador não encontrado na base de dados
                   case 1:
                     mostraDialogoInfo(context,
@@ -190,6 +193,7 @@ class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
                         contentMessage:
                             'Após busca em nossa base de dados, não localizamos o sensor ou atuador com o UUID informado. Verifique se o UUID foi digitado corretamente ou procure a equipe do Planto IoT para resolver o problema. A depender do caso, pode ser necessário realizar pré-cadastro do sensor/atuador desejado.');
                     break;
+
                   // 2 - Sensor/atuador encontrado, mas o usuário não possui permissão para acessá-lo
                   case 2:
                     mostraDialogoInfo(context,
@@ -197,6 +201,7 @@ class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
                         contentMessage:
                             'O sensor ou atuador existe na nossa base de dados, mas o usuário não possui permissão para acessá-lo. No caso, é necessário que o administrador do sensor/atuador habilite seu e-mail para acesso ao dispositivo.');
                     break;
+
                   // 3 - Sensor/atuador encontrado e o usuário possui NÃO permissão de administrador sobre o sensor, mas o cadastro não está completo. Redireciona para completar o cadastro do sensor
                   case 3:
                     mostraDialogoInfo(context,
@@ -204,13 +209,13 @@ class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
                         contentMessage:
                         'O sensor ou atuador existe na nossa base de dados e você possui permissão para acessá-lo, mas é necessário que o cadastro do sensor/atuador seja concluído por uma pessoa com poderes de administrador. No caso, contacte o administrador do sensor para concluir o cadastro.');
                     break;
+
                   // 4 - Sensor/atuador encontrado e o usuário possui permissão de ADMINISTRADOR sobre o sensor, mas o cadastro não está completo. Redireciona para completar o cadastro do sensor
                   case 4:
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Cadastro de sensor - a ser implementado futuramente!')),
-                    );
+                    Navigator.of(context).pop();
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => CadastroSensorAtuadorScreen(uuid: uuid, loggedInUseremail: widget.loggedInUseremail,)));
                     break;
+
                   // 5 - Sensor/atuador encontrado e o usuário possui permissão para acessá-lo, e o cadastro está completo. Realiza a conexão com o sensor imediatamente. Se uma conexão com o sensor já existe, não haverá alterações na aplicação.
                   default:
                     Map<String, dynamic> conectarSensoresAtuadoresResposta =
