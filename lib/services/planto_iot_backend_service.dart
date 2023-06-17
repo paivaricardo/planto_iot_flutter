@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
+import 'package:planto_iot_flutter/model/sensor_atuador_cadastro_completo_model.dart';
 import 'package:planto_iot_flutter/model/sensor_atuador_model.dart';
 
 import '../config/app_config.dart';
@@ -89,7 +90,8 @@ class BackendService {
         final emailUsuario = usuario['email_usuario'];
         if (emailUsuario == email) {
           hasAuthorization = true;
-          idPerfilAutorizacao = autorizacao['perfil_autorizacao']['id_perfil_autorizacao'];
+          idPerfilAutorizacao =
+              autorizacao['perfil_autorizacao']['id_perfil_autorizacao'];
           break;
         }
       }
@@ -108,7 +110,8 @@ class BackendService {
           "status": 3,
           "content": jsonResponse,
         };
-      } else if (sensorAtuadorFoiCadastrado == false && idPerfilAutorizacao == 1) {
+      } else if (sensorAtuadorFoiCadastrado == false &&
+          idPerfilAutorizacao == 1) {
         return {
           "status": 4,
           "content": jsonResponse,
@@ -159,7 +162,8 @@ class BackendService {
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
 
-      final List<CulturaModel> culturas = List<CulturaModel>.from(jsonResponse.map(
+      final List<CulturaModel> culturas = List<CulturaModel>.from(
+          jsonResponse.map(
               (culturaObjetoJson) => CulturaModel.fromJson(culturaObjetoJson)));
 
       return culturas;
@@ -176,8 +180,8 @@ class BackendService {
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
 
-      final List<AreaModel> areas = List<AreaModel>.from(jsonResponse.map(
-              (areaObjetoJson) => AreaModel.fromJson(areaObjetoJson)));
+      final List<AreaModel> areas = List<AreaModel>.from(jsonResponse
+          .map((areaObjetoJson) => AreaModel.fromJson(areaObjetoJson)));
 
       return areas;
     } else {
@@ -185,4 +189,23 @@ class BackendService {
     }
   }
 
+  static Future<Map<String, dynamic>> cadastrarSensorAtuador(
+      SensorAtuadorCadastroCompletoModel
+          sensorAtuadorCadastroCompletoModel) async {
+    final url =
+        Uri.http(AppConfig.backendAuthority, "/cadastrar-sensor-atuador");
+
+    final requestBody = jsonEncode(sensorAtuadorCadastroCompletoModel.toJson());
+
+    final response = await http.post(url,
+        headers: {'Content-Type': 'application/json'}, body: requestBody);
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      return jsonResponse;
+    } else {
+      throw Exception(
+          "[BackendServiço - Erro] Falha ao cadastrar sensor/atuador");
+    }
+  }
 }

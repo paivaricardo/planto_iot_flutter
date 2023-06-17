@@ -8,6 +8,8 @@ import 'package:planto_iot_flutter/model/sensor_atuador_info_model.dart';
 import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
 import 'package:provider/provider.dart';
 
+import '../../model/sensor_atuador_cadastro_completo_model.dart';
+
 class CadastroSensorAtuadorScreen extends StatefulWidget {
   final String uuid;
   final String loggedInUseremail;
@@ -49,6 +51,12 @@ class _CadastroSensorAtuadorScreenState
 
   // Armazena a informação acerca do processamento do formulário
   bool _isProcessing = false;
+
+  // Controla se o sensor/atuador está sendo cadastrado ou atualizado
+  bool _isUpdate = false;
+
+  // Controla se se trata de cadastro de sensor ou de um atuador. 1 para sensor, 2 para atuador
+  int _controleSensorAtuador = 1;
 
   @override
   void initState() {
@@ -94,6 +102,12 @@ class _CadastroSensorAtuadorScreenState
                 return Text('Error: ${snapshot.error}');
               } else {
                 final sensorBackendInfo = snapshot.data!;
+
+                // Verifica se o sensor/atuador já foi cadastrado ou se é o primeiro cadastro
+                if (sensorBackendInfo['content']['sensor_atuador_foi_cadastrado']) {
+                  _isUpdate = true;
+                }
+
                 _sensorAtuadorInitialInfo = SensorAtuadorInfoModel.fromJson(
                     sensorBackendInfo['content']['sensor_atuador_info']);
 
@@ -153,7 +167,8 @@ class _CadastroSensorAtuadorScreenState
           ),
           TextFormField(
             controller: _nomeSensorController,
-            decoration: const InputDecoration(labelText: 'Nome do Sensor ou Atuador'),
+            decoration:
+                const InputDecoration(labelText: 'Nome do Sensor ou Atuador'),
             maxLength: 255,
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -202,7 +217,10 @@ class _CadastroSensorAtuadorScreenState
               return null;
             },
           ),
-          ElevatedButton.icon(onPressed: _handleMapButtonPressed, icon: const Icon(Icons.map_rounded), label: const Text("Localizar no mapa")),
+          ElevatedButton.icon(
+              onPressed: _handleMapButtonPressed,
+              icon: const Icon(Icons.map_rounded),
+              label: const Text("Localizar no mapa")),
           FutureBuilder<List<CulturaModel>>(
             future: _culturasFuture,
             builder: (context, snapshot) {
@@ -338,25 +356,90 @@ class _CadastroSensorAtuadorScreenState
     );
   }
 
-  void _submitCadastroForm() {
-    if (_formKey.currentState!.validate()) {
-      // Perform the sensor/actuator registration logic here
-      // using the entered form values and the widget.uuid and widget.loggedInUseremail
+  void _submitCadastroForm() async {
+    try {
+      if (_formKey.currentState!.validate()) {
+        // Setar o estado como processando. Isso será refletido no botão de cadastro, que não deixará o usuário clicar novamente
+        setState(() {
+          _isProcessing = true;
+        });
 
+        // Após a validação, criar um objeto SensorAtuadorCadastroCompletoModel com os dados do formulário
+        final SensorAtuadorCadastroCompletoModel
+            sensorAtuadorCadastroCompletoSubmit =
+            SensorAtuadorCadastroCompletoModel(
+          idSensorAtuador: _sensorAtuadorInitialInfo!.idSensorAtuador,
+          uuidSensorAtuador: _sensorAtuadorInitialInfo!.uuidSensorAtuador,
+          nomeSensor: _nomeSensorController.text,
+          latitude: double.parse(_latitudeController.text),
+          longitude: double.parse(_longitudeController.text),
+          emailUsuarioCadastrante:
+              _sensorAtuadorInitialInfo!.usuarioCadastrante != null
+                  ? _sensorAtuadorInitialInfo!.usuarioCadastrante!.emailUsuario
+                  : loggedInUser!.email!,
+          idArea: int.parse(_idAreaController.text),
+          idCultura: int.parse(_idCulturaController.text),
+          observacoes: _observacoesController.text.isEmpty
+              ? null
+              : _observacoesController.text,
+        );
+
+        // Realizar a chamada de serviço do backend para cadastrar o sensor/atuador, ou atualizar o cadastro (o endpoint chamado é o mesmo)
+        final Map<String, dynamic> backendServiceResponse =
+            await BackendService.cadastrarSensorAtuador(
+          sensorAtuadorCadastroCompletoSubmit,
+        );
+
+        // Determinar mensagem acerca de estado de conexão com o sensor em questão
+        final int mensagemConexaoSensor =
+            backendServiceResponse['conexao_usuario_sensor']
+                ['cod_status_conexao'];
+
+        bool showMensagemConexaoSensor = false;
+
+        if (mensagemConexaoSensor == 1) {
+          showMensagemConexaoSensor = true;
+        }
+
+        // Mostar uma mensagem de sucesso ao usuário
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Column(
+            children: [
+              Text(_isUpdate
+                  ? 'Sensor/atuador atualizado com sucesso!'
+                  : 'Sensor/atuador cadastrado com sucesso!'),
+              Visibility(
+                  visible: showMensagemConexaoSensor,
+                  child: const Text(
+                      'O sensor/atuador foi conectado com sucesso ao usuário!'))
+            ],
+          )),
+        );
+
+        //  Retornar para a tela de listagem de sensores/atuadores
+        Navigator.of(context).pop();
+      }
+    } catch (e) {
+      //  Retornoar o estado do botão de cadastro para o estado inicial
       setState(() {
-        _isProcessing = true;
+        _isProcessing = false;
       });
 
-      // Show a success message or navigate to a success screen
+      // Mostrar uma mensagem de erro
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Funcionalidade a ser implementada futuramente!')),
+        SnackBar(
+            content: Text(_isUpdate
+                ? 'Erro ao atualizar o sensor/atuador'
+                : 'Erro ao cadastrar o sensor/atuador')),
       );
     }
   }
 
   void _handleMapButtonPressed() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Funcionalidade a ser implementada futuramente!')),
+      const SnackBar(
+          content: Text('Funcionalidade a ser implementada futuramente!')),
     );
   }
 
