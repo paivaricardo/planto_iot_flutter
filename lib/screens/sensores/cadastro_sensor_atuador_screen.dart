@@ -56,7 +56,7 @@ class _CadastroSensorAtuadorScreenState
   bool _isUpdate = false;
 
   // Controla se se trata de cadastro de sensor ou de um atuador. 1 para sensor, 2 para atuador
-  int _controleSensorAtuador = 1;
+  int _isSensorOrAtuador = 1;
 
   @override
   void initState() {
@@ -76,11 +76,16 @@ class _CadastroSensorAtuadorScreenState
   Widget _buildLoadingScreen() {
     return Center(
       child: Column(
-        children: const [
-          CircularProgressIndicator(),
+        children: [
+          const CircularProgressIndicator(
+            color: Colors.white,
+          ),
           Text(
-            "Carrendo dados do sensor...",
-            style: TextStyle(color: Colors.white, fontFamily: "Josefin Sans"),
+            _isSensorOrAtuador == 1
+                ? "Carregando dados do sensor..."
+                : "Carregando dados do atuador...",
+            style: const TextStyle(
+                color: Colors.white, fontFamily: "Josefin Sans"),
           )
         ],
       ),
@@ -104,7 +109,8 @@ class _CadastroSensorAtuadorScreenState
                 final sensorBackendInfo = snapshot.data!;
 
                 // Verifica se o sensor/atuador já foi cadastrado ou se é o primeiro cadastro
-                if (sensorBackendInfo['content']['sensor_atuador_foi_cadastrado']) {
+                if (sensorBackendInfo['content']
+                    ['sensor_atuador_foi_cadastrado']) {
                   _isUpdate = true;
                 }
 
@@ -115,14 +121,21 @@ class _CadastroSensorAtuadorScreenState
                   return const Text('Sensor não encontrado');
                 }
 
+                if (_sensorAtuadorInitialInfo!.tipoSensor.idTipoSensor >=
+                    20000) {
+                  _isSensorOrAtuador = 2;
+                }
+
                 _loadFields(_sensorAtuadorInitialInfo);
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Tipo de Sensor/Atuador:',
-                      style: TextStyle(
+                    Text(
+                      _isSensorOrAtuador == 1
+                          ? 'Tipo de Sensor'
+                          : 'Tipo de Atuador:',
+                      style: const TextStyle(
                           fontFamily: 'Josefin Sans',
                           fontWeight: FontWeight.bold),
                     ),
@@ -167,12 +180,16 @@ class _CadastroSensorAtuadorScreenState
           ),
           TextFormField(
             controller: _nomeSensorController,
-            decoration:
-                const InputDecoration(labelText: 'Nome do Sensor ou Atuador'),
+            decoration: InputDecoration(
+                labelText: _isSensorOrAtuador == 1
+                    ? 'Nome do Sensor'
+                    : 'Nome do Atuador'),
             maxLength: 255,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor, insira o nome do sensor';
+                return _isSensorOrAtuador == 1
+                    ? 'Por favor, insira o nome do sensor'
+                    : 'Por favor, insira o nome do atuador';
               }
               return null;
             },
@@ -336,20 +353,20 @@ class _CadastroSensorAtuadorScreenState
           ElevatedButton(
             onPressed: _isProcessing ? () {} : _submitCadastroForm,
             child: _isProcessing
-                ? Row(
-                    children: const [
-                      SizedBox(
-                        width: 10.0,
-                        height: 10.0,
-                        child: CircularProgressIndicator(),
+                ? Row(mainAxisSize: MainAxisSize.min, children: const [
+                    SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(right: 16.0),
-                        child: Text('Processando...'),
-                      )
-                    ],
-                  )
-                : const Text('Cadastrar'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 16.0),
+                      child: Text('Processando...'),
+                    )
+                  ]) // Show CircularProgressIndicator when connecting
+                : Text(_isUpdate ? 'Atualizar' : 'Cadastrar'),
           ),
         ],
       ),
@@ -448,7 +465,7 @@ class _CadastroSensorAtuadorScreenState
     loggedInUser = Provider.of<User?>(context);
 
     return Scaffold(
-      appBar: _buildAppBar(),
+      appBar: _buildAppBar(context),
       body: _buildBody(),
     );
   }
@@ -470,29 +487,28 @@ class _CadastroSensorAtuadorScreenState
     );
   }
 
-  _buildAppBar() {
+  AppBar _buildAppBar(BuildContext context) {
     return AppBar(
-        title: Stack(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const PlantoIOTTitleComponent(size: 18),
-                IconButton(
-                    onPressed: () => _showHelpDialog(context),
-                    icon: const Icon(Icons.help_outline_rounded,
-                        color: Colors.white, size: 24))
+                Text(
+                    "Cadastrar ${_isSensorOrAtuador == 1 ? 'Sensor' : 'Atuador'}",
+                    style: const TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
               ],
-            ),
-            const Positioned.fill(
-              child: Align(
-                alignment: Alignment.center,
-                child: Text("Cadastrar sensor/atuador",
-                    style: TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
-              ),
             ),
           ],
         ),
+        actions: [
+          IconButton(
+              onPressed: () => _showHelpDialog(context),
+              icon: const Icon(Icons.help_outline_rounded,
+                  color: Colors.white, size: 24)),
+        ],
         flexibleSpace: const PlantoIOTAppBarBackground());
   }
 

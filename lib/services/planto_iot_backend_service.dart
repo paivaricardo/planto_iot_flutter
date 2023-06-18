@@ -96,6 +96,7 @@ class BackendService {
         }
       }
 
+      // Status 2 - Usuário não tem autorização para acessar o sensor
       if (!hasAuthorization) {
         return {
           "status": 2,
@@ -103,6 +104,7 @@ class BackendService {
         };
       }
 
+      // Status 3 - Sensor/atuador não foi cadastrado, e o usuário não é administrador
       final sensorAtuadorFoiCadastrado =
           jsonResponse['sensor_atuador_foi_cadastrado'];
       if (sensorAtuadorFoiCadastrado == false && idPerfilAutorizacao == 2) {
@@ -110,13 +112,15 @@ class BackendService {
           "status": 3,
           "content": jsonResponse,
         };
-      } else if (sensorAtuadorFoiCadastrado == false &&
+      }else if (sensorAtuadorFoiCadastrado == false &&
           idPerfilAutorizacao == 1) {
+        // Status 4 - Sensor/atuador não foi cadastrado e usuário é administrador
         return {
           "status": 4,
           "content": jsonResponse,
         };
       } else {
+        // Status 5 - Sensor/atuador foi cadastrado corretamente, e o usuário tem autorização para acessá-lo
         return {
           "status": 5,
           "content": jsonResponse,
@@ -125,6 +129,8 @@ class BackendService {
     } else if (response.statusCode == 400) {
       final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
       final error = jsonResponse['detail']['error'];
+
+      // Status 1 - Sensor/atuador não existe na base de dados
       if (error ==
           "O sensor ou atuador informado não existe na base de dados") {
         return {

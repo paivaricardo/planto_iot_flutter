@@ -4,6 +4,7 @@ import 'package:planto_iot_flutter/components/planto_iot_appbar_background.dart'
 import 'package:planto_iot_flutter/components/planto_iot_background_builder.dart';
 import 'package:planto_iot_flutter/components/planto_iot_title_component.dart';
 import 'package:planto_iot_flutter/model/sensor_atuador_model.dart';
+import 'package:planto_iot_flutter/screens/sensores/monitorar_sensor_atuador_especifico_screen.dart';
 import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
 import 'package:provider/provider.dart';
 
@@ -22,30 +23,7 @@ class _SensoresScreenState extends State<SensoresScreen> {
     final User loggedInUser = Provider.of<User?>(context)!;
 
     return Scaffold(
-      appBar: AppBar(
-          title: Stack(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const PlantoIOTTitleComponent(size: 18),
-                  IconButton(
-                      onPressed: () => _showHelpDialog(context),
-                      icon: const Icon(Icons.help_outline_rounded,
-                          color: Colors.white, size: 24))
-                ],
-              ),
-              const Positioned.fill(
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Text("Sensores",
-                      style:
-                          TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
-                ),
-              ),
-            ],
-          ),
-          flexibleSpace: const PlantoIOTAppBarBackground()),
+      appBar: _buildAppBar(context),
       body: Container(
         width: double.infinity,
         height: MediaQuery.of(context).size.height,
@@ -66,7 +44,10 @@ class _SensoresScreenState extends State<SensoresScreen> {
                       padding: EdgeInsets.only(top: 16.0),
                       child: Text(
                         "Carregando dados de sensores...",
-                        style: TextStyle(fontFamily: 'Josefin Sans', fontSize: 16.0, color: Colors.white),
+                        style: TextStyle(
+                            fontFamily: 'Josefin Sans',
+                            fontSize: 16.0,
+                            color: Colors.white),
                       ),
                     )
                   ],
@@ -77,7 +58,7 @@ class _SensoresScreenState extends State<SensoresScreen> {
                   children: [
                     Text(
                       'Erro ao carregar dados de sensores: ${snapshot.error}',
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ],
                 );
@@ -91,7 +72,7 @@ class _SensoresScreenState extends State<SensoresScreen> {
                   children: [
                     Text(
                       'Erro ao carregar dados de sensores: ${snapshot.error}',
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ],
                 );
@@ -103,11 +84,37 @@ class _SensoresScreenState extends State<SensoresScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Chamar a tela para conexão a novos sensores e atuadores
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ConectarSensoresScreen()));
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const ConectarSensoresScreen()));
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
+  }
+
+  AppBar _buildAppBar(BuildContext context) {
+    return AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                PlantoIOTTitleComponent(size: 18),
+                Text("Sensores e Atuadores",
+                    style: TextStyle(
+                        fontSize: 18.0, fontFamily: 'FredokaOne')),
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          IconButton(
+              onPressed: () => _showHelpDialog(context),
+              icon: const Icon(Icons.help_outline_rounded,
+                  color: Colors.white, size: 24)),
+        ],
+        flexibleSpace: const PlantoIOTAppBarBackground());
   }
 
   void _showHelpDialog(BuildContext context) {
@@ -153,46 +160,52 @@ class ListaSensoresAtuadores extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return listaSensoresAtuadores.isEmpty ?
-    Padding(
-      padding: const EdgeInsets.only(top: 64.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
-        children: const [
-          Icon(Icons.eco_rounded, size: 128.0, color: Colors.white),
-          Text(
-            'Você ainda não possui sensores ou atuadores conectados. Clique no botão + para adicionar.',
-            style: TextStyle(fontFamily: 'Josefin Sans', fontSize: 32, color: Colors.white),
-          ),
-        ],
-      ),
-    )
-    : ListView.builder(
-        itemCount: listaSensoresAtuadores.length,
-        itemBuilder: (context, index) {
-          final sensorAtuador = listaSensoresAtuadores[index];
-          return Card(
-            child: ListTile(
-              leading: sensorAtuador.tipoSensor.idTipoSensor < 20000
-                  ? Icon(Icons.sensors)
-                  : Icon(Icons.settings_remote),
-              title: Text(sensorAtuador.nomeSensor),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(sensorAtuador.uuidSensorAtuador),
-                  Text(sensorAtuador.tipoSensor.nomeTipoSensor),
-                  Text(sensorAtuador.area.nomeArea),
-                  Text(sensorAtuador.cultura.nomeCultura),
-                ],
-              ),
-              trailing: Icon(Icons.arrow_forward_ios),
-              onTap: () {
-                // Chamar a tela de detalhes do sensor
-              },
+    return listaSensoresAtuadores.isEmpty
+        ? Padding(
+            padding: const EdgeInsets.only(top: 64.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: const [
+                Icon(Icons.eco_rounded, size: 128.0, color: Colors.white),
+                Text(
+                  'Você ainda não possui sensores ou atuadores conectados. Clique no botão + para adicionar.',
+                  style: TextStyle(
+                      fontFamily: 'Josefin Sans',
+                      fontSize: 32,
+                      color: Colors.white),
+                ),
+              ],
             ),
-          );
-        });
+          )
+        : ListView.builder(
+            itemCount: listaSensoresAtuadores.length,
+            itemBuilder: (context, index) {
+              final sensorAtuador = listaSensoresAtuadores[index];
+              return Card(
+                child: ListTile(
+                  leading: sensorAtuador.tipoSensor.idTipoSensor < 20000
+                      ? const Icon(Icons.sensors)
+                      : const Icon(Icons.settings_remote),
+                  title: Text(sensorAtuador.nomeSensor),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(sensorAtuador.uuidSensorAtuador),
+                      Text(sensorAtuador.tipoSensor.nomeTipoSensor),
+                      Text(sensorAtuador.area.nomeArea),
+                      Text(sensorAtuador.cultura.nomeCultura),
+                    ],
+                  ),
+                  trailing: const Icon(Icons.arrow_forward_ios),
+                  onTap: () {
+                      // Chamar a tela de detalhes do sensor ou do atuador
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => MonitorarSensorAtuadorEspecificoScreen(
+                              uuid: sensorAtuador.uuidSensorAtuador)));
+                  },
+                ),
+              );
+            });
   }
 }

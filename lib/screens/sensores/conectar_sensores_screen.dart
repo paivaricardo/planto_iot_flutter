@@ -22,30 +22,7 @@ class _ConectarSensoresScreenState extends State<ConectarSensoresScreen> {
     final User loggedInUser = Provider.of<User?>(context)!;
 
     return Scaffold(
-      appBar: AppBar(
-          title: Stack(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const PlantoIOTTitleComponent(size: 18),
-                  IconButton(
-                      onPressed: () => _showHelpDialog(context),
-                      icon: const Icon(Icons.help_outline_rounded,
-                          color: Colors.white, size: 24))
-                ],
-              ),
-              const Positioned.fill(
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Text("Conectar sensores",
-                      style:
-                          TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
-                ),
-              ),
-            ],
-          ),
-          flexibleSpace: const PlantoIOTAppBarBackground()),
+      appBar: _buildAppBar(context),
       body: Container(
         width: double.infinity,
         height: MediaQuery.of(context).size.height,
@@ -58,6 +35,31 @@ class _ConectarSensoresScreenState extends State<ConectarSensoresScreen> {
         ),
       ),
     );
+  }
+
+  AppBar _buildAppBar(BuildContext context) {
+    return AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                PlantoIOTTitleComponent(size: 18),
+                Text("Conectar Sensor/Atuador",
+                    style: TextStyle(
+                        fontSize: 18.0, fontFamily: 'FredokaOne')),
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          IconButton(
+              onPressed: () => _showHelpDialog(context),
+              icon: const Icon(Icons.help_outline_rounded,
+                  color: Colors.white, size: 24)),
+        ],
+        flexibleSpace: const PlantoIOTAppBarBackground());
   }
 
   void _showHelpDialog(BuildContext context) {
