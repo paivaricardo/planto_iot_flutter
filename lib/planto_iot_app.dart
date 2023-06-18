@@ -1,13 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:planto_iot_flutter/components/auth_wrapper/auth_wrapper_component.dart';
-import 'package:planto_iot_flutter/model/usuario_model.dart';
 import 'package:planto_iot_flutter/screens/configuracoes/configuracoes_screen.dart';
 import 'package:planto_iot_flutter/screens/dashboard/dashboard_screen.dart';
 import 'package:planto_iot_flutter/screens/sensores/sensores_screen.dart';
 import 'package:planto_iot_flutter/screens/sobre/sobre_screen.dart';
 import 'package:planto_iot_flutter/services/firebase_auth_service.dart';
-import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
 import 'package:provider/provider.dart';
 
 // Este é a classe principal da aplicação

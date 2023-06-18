@@ -4,6 +4,7 @@ import 'package:planto_iot_flutter/components/planto_iot_appbar_background.dart'
 import 'package:planto_iot_flutter/components/planto_iot_background_builder.dart';
 import 'package:planto_iot_flutter/components/planto_iot_title_component.dart';
 import 'package:planto_iot_flutter/model/sensor_atuador_model.dart';
+import 'package:planto_iot_flutter/screens/sensores/cadastro_sensor_atuador_screen.dart';
 import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -13,7 +14,7 @@ class MonitorarSensorAtuadorEspecificoScreen extends StatefulWidget {
   final int isSensorOrAtuador;
 
   const MonitorarSensorAtuadorEspecificoScreen(
-      {required this.uuid, required this.isSensorOrAtuador, Key? key})
+      {required this.uuid, Key? key, required this.isSensorOrAtuador})
       : super(key: key);
 
   @override
@@ -31,6 +32,8 @@ class _MonitorarSensorAtuadorEspecificoScreenState
 
   // Controla se se trata de cadastro de sensor ou de um atuador. 1 para sensor, 2 para atuador
   int _isSensorOrAtuador = 1;
+
+  bool sensorAtuadorCarregado = false;
 
   @override
   void initState() {
@@ -107,12 +110,16 @@ class _MonitorarSensorAtuadorEspecificoScreenState
             sensorAtuadorModel = SensorAtuadorModel.fromJson(
                 sensorAtuadorBackendInfo['content']['sensor_atuador_info']);
 
+            sensorAtuadorCarregado = true;
+
             // Definir a variável que define se se trata de um sensor ou atuador
             _isSensorOrAtuador =
-                sensorAtuadorModel!.idSensorAtuador < 20000 ? 1 : 2;
+                sensorAtuadorModel!.tipoSensor.idTipoSensor < 20000 ? 1 : 2;
 
             return MonitorarSensorAtuadorEspecificoCarregado(
-                sensorAtuadorModel!);
+              sensorAtuadorModel!,
+              isSensorOrAtuador: _isSensorOrAtuador,
+            );
           } else {
             return _buildNotAuthorizedScreen();
           }
@@ -136,7 +143,8 @@ class _MonitorarSensorAtuadorEspecificoScreenState
                     _isSensorOrAtuador == 1
                         ? "Monitorar Sensor"
                         : "Controlar Atuador",
-                    style: const TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
+                    style: const TextStyle(
+                        fontSize: 18.0, fontFamily: 'FredokaOne')),
               ],
             ),
           ],
@@ -147,7 +155,8 @@ class _MonitorarSensorAtuadorEspecificoScreenState
               icon: const Icon(Icons.help_outline_rounded,
                   color: Colors.white, size: 24)),
           IconButton(
-              onPressed: () => _showMoreActionsMenu(context),
+              onPressed: () =>
+                  sensorAtuadorCarregado ? _showMoreActionsMenu(context) : null,
               icon: const Icon(Icons.more_vert_rounded,
                   color: Colors.white, size: 24)),
         ],
@@ -200,14 +209,72 @@ class _MonitorarSensorAtuadorEspecificoScreenState
     );
   }
 
-  _showMoreActionsMenu(BuildContext context) {}
+  void _showMoreActionsMenu(BuildContext context) {
+    final RenderBox appBarRenderBox = context.findRenderObject() as RenderBox;
+    final appBarHeight = appBarRenderBox.size.height;
+
+    final double topPadding = MediaQuery.of(context).padding.top;
+
+    final RenderBox overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox;
+    final RelativeRect position = RelativeRect.fromRect(
+      Rect.fromPoints(
+        appBarRenderBox.localToGlobal(Offset(10, appBarHeight + topPadding),
+            ancestor: overlay),
+        appBarRenderBox.localToGlobal(
+            appBarRenderBox.size.topRight(Offset.zero),
+            ancestor: overlay),
+      ),
+      Offset.zero & overlay.size,
+    );
+
+    showMenu<String>(
+      context: context,
+      position: position,
+      items: [
+        const PopupMenuItem<String>(
+          value: 'edit',
+          child: Text('Editar cadastro'),
+        ),
+        const PopupMenuItem<String>(
+          value: 'manage',
+          child: Text('Gerenciar autorizações'),
+        ),
+      ],
+      elevation: 8,
+    ).then((value) {
+      if (value == 'edit') {
+        // Handle the 'Editar cadastro' option
+        Navigator.of(context)
+            .push(MaterialPageRoute(
+                builder: (context) => CadastroSensorAtuadorScreen(
+                      uuid: widget.uuid,
+                      loggedInUseremail: loggedInUser!.email!,
+                      isSensorOrAtuador: _isSensorOrAtuador,
+                      isUpdate: true,
+                    )))
+            .then((value) => setState(() {}));
+      } else if (value == 'manage') {
+        // Handle the 'Gerenciar autorizações' option
+      }
+    });
+  }
+
+  void _handleEditCadastro() {
+    // Implement the logic for editing the cadastro
+  }
+
+  void _handleGerenciarAutorizacoes() {
+    // Implement the logic for managing autorizacoes
+  }
 }
 
 class MonitorarSensorAtuadorEspecificoCarregado extends StatefulWidget {
+  final int isSensorOrAtuador;
   final SensorAtuadorModel sensorAtuadorCarregado;
 
   const MonitorarSensorAtuadorEspecificoCarregado(this.sensorAtuadorCarregado,
-      {super.key});
+      {required this.isSensorOrAtuador, super.key});
 
   @override
   State<MonitorarSensorAtuadorEspecificoCarregado> createState() =>
@@ -224,23 +291,34 @@ class _MonitorarSensorAtuadorEspecificoCarregadoState
 
     return Column(
       children: [
-        _buildSensorInfoCard(),
-        _buildUltimasLeiturasCard(),
+        _buildSensorAtuadorInfoCard(),
+        widget.isSensorOrAtuador == 1
+            ? _buildUltimasLeiturasCard()
+            : _buildUltimosAcionamentosCard(),
         _buildCulturaCard(),
         _buildAreaCard(),
         _buildLocalizacaoCard(),
         _buildObservacoesCard(),
         _buildQRCodeCard(),
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 8.0),
+          child: Divider(
+            color: Colors.white,
+            thickness: 2.0,
+          ),
+        ),
+        _buildDesconectarButton(),
       ],
     );
   }
 
-  _buildSensorInfoCard() {
+  _buildSensorAtuadorInfoCard() {
     return Card(
       child: Column(
         children: [
           ListTile(
-            title: const Text('Nome do sensor'),
+            title: Text(
+                "Nome do ${widget.isSensorOrAtuador == 1 ? 'sensor' : 'atuador'}"),
             subtitle: SelectableText(widget.sensorAtuadorCarregado.nomeSensor),
           ),
           ListTile(
@@ -249,7 +327,8 @@ class _MonitorarSensorAtuadorEspecificoCarregadoState
                 SelectableText(widget.sensorAtuadorCarregado.uuidSensorAtuador),
           ),
           ListTile(
-            title: const Text('Tipo de sensor'),
+            title: Text(
+                "Tipo de ${widget.sensorAtuadorCarregado == 1 ? 'sensor' : 'atuador'}"),
             subtitle: SelectableText(
                 widget.sensorAtuadorCarregado.tipoSensor.nomeTipoSensor),
           ),
@@ -358,6 +437,32 @@ class _MonitorarSensorAtuadorEspecificoCarregadoState
           )
         ],
       ),
+    );
+  }
+
+  _buildUltimosAcionamentosCard() {
+    return Card(
+      child: Column(
+        children: const [
+          ListTile(
+              leading: Icon(Icons.table_chart_rounded),
+              title: Text('Últimos acionamentos')),
+        ],
+      ),
+    );
+  }
+
+  _buildDesconectarButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+          onPressed: () {},
+          icon: const Icon(Icons.sensors_off_rounded),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+          ),
+          label: Text(
+              "Desconectar ${widget.isSensorOrAtuador == 1 ? 'sensor' : 'atuador'}")),
     );
   }
 }

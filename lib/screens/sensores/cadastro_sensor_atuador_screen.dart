@@ -13,11 +13,15 @@ import '../../model/sensor_atuador_cadastro_completo_model.dart';
 class CadastroSensorAtuadorScreen extends StatefulWidget {
   final String uuid;
   final String loggedInUseremail;
+  final int isSensorOrAtuador;
+  final bool isUpdate;
 
   const CadastroSensorAtuadorScreen({
     Key? key,
     required this.uuid,
     required this.loggedInUseremail,
+    required this.isSensorOrAtuador,
+    required this.isUpdate,
   }) : super(key: key);
 
   @override
@@ -62,6 +66,8 @@ class _CadastroSensorAtuadorScreenState
   void initState() {
     super.initState();
     _loadData();
+
+    _isUpdate = widget.isUpdate;
   }
 
   void _loadData() {
@@ -497,7 +503,7 @@ class _CadastroSensorAtuadorScreenState
               children: [
                 const PlantoIOTTitleComponent(size: 18),
                 Text(
-                    "Cadastrar ${_isSensorOrAtuador == 1 ? 'Sensor' : 'Atuador'}",
+                    "${_isUpdate ? 'Atualizar' : 'Cadastrar'} ${_isSensorOrAtuador == 1 ? 'Sensor' : 'Atuador'}",
                     style: const TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
               ],
             ),

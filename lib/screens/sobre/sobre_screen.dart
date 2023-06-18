@@ -89,7 +89,7 @@ class SobreScreen extends StatelessWidget {
                 ),
                 const Padding(
                   padding: EdgeInsets.only(top: 16.0),
-                  child: Text("Versão: 0.1.0",
+                  child: Text("Versão: 0.2.0",
                       style: TextStyle(
                           fontFamily: 'Josefin Sans',
                           color: Colors.white,
@@ -162,6 +162,16 @@ class SobreScreen extends StatelessWidget {
                           fontFamily: 'Josefin Sans',
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
+                          fontSize: 18.0)),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 16.0),
+                  child: Text(
+                      "0.2.0 (18/06/2023): Implementada a lista de sensores conectados, tela de conexão a novos sensores, cadastro/atualização de sensores e também tela de informações detalhadas de sensores/atuadores.",
+                      textAlign: TextAlign.justify,
+                      style: TextStyle(
+                          fontFamily: 'Josefin Sans',
+                          color: Colors.white,
                           fontSize: 18.0)),
                 ),
                 const Padding(

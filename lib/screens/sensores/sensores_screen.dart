@@ -84,8 +84,10 @@ class _SensoresScreenState extends State<SensoresScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Chamar a tela para conexão a novos sensores e atuadores
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const ConectarSensoresScreen()));
+          Navigator.of(context)
+              .push(MaterialPageRoute(
+                  builder: (context) => const ConectarSensoresScreen()))
+              .then((value) => setState(() {}));
         },
         child: const Icon(Icons.add),
       ),

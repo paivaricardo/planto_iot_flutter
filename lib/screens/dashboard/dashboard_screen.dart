@@ -124,7 +124,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               padding: EdgeInsets.all(8.0),
               child: Align(
                   alignment: Alignment.bottomRight,
-                  child: Text("Versão 0.1.0",
+                  child: Text("Versão 0.2.0",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 18.0,

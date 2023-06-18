@@ -47,8 +47,7 @@ class _ConectarSensoresScreenState extends State<ConectarSensoresScreen> {
               children: const [
                 PlantoIOTTitleComponent(size: 18),
                 Text("Conectar Sensor/Atuador",
-                    style: TextStyle(
-                        fontSize: 18.0, fontFamily: 'FredokaOne')),
+                    style: TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
               ],
             ),
           ],
@@ -186,7 +185,6 @@ class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
                         uuid: uuid, email: widget.loggedInUseremail);
 
                 switch (result['status']) {
-
                   // 1 - Sensor/atuador não encontrado na base de dados
                   case 1:
                     mostraDialogoInfo(context,
@@ -209,13 +207,26 @@ class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
                     mostraDialogoInfo(context,
                         titleMessage: 'Sensor/Atuador não cadastrado',
                         contentMessage:
-                        'O sensor ou atuador existe na nossa base de dados e você possui permissão para acessá-lo, mas é necessário que o cadastro do sensor/atuador seja concluído por uma pessoa com poderes de administrador. No caso, contacte o administrador do sensor para concluir o cadastro.');
+                            'O sensor ou atuador existe na nossa base de dados e você possui permissão para acessá-lo, mas é necessário que o cadastro do sensor/atuador seja concluído por uma pessoa com poderes de administrador. No caso, contacte o administrador do sensor para concluir o cadastro.');
                     break;
 
                   // 4 - Sensor/atuador encontrado e o usuário possui permissão de ADMINISTRADOR sobre o sensor, mas o cadastro não está completo. Redireciona para completar o cadastro do sensor
                   case 4:
+                    int isSensorOrAtuador =
+                        result['content']['sensor_atuador_info']['id_tipo_sensor'] < 20000 ? 1 : 2;
+
+                    bool isUpdate = !result['content']['sensor_atuador_foi_cadastrado'];
+
                     Navigator.of(context).pop();
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => CadastroSensorAtuadorScreen(uuid: uuid, loggedInUseremail: widget.loggedInUseremail,)));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CadastroSensorAtuadorScreen(
+                                  uuid: uuid,
+                                  isSensorOrAtuador: isSensorOrAtuador,
+                                  loggedInUseremail: widget.loggedInUseremail,
+                                  isUpdate: isUpdate,
+                                )));
                     break;
 
                   // 5 - Sensor/atuador encontrado e o usuário possui permissão para acessá-lo, e o cadastro está completo. Realiza a conexão com o sensor imediatamente. Se uma conexão com o sensor já existe, não haverá alterações na aplicação.
@@ -229,11 +240,10 @@ class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
                         1) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                            content: Text(
-                                'Sensor/atuador conectado com sucesso!')),
+                            content:
+                                Text('Sensor/atuador conectado com sucesso!')),
                       );
                       Navigator.of(context).pop();
-
                     } else if (conectarSensoresAtuadoresResposta[
                             'cod_status_conexao'] ==
                         2) {
@@ -243,7 +253,6 @@ class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
                                 'Sensor/atuador já está conectado ao usuário.')),
                       );
                       Navigator.of(context).pop();
-
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
