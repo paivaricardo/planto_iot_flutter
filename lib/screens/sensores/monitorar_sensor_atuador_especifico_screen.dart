@@ -10,8 +10,10 @@ import 'package:qr_flutter/qr_flutter.dart';
 
 class MonitorarSensorAtuadorEspecificoScreen extends StatefulWidget {
   final String uuid;
+  final int isSensorOrAtuador;
 
-  const MonitorarSensorAtuadorEspecificoScreen({required this.uuid, Key? key})
+  const MonitorarSensorAtuadorEspecificoScreen(
+      {required this.uuid, required this.isSensorOrAtuador, Key? key})
       : super(key: key);
 
   @override
@@ -29,6 +31,12 @@ class _MonitorarSensorAtuadorEspecificoScreenState
 
   // Controla se se trata de cadastro de sensor ou de um atuador. 1 para sensor, 2 para atuador
   int _isSensorOrAtuador = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _isSensorOrAtuador = widget.isSensorOrAtuador;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,9 +108,11 @@ class _MonitorarSensorAtuadorEspecificoScreenState
                 sensorAtuadorBackendInfo['content']['sensor_atuador_info']);
 
             // Definir a variável que define se se trata de um sensor ou atuador
-            _isSensorOrAtuador = sensorAtuadorModel!.idSensorAtuador < 20000 ? 1 : 2 ;
+            _isSensorOrAtuador =
+                sensorAtuadorModel!.idSensorAtuador < 20000 ? 1 : 2;
 
-            return MonitorarSensorAtuadorEspecificoCarregado(sensorAtuadorModel!);
+            return MonitorarSensorAtuadorEspecificoCarregado(
+                sensorAtuadorModel!);
           } else {
             return _buildNotAuthorizedScreen();
           }
@@ -122,8 +132,11 @@ class _MonitorarSensorAtuadorEspecificoScreenState
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const PlantoIOTTitleComponent(size: 18),
-                Text("Monitorar ${_isSensorOrAtuador == 1 ? 'Sensor' : 'Atuador'}",
-                    style: TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
+                Text(
+                    _isSensorOrAtuador == 1
+                        ? "Monitorar Sensor"
+                        : "Controlar Atuador",
+                    style: const TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
               ],
             ),
           ],
@@ -321,8 +334,8 @@ class _MonitorarSensorAtuadorEspecificoCarregadoState
                 leading: Icon(Icons.info_outline_rounded),
                 title: Text('Observações')),
             ListTile(
-                title:
-                    SelectableText(widget.sensorAtuadorCarregado.observacoes ?? '')),
+                title: SelectableText(
+                    widget.sensorAtuadorCarregado.observacoes ?? '')),
           ],
         ),
       ),

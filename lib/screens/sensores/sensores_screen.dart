@@ -102,8 +102,7 @@ class _SensoresScreenState extends State<SensoresScreen> {
               children: const [
                 PlantoIOTTitleComponent(size: 18),
                 Text("Sensores e Atuadores",
-                    style: TextStyle(
-                        fontSize: 18.0, fontFamily: 'FredokaOne')),
+                    style: TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
               ],
             ),
           ],
@@ -199,10 +198,16 @@ class ListaSensoresAtuadores extends StatelessWidget {
                   ),
                   trailing: const Icon(Icons.arrow_forward_ios),
                   onTap: () {
-                      // Chamar a tela de detalhes do sensor ou do atuador
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => MonitorarSensorAtuadorEspecificoScreen(
-                              uuid: sensorAtuador.uuidSensorAtuador)));
+                    int isSensorOrAtuador =
+                        sensorAtuador.tipoSensor.idTipoSensor < 20000 ? 1 : 2;
+
+                    // Chamar a tela de detalhes do sensor ou do atuador
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) =>
+                            MonitorarSensorAtuadorEspecificoScreen(
+                              uuid: sensorAtuador.uuidSensorAtuador,
+                              isSensorOrAtuador: isSensorOrAtuador,
+                            )));
                   },
                 ),
               );
