@@ -153,15 +153,20 @@ class _SensoresScreenState extends State<SensoresScreen> {
   }
 }
 
-class ListaSensoresAtuadores extends StatelessWidget {
+class ListaSensoresAtuadores extends StatefulWidget {
   final List<SensorAtuadorModel> listaSensoresAtuadores;
 
   const ListaSensoresAtuadores(
       {super.key, required this.listaSensoresAtuadores});
 
   @override
+  State<ListaSensoresAtuadores> createState() => _ListaSensoresAtuadoresState();
+}
+
+class _ListaSensoresAtuadoresState extends State<ListaSensoresAtuadores> {
+  @override
   Widget build(BuildContext context) {
-    return listaSensoresAtuadores.isEmpty
+    return widget.listaSensoresAtuadores.isEmpty
         ? Padding(
             padding: const EdgeInsets.only(top: 64.0),
             child: Column(
@@ -180,9 +185,9 @@ class ListaSensoresAtuadores extends StatelessWidget {
             ),
           )
         : ListView.builder(
-            itemCount: listaSensoresAtuadores.length,
+            itemCount: widget.listaSensoresAtuadores.length,
             itemBuilder: (context, index) {
-              final sensorAtuador = listaSensoresAtuadores[index];
+              final sensorAtuador = widget.listaSensoresAtuadores[index];
               return Card(
                 child: ListTile(
                   leading: sensorAtuador.tipoSensor.idTipoSensor < 20000
@@ -209,7 +214,7 @@ class ListaSensoresAtuadores extends StatelessWidget {
                             MonitorarSensorAtuadorEspecificoScreen(
                               uuid: sensorAtuador.uuidSensorAtuador,
                               isSensorOrAtuador: isSensorOrAtuador,
-                            )));
+                            ))).then((value) => setState(() {}));
                   },
                 ),
               );
