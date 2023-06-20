@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:planto_iot_flutter/components/planto_iot_appbar_background.dart';
 import 'package:planto_iot_flutter/components/planto_iot_background_builder.dart';
 import 'package:planto_iot_flutter/components/planto_iot_title_component.dart';
+import 'package:planto_iot_flutter/version_info/version_info_main.dart';
+import 'package:planto_iot_flutter/version_info/version_info_model.dart';
 
 class SobreScreen extends StatelessWidget {
   const SobreScreen({Key? key}) : super(key: key);
@@ -27,7 +29,7 @@ class SobreScreen extends StatelessWidget {
                   alignment: Alignment.center,
                   child: Text("Sobre",
                       style:
-                      TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
+                          TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
                 ),
               ),
             ],
@@ -87,10 +89,11 @@ class SobreScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 16.0),
-                  child: Text("Versão: 0.3.0",
-                      style: TextStyle(
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: Text(
+                      "Versão: ${VersionInfoMain.currentVersion.versionName}",
+                      style: const TextStyle(
                           fontFamily: 'Josefin Sans',
                           color: Colors.white,
                           fontSize: 18.0,
@@ -164,36 +167,21 @@ class SobreScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           fontSize: 18.0)),
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 16.0),
-                  child: Text(
-                      "0.3.0 (19/06/2023): Implementada a tabela de últimas leituras do sensor, na tela de detalhamento do sensor.",
-                      textAlign: TextAlign.justify,
-                      style: TextStyle(
-                          fontFamily: 'Josefin Sans',
-                          color: Colors.white,
-                          fontSize: 18.0)),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 16.0),
-                  child: Text(
-                      "0.2.0 (18/06/2023): Implementada a lista de sensores conectados, tela de conexão a novos sensores, cadastro/atualização de sensores e também tela de informações detalhadas de sensores/atuadores.",
-                      textAlign: TextAlign.justify,
-                      style: TextStyle(
-                          fontFamily: 'Josefin Sans',
-                          color: Colors.white,
-                          fontSize: 18.0)),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 16.0),
-                  child: Text(
-                      "0.1.0 (18/03/2023): Primeira versão do aplicativo Planto IoT. Implementada a funcionada de login e cadastro via provedor de identidade do Google. Implementado o dashboard e placeholders para as funcionalidades de sensores, configurações. Implementada a funcionalidade de logout.",
-                      textAlign: TextAlign.justify,
-                      style: TextStyle(
-                          fontFamily: 'Josefin Sans',
-                          color: Colors.white,
-                          fontSize: 18.0)),
-                ),
+                ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: VersionInfoMain.versionHistory.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 16.0),
+                        child: Text(
+                            "${VersionInfoMain.versionHistory[index].versionName} (${VersionInfoMain.versionHistory[index].date}): ${VersionInfoMain.versionHistory[index].notes}",
+                            textAlign: TextAlign.justify,
+                            style: const TextStyle(
+                                fontFamily: 'Josefin Sans',
+                                color: Colors.white,
+                                fontSize: 18.0)),
+                      );
+                    }),
                 Padding(
                   padding: const EdgeInsets.only(top: 32.0),
                   child: ElevatedButton(
@@ -214,7 +202,10 @@ class SobreScreen extends StatelessWidget {
         builder: (BuildContext context) {
           return AlertDialog(
             alignment: Alignment.center,
-            title: const Text('Sobre', style: TextStyle(fontFamily: "FredokaOne", fontSize: 24.0),),
+            title: const Text(
+              'Sobre',
+              style: TextStyle(fontFamily: "FredokaOne", fontSize: 24.0),
+            ),
             content: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -222,7 +213,8 @@ class SobreScreen extends StatelessWidget {
                   Text(
                     'Esta tela contém informações gerais sobre o aplicativo e o projeto Planto IoT, assim como sobre a equipe de desenvolvimento. Também possui o histórico de versões do aplicativo.',
                     textAlign: TextAlign.justify,
-                    style: TextStyle(fontFamily: "Josefin Sans", fontSize: 16.0),
+                    style:
+                        TextStyle(fontFamily: "Josefin Sans", fontSize: 16.0),
                   )
                 ],
               ),

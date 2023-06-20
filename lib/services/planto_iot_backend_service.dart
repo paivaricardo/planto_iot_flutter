@@ -216,7 +216,7 @@ class BackendService {
     }
   }
 
-  static Future<List<LeituraModel>> listarUltimasLeiturasSensorAtuador (
+  static Future<List<LeituraModel>> listarUltimasLeiturasSensorAtuador(
       {required String uuidSensorAtuador,
       required int numLeituras,
       required int filtragemTipoSinal}) async {
@@ -229,20 +229,48 @@ class BackendService {
 
       final ultimasLeiturasResponse = await http.get(url);
 
-    //  Convertar a resposta json das últimas leituras do sensor/atuador no modelo de dados de Leitura
+      //  Convertar a resposta json das últimas leituras do sensor/atuador no modelo de dados de Leitura
 
       if (ultimasLeiturasResponse.statusCode == 200) {
-        final jsonResponse = jsonDecode(utf8.decode(ultimasLeiturasResponse.bodyBytes));
+        final jsonResponse =
+            jsonDecode(utf8.decode(ultimasLeiturasResponse.bodyBytes));
 
-        final List<LeituraModel> ultimasLeituras = List<LeituraModel>.from(jsonResponse.map((leituraObjetoJson) => LeituraModel.fromJson(leituraObjetoJson)));
+        final List<LeituraModel> ultimasLeituras = List<LeituraModel>.from(
+            jsonResponse.map((leituraObjetoJson) =>
+                LeituraModel.fromJson(leituraObjetoJson)));
 
         return ultimasLeituras;
       } else {
-        throw Exception("Falha ao listar últimas leituras do sensor/atuador $uuidSensorAtuador");
+        throw Exception(
+            "Falha ao listar últimas leituras do sensor/atuador $uuidSensorAtuador");
       }
     } catch (e) {
       print(e);
-      throw Exception("Falha ao listar últimas leituras do sensor/atuador $uuidSensorAtuador");
+      throw Exception(
+          "Falha ao listar últimas leituras do sensor/atuador $uuidSensorAtuador");
+    }
+  }
+
+  static Future<Map<String, dynamic>> ativarAtuador(
+      String uuidSensorAtuador, int fatorAcionamento) async {
+    try {
+      final url = Uri.http(
+          AppConfig.backendAuthority, "/ativar-atuador/$uuidSensorAtuador", {
+        "quantidade_atuacao": fatorAcionamento.toString(),
+      });
+
+      final ativarAtuadorResponse = await http.put(url);
+
+      if (ativarAtuadorResponse.statusCode == 200) {
+        final jsonResponse =
+            jsonDecode(utf8.decode(ativarAtuadorResponse.bodyBytes));
+        return jsonResponse;
+      } else {
+        throw Exception("Falha ao ativar atuador $uuidSensorAtuador");
+      }
+    } catch (e) {
+      print(e);
+      throw Exception("Falha ao ativar atuador $uuidSensorAtuador");
     }
   }
 }

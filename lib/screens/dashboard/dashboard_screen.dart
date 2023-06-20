@@ -5,6 +5,7 @@ import 'package:planto_iot_flutter/components/planto_iot_background_builder.dart
 import 'package:planto_iot_flutter/components/planto_iot_title_component.dart';
 import 'package:planto_iot_flutter/services/firebase_auth_service.dart';
 import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
+import 'package:planto_iot_flutter/version_info/version_info_main.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/dashboard_button.dart';
@@ -121,12 +122,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.all(8.0),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
               child: Align(
                   alignment: Alignment.bottomRight,
-                  child: Text("Versão 0.3.0 (19/06/2023)",
-                      style: TextStyle(
+                  child: Text("Versão ${VersionInfoMain.currentVersion.versionName} ${VersionInfoMain.currentVersion.date}",
+                      style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18.0,
                           fontFamily: 'Josefin Sans'))),

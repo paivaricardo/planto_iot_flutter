@@ -76,7 +76,7 @@ class _MonitorarSensorAtuadorEspecificoScreenState
   Widget buildBody(BuildContext context, User? loggedInUser) {
     return Container(
       width: double.infinity,
-      height: MediaQuery.of(context).size.height,
+      height: double.infinity,
       decoration: PlantoIoTBackgroundBuilder().buildPlantoIoTAppBackGround(
           firstRadialColor: 0xFF0D6D0B, secondRadialColor: 0xFF0B3904),
       child: Padding(
@@ -299,6 +299,7 @@ class _MonitorarSensorAtuadorEspecificoCarregadoState
     return Column(
       children: [
         _buildSensorAtuadorInfoCard(),
+        if (widget.isSensorOrAtuador == 2) _buildAcionarAtuadorCard(),
         widget.isSensorOrAtuador == 1
             ? _buildUltimasLeiturasCard()
             : _buildUltimosAcionamentosCard(),
@@ -479,11 +480,42 @@ class _MonitorarSensorAtuadorEspecificoCarregadoState
 
   _buildUltimosAcionamentosCard() {
     return Card(
-      child: Column(
-        children: const [
-          ListTile(
-              leading: Icon(Icons.table_chart_rounded),
-              title: Text('Últimos acionamentos')),
+      child: Stack(
+        children: [
+          Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 24.0, 12.0, 0),
+              child: SizedBox(
+                width: 128,
+                height: 20,
+                child: AnimatedTextKit(
+                  repeatForever: true,
+                  animatedTexts: [
+                    FadeAnimatedText('AO VIVO',
+                        textStyle: const TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'Josefin Sans',
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green),
+                        textAlign: TextAlign.center)
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Column(
+            children: [
+              const ListTile(
+                  leading: Icon(Icons.table_chart_rounded),
+                  title: Text('Últimos acionamentos')),
+              UltimasLeiturasStatefulWidget(
+                sensorAtuadorModel: widget.sensorAtuadorCarregado,
+                tipoSinalFiltragem: 50000,
+                loggedInUser: loggedInUser!,
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -510,19 +542,42 @@ class _MonitorarSensorAtuadorEspecificoCarregadoState
               "Desconectar ${widget.isSensorOrAtuador == 1 ? 'sensor' : 'atuador'}")),
     );
   }
+
+  _buildAcionarAtuadorCard() {
+    return Card(
+      child: Column(
+        children: [
+          const ListTile(
+              leading: Icon(Icons.settings_remote_outlined),
+              title: Text('Acionar atuador')),
+          AcionarAtuadorWidget(
+              sensorAtuadorModel: widget.sensorAtuadorCarregado),
+        ],
+      ),
+    );
+  }
 }
 
 class UltimasLeiturasStatefulWidget extends StatefulWidget {
   // Informações do sensor que está sendo monitorado
   final SensorAtuadorModel sensorAtuadorModel;
 
+  // Número de leituras passadas
+  final int numLeituras;
+
+  // Filtragem de tipo de sinal
+  final int tipoSinalFiltragem;
+
   // Controlar o usuário logado - Obtido pelo Provider
   final User loggedInUser;
 
-  const UltimasLeiturasStatefulWidget(
-      {required this.sensorAtuadorModel,
-      required this.loggedInUser,
-      super.key});
+  const UltimasLeiturasStatefulWidget({
+    required this.sensorAtuadorModel,
+    required this.loggedInUser,
+    this.numLeituras = 5,
+    this.tipoSinalFiltragem = 10000,
+    super.key,
+  });
 
   @override
   State<UltimasLeiturasStatefulWidget> createState() =>
@@ -531,23 +586,35 @@ class UltimasLeiturasStatefulWidget extends StatefulWidget {
 
 class _UltimasLeiturasStatefulWidgetState
     extends State<UltimasLeiturasStatefulWidget> {
+  // Timer para atualizar as leituras
+  late Timer timer;
+
   @override
   void initState() {
     super.initState();
 
     // Iniciar o timer para atualizar as leituras
-    Timer.periodic(const Duration(seconds: 7), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 7), (timer) {
       setState(() {});
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    // Cancelar o timer
+    timer.cancel();
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: BackendService.listarUltimasLeiturasSensorAtuador(
-          uuidSensorAtuador: widget.sensorAtuadorModel.uuidSensorAtuador,
-          numLeituras: 5,
-          filtragemTipoSinal: 10000),
+        uuidSensorAtuador: widget.sensorAtuadorModel.uuidSensorAtuador,
+        numLeituras: widget.numLeituras,
+        filtragemTipoSinal: widget.tipoSinalFiltragem,
+      ),
       builder:
           (BuildContext context, AsyncSnapshot<List<LeituraModel>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -561,10 +628,12 @@ class _UltimasLeiturasStatefulWidgetState
           if (listaLeituras.isNotEmpty) {
             return _buildUltimasLeiturasView(listaLeituras);
           } else {
-            return const Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
               child: Center(
-                child: Text("Não há leituras para este sensor ainda."),
+                child: Text(widget.sensorAtuadorModel.idTipoSensor < 20000
+                    ? "Não há leituras para este sensor ainda."
+                    : "Não há acionamentos registrados para este atuador ainda."),
               ),
             );
           }
@@ -576,8 +645,19 @@ class _UltimasLeiturasStatefulWidgetState
   }
 
   Widget _buildLoadingScreen() {
-    return const Center(
-      child: CircularProgressIndicator(),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Center(
+        child: Column(
+          children: const [
+            CircularProgressIndicator(),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('Carregando dados...'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -620,5 +700,125 @@ class _UltimasLeiturasStatefulWidgetState
 
   Widget _buildUltimasLeiturasView(List<LeituraModel> listaLeituras) {
     return _buildUltimasLeiturasTable(listaLeituras);
+  }
+}
+
+class AcionarAtuadorWidget extends StatefulWidget {
+  final SensorAtuadorModel sensorAtuadorModel;
+
+  const AcionarAtuadorWidget({required this.sensorAtuadorModel, super.key});
+
+  @override
+  State<AcionarAtuadorWidget> createState() => _AcionarAtuadorWidgetState();
+}
+
+class _AcionarAtuadorWidgetState extends State<AcionarAtuadorWidget> {
+  //Chave do formulário
+  final _formKey = GlobalKey<FormState>();
+
+  // Controlador do campo de fator de acionamento
+  final _fatorAcionamentoController = TextEditingController();
+
+  // Controlar se o formulário está processando ou não
+  bool _isProcessing = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // Limpar o controlador
+    _fatorAcionamentoController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Form(
+        key: _formKey,
+        child: Column(children: [
+          TextFormField(
+            controller: _fatorAcionamentoController,
+            decoration: const InputDecoration(
+              labelText: 'Fator de acionamento',
+            ),
+            keyboardType: const TextInputType.numberWithOptions(decimal: false),
+            validator: (value) {
+              if (value == null || value.isEmpty || double.tryParse(value) == null) {
+                return 'Por favor, insira um valor numérico,';
+              }
+
+              if (double.parse(value) < 0 || double.parse(value) > 10000) {
+                return 'Por favor, insira um valor entre 0 e 10000.';
+              }
+
+              return null;
+            },
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: _isProcessing
+                ? ElevatedButton(
+                    onPressed: () {},
+                    child: Row(
+                      children: const [
+                        CircularProgressIndicator(
+                          color: Colors.white,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text("Processando..."),
+                        ),
+                      ],
+                    ))
+                : ElevatedButton.icon(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        setState(() {
+                          _isProcessing = true;
+                        });
+                        try {
+                          // Arredondar o valor numérico encontrado para o inteiro mais próximo
+                          final int fatorAcionamento = double.parse(_fatorAcionamentoController.text).round();
+
+                          // Se o formulário for válido, acionar o atuador
+                          final Map<String, dynamic> responseAtivarAtuador = await _acionarAtuador(fatorAcionamento);
+
+                          // Se o atuador foi acionado com sucesso, mostrar uma mensagem de sucesso
+                          if (responseAtivarAtuador['status'] == 'success') {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Atuador acionado com sucesso!')));
+                          } else {
+                            throw Exception(responseAtivarAtuador['message']);
+                          }
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Erro ao tentar acionar o atuador: ${e.toString()})')
+                          ));
+                        } finally {
+                          setState(() {
+                            _isProcessing = false;
+                          });
+                        }
+                      }
+                    },
+                    icon: const Icon(Icons.settings_remote_rounded),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                    ),
+                    label: const Text("Acionar atuador")),
+          ),
+        ]),
+      ),
+    );
+  }
+
+  Future<Map<String, dynamic>> _acionarAtuador(int fatorAcionamento) {
+    // Acionar o atuador
+    return BackendService.ativarAtuador(widget.sensorAtuadorModel.uuidSensorAtuador, fatorAcionamento);
   }
 }
