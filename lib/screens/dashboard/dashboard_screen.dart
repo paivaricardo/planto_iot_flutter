@@ -108,8 +108,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         onPressed: () {
                           Navigator.pushNamed(context, '/configuracoes');
                         },
-                        title: 'Configurações',
+                        title: 'Configurações' ,
                         icon: Icons.settings_rounded),
+
                     DashboardButton(
                         onPressed: () => FirebaseAuthService.signOut(),
                         onLongPress: () =>

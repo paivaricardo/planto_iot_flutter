@@ -143,6 +143,8 @@ class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TextFormField(
+            style: TextStyle(
+                color:Colors.white),
             controller: _qrCodeFieldController,
             validator: _validateUuid,
             maxLength: 36,
