@@ -196,7 +196,9 @@ class _CadastroSensorAtuadorScreenState
                     : 'Nome do Atuador', labelStyle: TextStyle(color: Colors.white) ),
             maxLength: 255,
             style:
-            TextStyle(color: Colors.white,),
+            TextStyle(
+              color: Colors.white,
+            ),
 
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -325,17 +327,17 @@ class _CadastroSensorAtuadorScreenState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Área"),
+                      const Text("Área",style: TextStyle(color: Colors.white),),
                       Row(
                         children: [
                           Expanded(
                             child: DropdownButtonFormField<int>(
                               value: _sensorAtuadorInitialInfo?.idArea,
-                              hint: const Text('Selecione a área'),
+                              hint: const Text('Selecione a área', style: TextStyle(color: Colors.white),),
                               items: areas.map((area) {
                                 return DropdownMenuItem<int>(
                                   value: area.idArea,
-                                  child: Text(area.nomeArea),
+                                  child: Text(area.nomeArea,style: TextStyle(color: Colors.white,),),
                                 );
                               }).toList(),
                               onChanged: (value) {
@@ -351,7 +353,7 @@ class _CadastroSensorAtuadorScreenState
                             ),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.edit),
+                            icon: const Icon(Icons.edit,color: Colors.white,),
                             onPressed: () {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -370,7 +372,8 @@ class _CadastroSensorAtuadorScreenState
           ),
           TextFormField(
             controller: _observacoesController,
-            decoration: const InputDecoration(labelText: 'Observações'),
+            decoration: const InputDecoration(labelText: 'Observações',labelStyle: TextStyle(color: Colors.white)),
+            style: TextStyle(color:Colors.white),
             keyboardType: TextInputType.multiline,
             maxLength: 1000,
             minLines: 1,
