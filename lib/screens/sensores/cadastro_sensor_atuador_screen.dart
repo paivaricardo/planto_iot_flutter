@@ -8,6 +8,7 @@ import 'package:planto_iot_flutter/model/sensor_atuador_info_model.dart';
 import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
 import 'package:provider/provider.dart';
 
+import '../../components/planto_iot_background_builder.dart';
 import '../../model/sensor_atuador_cadastro_completo_model.dart';
 
 class CadastroSensorAtuadorScreen extends StatefulWidget {
@@ -143,11 +144,12 @@ class _CadastroSensorAtuadorScreenState
                           : 'Tipo de Atuador:',
                       style: const TextStyle(
                           fontFamily: 'Josefin Sans',
+                          color: Colors.white,
                           fontWeight: FontWeight.bold),
                     ),
                     SelectableText(
                       _sensorAtuadorInitialInfo!.tipoSensor.nomeTipoSensor,
-                      style: const TextStyle(fontFamily: 'Josefin Sans'),
+                      style: const TextStyle(fontFamily: 'Josefin Sans', color: Colors.white),
                     ),
                     const Padding(
                       padding: EdgeInsets.only(top: 16.0),
@@ -155,12 +157,13 @@ class _CadastroSensorAtuadorScreenState
                         'UUID:',
                         style: TextStyle(
                             fontFamily: 'Josefin Sans',
+                            color: Colors.white,
                             fontWeight: FontWeight.bold),
                       ),
                     ),
                     SelectableText(
                       _sensorAtuadorInitialInfo!.uuidSensorAtuador,
-                      style: const TextStyle(fontFamily: 'Josefin Sans'),
+                      style: const TextStyle(fontFamily: 'Josefin Sans', color: Colors.white),
                     ),
                     const Padding(
                       padding: EdgeInsets.only(top: 16.0),
@@ -168,6 +171,7 @@ class _CadastroSensorAtuadorScreenState
                         'Usuário cadastrante:',
                         style: TextStyle(
                             fontFamily: 'Josefin Sans',
+                            color: Colors.white,
                             fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -177,7 +181,7 @@ class _CadastroSensorAtuadorScreenState
                               .usuarioCadastrante!.nomeUsuario
                           : loggedInUser!.displayName ??
                               'Usuário não encontrado',
-                      style: const TextStyle(fontFamily: 'Josefin Sans'),
+                      style: const TextStyle(fontFamily: 'Josefin Sans',color: Colors.white),
                     ),
                   ],
                 );
@@ -189,8 +193,11 @@ class _CadastroSensorAtuadorScreenState
             decoration: InputDecoration(
                 labelText: _isSensorOrAtuador == 1
                     ? 'Nome do Sensor'
-                    : 'Nome do Atuador'),
+                    : 'Nome do Atuador', labelStyle: TextStyle(color: Colors.white) ),
             maxLength: 255,
+            style:
+            TextStyle(color: Colors.white,),
+
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return _isSensorOrAtuador == 1
@@ -202,7 +209,7 @@ class _CadastroSensorAtuadorScreenState
           ),
           TextFormField(
             controller: _latitudeController,
-            decoration: const InputDecoration(labelText: 'Latitude'),
+            decoration: const InputDecoration(labelText: 'Latitude',labelStyle: TextStyle(color: Colors.white)),
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -477,19 +484,27 @@ class _CadastroSensorAtuadorScreenState
   }
 
   _buildBody() {
-    return FutureBuilder<Map<String, dynamic>>(
-      future: _sensorInfoFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _buildLoadingScreen();
-        } else if (snapshot.hasError) {
-          return Center(
-            child: Text('Error: ${snapshot.error}'),
-          );
-        } else {
-          return _buildForm();
-        }
-      },
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
+      decoration: PlantoIoTBackgroundBuilder().buildPlantoIoTAppBackGround(
+          firstRadialColor: 0xFF0D6D0B, secondRadialColor: 0xFF0B3904),
+      child: Stack(
+        children: [FutureBuilder<Map<String, dynamic>>(
+          future: _sensorInfoFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return _buildLoadingScreen();
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text('Error: ${snapshot.error}'),
+              );
+            } else {
+              return _buildForm();
+            }
+          },
+        )],
+      ),
     );
   }
 
