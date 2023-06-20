@@ -210,6 +210,7 @@ class _CadastroSensorAtuadorScreenState
           TextFormField(
             controller: _latitudeController,
             decoration: const InputDecoration(labelText: 'Latitude',labelStyle: TextStyle(color: Colors.white)),
+            style: TextStyle(color: Colors.white),
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -230,7 +231,8 @@ class _CadastroSensorAtuadorScreenState
           TextFormField(
             controller: _longitudeController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(labelText: 'Longitude'),
+            decoration: const InputDecoration(labelText: 'Longitude', labelStyle: TextStyle(color: Colors.white)),
+            style: TextStyle(color: Colors.white),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Por favor, insira a longitude';
@@ -249,7 +251,7 @@ class _CadastroSensorAtuadorScreenState
           ),
           ElevatedButton.icon(
               onPressed: _handleMapButtonPressed,
-              icon: const Icon(Icons.map_rounded),
+              icon: const Icon(Icons.map_rounded, color: Colors.white,),
               label: const Text("Localizar no mapa")),
           FutureBuilder<List<CulturaModel>>(
             future: _culturasFuture,
@@ -266,17 +268,17 @@ class _CadastroSensorAtuadorScreenState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Cultura"),
+                      const Text("Cultura",style: TextStyle(color: Colors.white),),
                       Row(
                         children: [
                           Expanded(
                             child: DropdownButtonFormField<int>(
                               value: _sensorAtuadorInitialInfo?.idCultura,
-                              hint: const Text('Selecione a cultura'),
+                              hint: const Text('Selecione a cultura',style: TextStyle(color: Colors.white),),
                               items: culturas.map((cultura) {
                                 return DropdownMenuItem<int>(
                                   value: cultura.idCultura,
-                                  child: Text(cultura.nomeCultura),
+                                  child: Text(cultura.nomeCultura,style: TextStyle(color: Colors.white),),
                                 );
                               }).toList(),
                               onChanged: (value) {
@@ -292,8 +294,13 @@ class _CadastroSensorAtuadorScreenState
                             ),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: () {},
+                            icon: const Icon(Icons.edit, color: Colors.white,),
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Funcionalidade a ser implementada futuramente!')),
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -345,7 +352,13 @@ class _CadastroSensorAtuadorScreenState
                           ),
                           IconButton(
                             icon: const Icon(Icons.edit),
-                            onPressed: () {},
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Funcionalidade a ser implementada futuramente!',)),
+
+                              );
+                            },
                           ),
                         ],
                       ),
