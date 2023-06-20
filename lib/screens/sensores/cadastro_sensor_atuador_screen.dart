@@ -301,9 +301,16 @@ class _CadastroSensorAtuadorScreenState
                                 return DropdownMenuItem<int>(
                                   value: cultura.idCultura,
                                   child: Text(cultura.nomeCultura,
-                                    style: TextStyle(color: Colors.white),),
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                                 );
                               }).toList(),
+                              decoration: const InputDecoration(
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white),
+
+                                ),
+                              ),
                               onChanged: (value) {
                                 // Handle the selected culture value
                                 _idCulturaController.text = value.toString();
@@ -361,9 +368,16 @@ class _CadastroSensorAtuadorScreenState
                                   child: Text(area.nomeArea,style: TextStyle(color: Colors.white,),),
                                 );
                               }).toList(),
+                              decoration: const InputDecoration(
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white),
+                                ),
+
+                              ),
                               onChanged: (value) {
                                 // Handle the selected area value
                                 _idAreaController.text = value.toString();
+
                               },
                               validator: (value) {
                                 if (value == null) {
