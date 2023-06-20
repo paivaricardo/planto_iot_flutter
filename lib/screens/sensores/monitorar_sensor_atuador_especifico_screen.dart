@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:planto_iot_flutter/components/planto_iot_appbar_background.dart';
@@ -6,8 +9,12 @@ import 'package:planto_iot_flutter/components/planto_iot_title_component.dart';
 import 'package:planto_iot_flutter/model/sensor_atuador_model.dart';
 import 'package:planto_iot_flutter/screens/sensores/cadastro_sensor_atuador_screen.dart';
 import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
+import 'package:planto_iot_flutter/utils/json_leitura_keys_parser.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:intl/intl.dart';
+
+import '../../model/leitura_model.dart';
 
 class MonitorarSensorAtuadorEspecificoScreen extends StatefulWidget {
   final String uuid;
@@ -350,11 +357,41 @@ class _MonitorarSensorAtuadorEspecificoCarregadoState
 
   _buildUltimasLeiturasCard() {
     return Card(
-      child: Column(
-        children: const [
-          ListTile(
-              leading: Icon(Icons.table_chart_rounded),
-              title: Text('Últimas leituras')),
+      child: Stack(
+        children: [
+          Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 24.0, 12.0, 0),
+              child: SizedBox(
+                width: 128,
+                height: 20,
+                child: AnimatedTextKit(
+                  repeatForever: true,
+                  animatedTexts: [
+                    FadeAnimatedText('AO VIVO',
+                        textStyle: const TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'Josefin Sans',
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green),
+                        textAlign: TextAlign.center)
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Column(
+            children: [
+              const ListTile(
+                  leading: Icon(Icons.table_chart_rounded),
+                  title: Text('Últimas leituras')),
+              UltimasLeiturasStatefulWidget(
+                sensorAtuadorModel: widget.sensorAtuadorCarregado,
+                loggedInUser: loggedInUser!,
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -456,7 +493,15 @@ class _MonitorarSensorAtuadorEspecificoCarregadoState
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
-          onPressed: () {},
+          onPressed: () {
+            // Desconectar o sensor
+            // TODO: Implementar a funcionalidade de desconexão do sensor
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Funcionalidade não implementada ainda!'),
+              ),
+            );
+          },
           icon: const Icon(Icons.sensors_off_rounded),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.red,
@@ -464,5 +509,116 @@ class _MonitorarSensorAtuadorEspecificoCarregadoState
           label: Text(
               "Desconectar ${widget.isSensorOrAtuador == 1 ? 'sensor' : 'atuador'}")),
     );
+  }
+}
+
+class UltimasLeiturasStatefulWidget extends StatefulWidget {
+  // Informações do sensor que está sendo monitorado
+  final SensorAtuadorModel sensorAtuadorModel;
+
+  // Controlar o usuário logado - Obtido pelo Provider
+  final User loggedInUser;
+
+  const UltimasLeiturasStatefulWidget(
+      {required this.sensorAtuadorModel,
+      required this.loggedInUser,
+      super.key});
+
+  @override
+  State<UltimasLeiturasStatefulWidget> createState() =>
+      _UltimasLeiturasStatefulWidgetState();
+}
+
+class _UltimasLeiturasStatefulWidgetState
+    extends State<UltimasLeiturasStatefulWidget> {
+  @override
+  void initState() {
+    super.initState();
+
+    // Iniciar o timer para atualizar as leituras
+    Timer.periodic(const Duration(seconds: 7), (timer) {
+      setState(() {});
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: BackendService.listarUltimasLeiturasSensorAtuador(
+          uuidSensorAtuador: widget.sensorAtuadorModel.uuidSensorAtuador,
+          numLeituras: 5,
+          filtragemTipoSinal: 10000),
+      builder:
+          (BuildContext context, AsyncSnapshot<List<LeituraModel>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _buildLoadingScreen();
+        } else if (snapshot.hasError) {
+          return _buildErrorScren(snapshot.error);
+        } else if (snapshot.hasData) {
+          // Carregar a lista de leituras do sensor
+          List<LeituraModel> listaLeituras = snapshot.data!;
+
+          if (listaLeituras.isNotEmpty) {
+            return _buildUltimasLeiturasView(listaLeituras);
+          } else {
+            return const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16.0),
+              child: Center(
+                child: Text("Não há leituras para este sensor ainda."),
+              ),
+            );
+          }
+        } else {
+          return _buildErrorScren(snapshot.error);
+        }
+      },
+    );
+  }
+
+  Widget _buildLoadingScreen() {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
+  Widget _buildErrorScren(Object? error) {
+    return Center(
+      child: Text(
+        "Erro ao carregar informações do sensor: ${error.toString()}",
+        style: const TextStyle(color: Colors.red),
+      ),
+    );
+  }
+
+  Widget _buildUltimasLeiturasTable(List<LeituraModel> listaLeituras) {
+    final firstLeitura = listaLeituras.first;
+
+    final jsonLeituraKeys = firstLeitura.jsonLeitura.keys.toList();
+
+    final jsonLeituraKeysParsed =
+        JsonLeituraKeysParser.parseJsonLeituraKeys(jsonLeituraKeys);
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: DataTable(columns: [
+        const DataColumn(label: Text('Data')),
+        for (var keyParsed in jsonLeituraKeysParsed)
+          DataColumn(label: Text(keyParsed.toString())),
+      ], rows: [
+        for (var leitura in listaLeituras)
+          DataRow(cells: [
+            DataCell(Text(
+              DateFormat('dd/MM/yyyy HH:mm:ss')
+                  .format(leitura.dataHoraLeitura.toLocal()),
+            )),
+            for (var key in jsonLeituraKeys)
+              DataCell(Text(leitura.jsonLeitura[key].toString())),
+          ])
+      ]),
+    );
+  }
+
+  Widget _buildUltimasLeiturasView(List<LeituraModel> listaLeituras) {
+    return _buildUltimasLeiturasTable(listaLeituras);
   }
 }

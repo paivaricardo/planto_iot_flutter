@@ -164,7 +164,12 @@ class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
           const SizedBox(height: 16.0),
           ElevatedButton.icon(
             onPressed: () {
-              // Implementar a lógica de escaneamento do QR Code aqui
+              // TODO: Implementar a lógica de escaneamento do QR Code aqui
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Funcionalidade não implementada ainda!'),
+                ),
+              );
             },
             icon: const Icon(Icons.qr_code),
             label: const Text('Escanear QR Code'),

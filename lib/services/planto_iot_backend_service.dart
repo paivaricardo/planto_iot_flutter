@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
+import 'package:planto_iot_flutter/model/leitura_model.dart';
 import 'package:planto_iot_flutter/model/sensor_atuador_cadastro_completo_model.dart';
 import 'package:planto_iot_flutter/model/sensor_atuador_model.dart';
 
@@ -112,7 +113,7 @@ class BackendService {
           "status": 3,
           "content": jsonResponse,
         };
-      }else if (sensorAtuadorFoiCadastrado == false &&
+      } else if (sensorAtuadorFoiCadastrado == false &&
           idPerfilAutorizacao == 1) {
         // Status 4 - Sensor/atuador não foi cadastrado e usuário é administrador
         return {
@@ -212,6 +213,36 @@ class BackendService {
     } else {
       throw Exception(
           "[BackendServiço - Erro] Falha ao cadastrar sensor/atuador");
+    }
+  }
+
+  static Future<List<LeituraModel>> listarUltimasLeiturasSensorAtuador (
+      {required String uuidSensorAtuador,
+      required int numLeituras,
+      required int filtragemTipoSinal}) async {
+    try {
+      final url = Uri.http(AppConfig.backendAuthority,
+          "/listar-ultimas-leituras-sensor-atuador/$uuidSensorAtuador", {
+        "num_leituras": numLeituras.toString(),
+        "filtragem_tipo_sinal": filtragemTipoSinal.toString()
+      });
+
+      final ultimasLeiturasResponse = await http.get(url);
+
+    //  Convertar a resposta json das últimas leituras do sensor/atuador no modelo de dados de Leitura
+
+      if (ultimasLeiturasResponse.statusCode == 200) {
+        final jsonResponse = jsonDecode(utf8.decode(ultimasLeiturasResponse.bodyBytes));
+
+        final List<LeituraModel> ultimasLeituras = List<LeituraModel>.from(jsonResponse.map((leituraObjetoJson) => LeituraModel.fromJson(leituraObjetoJson)));
+
+        return ultimasLeituras;
+      } else {
+        throw Exception("Falha ao listar últimas leituras do sensor/atuador $uuidSensorAtuador");
+      }
+    } catch (e) {
+      print(e);
+      throw Exception("Falha ao listar últimas leituras do sensor/atuador $uuidSensorAtuador");
     }
   }
 }
