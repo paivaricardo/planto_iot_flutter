@@ -193,8 +193,20 @@ class _CadastroSensorAtuadorScreenState
             decoration: InputDecoration(
                 labelText: _isSensorOrAtuador == 1
                     ? 'Nome do Sensor'
-                    : 'Nome do Atuador', labelStyle: TextStyle(color: Colors.white) ),
+                    : 'Nome do Atuador', labelStyle: TextStyle(
+                color: Colors.white,
+            ),
+            /*
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            )
+             */
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white),
+              ),
+            ),
             maxLength: 255,
+
             style:
             TextStyle(
               color: Colors.white,
@@ -211,7 +223,11 @@ class _CadastroSensorAtuadorScreenState
           ),
           TextFormField(
             controller: _latitudeController,
-            decoration: const InputDecoration(labelText: 'Latitude',labelStyle: TextStyle(color: Colors.white)),
+            decoration: const InputDecoration(labelText: 'Latitude',labelStyle: TextStyle(color: Colors.white),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white),
+              ),
+            ),
             style: TextStyle(color: Colors.white),
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             validator: (value) {
@@ -233,7 +249,10 @@ class _CadastroSensorAtuadorScreenState
           TextFormField(
             controller: _longitudeController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(labelText: 'Longitude', labelStyle: TextStyle(color: Colors.white)),
+            decoration: const InputDecoration(labelText: 'Longitude', labelStyle: TextStyle(color: Colors.white),
+                enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white),
+          ),),
             style: TextStyle(color: Colors.white),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -270,7 +289,8 @@ class _CadastroSensorAtuadorScreenState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Cultura",style: TextStyle(color: Colors.white),),
+                      const Text("Cultura",
+                        style: TextStyle(color: Colors.white),),
                       Row(
                         children: [
                           Expanded(
@@ -280,9 +300,17 @@ class _CadastroSensorAtuadorScreenState
                               items: culturas.map((cultura) {
                                 return DropdownMenuItem<int>(
                                   value: cultura.idCultura,
-                                  child: Text(cultura.nomeCultura,style: TextStyle(color: Colors.white),),
+                                  child: Text(cultura.nomeCultura,
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                                 );
                               }).toList(),
+                              decoration: const InputDecoration(
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white),
+
+                                ),
+                              ),
                               onChanged: (value) {
                                 // Handle the selected culture value
                                 _idCulturaController.text = value.toString();
@@ -340,9 +368,16 @@ class _CadastroSensorAtuadorScreenState
                                   child: Text(area.nomeArea,style: TextStyle(color: Colors.white,),),
                                 );
                               }).toList(),
+                              decoration: const InputDecoration(
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white),
+                                ),
+
+                              ),
                               onChanged: (value) {
                                 // Handle the selected area value
                                 _idAreaController.text = value.toString();
+
                               },
                               validator: (value) {
                                 if (value == null) {
@@ -372,7 +407,9 @@ class _CadastroSensorAtuadorScreenState
           ),
           TextFormField(
             controller: _observacoesController,
-            decoration: const InputDecoration(labelText: 'Observações',labelStyle: TextStyle(color: Colors.white)),
+            decoration: const InputDecoration(labelText: 'Observações',labelStyle: TextStyle(color: Colors.white),enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),),
             style: TextStyle(color:Colors.white),
             keyboardType: TextInputType.multiline,
             maxLength: 1000,
