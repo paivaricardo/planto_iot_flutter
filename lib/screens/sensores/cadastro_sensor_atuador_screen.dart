@@ -8,6 +8,7 @@ import 'package:planto_iot_flutter/model/sensor_atuador_info_model.dart';
 import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
 import 'package:provider/provider.dart';
 
+import '../../components/planto_iot_background_builder.dart';
 import '../../model/sensor_atuador_cadastro_completo_model.dart';
 
 class CadastroSensorAtuadorScreen extends StatefulWidget {
@@ -143,11 +144,12 @@ class _CadastroSensorAtuadorScreenState
                           : 'Tipo de Atuador:',
                       style: const TextStyle(
                           fontFamily: 'Josefin Sans',
+                          color: Colors.white,
                           fontWeight: FontWeight.bold),
                     ),
                     SelectableText(
                       _sensorAtuadorInitialInfo!.tipoSensor.nomeTipoSensor,
-                      style: const TextStyle(fontFamily: 'Josefin Sans'),
+                      style: const TextStyle(fontFamily: 'Josefin Sans', color: Colors.white),
                     ),
                     const Padding(
                       padding: EdgeInsets.only(top: 16.0),
@@ -155,12 +157,13 @@ class _CadastroSensorAtuadorScreenState
                         'UUID:',
                         style: TextStyle(
                             fontFamily: 'Josefin Sans',
+                            color: Colors.white,
                             fontWeight: FontWeight.bold),
                       ),
                     ),
                     SelectableText(
                       _sensorAtuadorInitialInfo!.uuidSensorAtuador,
-                      style: const TextStyle(fontFamily: 'Josefin Sans'),
+                      style: const TextStyle(fontFamily: 'Josefin Sans', color: Colors.white),
                     ),
                     const Padding(
                       padding: EdgeInsets.only(top: 16.0),
@@ -168,6 +171,7 @@ class _CadastroSensorAtuadorScreenState
                         'Usuário cadastrante:',
                         style: TextStyle(
                             fontFamily: 'Josefin Sans',
+                            color: Colors.white,
                             fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -177,7 +181,7 @@ class _CadastroSensorAtuadorScreenState
                               .usuarioCadastrante!.nomeUsuario
                           : loggedInUser!.displayName ??
                               'Usuário não encontrado',
-                      style: const TextStyle(fontFamily: 'Josefin Sans'),
+                      style: const TextStyle(fontFamily: 'Josefin Sans',color: Colors.white),
                     ),
                   ],
                 );
@@ -189,8 +193,13 @@ class _CadastroSensorAtuadorScreenState
             decoration: InputDecoration(
                 labelText: _isSensorOrAtuador == 1
                     ? 'Nome do Sensor'
-                    : 'Nome do Atuador'),
+                    : 'Nome do Atuador', labelStyle: TextStyle(color: Colors.white) ),
             maxLength: 255,
+            style:
+            TextStyle(
+              color: Colors.white,
+            ),
+
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return _isSensorOrAtuador == 1
@@ -202,7 +211,8 @@ class _CadastroSensorAtuadorScreenState
           ),
           TextFormField(
             controller: _latitudeController,
-            decoration: const InputDecoration(labelText: 'Latitude'),
+            decoration: const InputDecoration(labelText: 'Latitude',labelStyle: TextStyle(color: Colors.white)),
+            style: TextStyle(color: Colors.white),
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -223,7 +233,8 @@ class _CadastroSensorAtuadorScreenState
           TextFormField(
             controller: _longitudeController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(labelText: 'Longitude'),
+            decoration: const InputDecoration(labelText: 'Longitude', labelStyle: TextStyle(color: Colors.white)),
+            style: TextStyle(color: Colors.white),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Por favor, insira a longitude';
@@ -242,7 +253,7 @@ class _CadastroSensorAtuadorScreenState
           ),
           ElevatedButton.icon(
               onPressed: _handleMapButtonPressed,
-              icon: const Icon(Icons.map_rounded),
+              icon: const Icon(Icons.map_rounded, color: Colors.white,),
               label: const Text("Localizar no mapa")),
           FutureBuilder<List<CulturaModel>>(
             future: _culturasFuture,
@@ -259,17 +270,17 @@ class _CadastroSensorAtuadorScreenState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Cultura"),
+                      const Text("Cultura",style: TextStyle(color: Colors.white),),
                       Row(
                         children: [
                           Expanded(
                             child: DropdownButtonFormField<int>(
                               value: _sensorAtuadorInitialInfo?.idCultura,
-                              hint: const Text('Selecione a cultura'),
+                              hint: const Text('Selecione a cultura',style: TextStyle(color: Colors.white),),
                               items: culturas.map((cultura) {
                                 return DropdownMenuItem<int>(
                                   value: cultura.idCultura,
-                                  child: Text(cultura.nomeCultura),
+                                  child: Text(cultura.nomeCultura,style: TextStyle(color: Colors.white),),
                                 );
                               }).toList(),
                               onChanged: (value) {
@@ -285,8 +296,13 @@ class _CadastroSensorAtuadorScreenState
                             ),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: () {},
+                            icon: const Icon(Icons.edit, color: Colors.white,),
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Funcionalidade a ser implementada futuramente!')),
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -311,17 +327,17 @@ class _CadastroSensorAtuadorScreenState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Área"),
+                      const Text("Área",style: TextStyle(color: Colors.white),),
                       Row(
                         children: [
                           Expanded(
                             child: DropdownButtonFormField<int>(
                               value: _sensorAtuadorInitialInfo?.idArea,
-                              hint: const Text('Selecione a área'),
+                              hint: const Text('Selecione a área', style: TextStyle(color: Colors.white),),
                               items: areas.map((area) {
                                 return DropdownMenuItem<int>(
                                   value: area.idArea,
-                                  child: Text(area.nomeArea),
+                                  child: Text(area.nomeArea,style: TextStyle(color: Colors.white,),),
                                 );
                               }).toList(),
                               onChanged: (value) {
@@ -337,8 +353,14 @@ class _CadastroSensorAtuadorScreenState
                             ),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: () {},
+                            icon: const Icon(Icons.edit,color: Colors.white,),
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Funcionalidade a ser implementada futuramente!',)),
+
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -350,7 +372,8 @@ class _CadastroSensorAtuadorScreenState
           ),
           TextFormField(
             controller: _observacoesController,
-            decoration: const InputDecoration(labelText: 'Observações'),
+            decoration: const InputDecoration(labelText: 'Observações',labelStyle: TextStyle(color: Colors.white)),
+            style: TextStyle(color:Colors.white),
             keyboardType: TextInputType.multiline,
             maxLength: 1000,
             minLines: 1,
@@ -477,19 +500,27 @@ class _CadastroSensorAtuadorScreenState
   }
 
   _buildBody() {
-    return FutureBuilder<Map<String, dynamic>>(
-      future: _sensorInfoFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _buildLoadingScreen();
-        } else if (snapshot.hasError) {
-          return Center(
-            child: Text('Error: ${snapshot.error}'),
-          );
-        } else {
-          return _buildForm();
-        }
-      },
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
+      decoration: PlantoIoTBackgroundBuilder().buildPlantoIoTAppBackGround(
+          firstRadialColor: 0xFF0D6D0B, secondRadialColor: 0xFF0B3904),
+      child: Stack(
+        children: [FutureBuilder<Map<String, dynamic>>(
+          future: _sensorInfoFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return _buildLoadingScreen();
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text('Error: ${snapshot.error}'),
+              );
+            } else {
+              return _buildForm();
+            }
+          },
+        )],
+      ),
     );
   }
 

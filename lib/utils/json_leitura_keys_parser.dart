@@ -1,6 +1,6 @@
 class JsonLeituraKeysParser {
   static Map<String, String> keyMap = {
-    'percentualUmidadeSolo': '% Umidade Solo',
+    'percentualUmidadeSolo': 'Umidade Solo (%)',
   };
 
   static parseJsonLeituraKeys(List<String> keys) {
