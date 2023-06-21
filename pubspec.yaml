@@ -46,6 +46,7 @@ dependencies:
   animated_text_kit: ^4.2.2
   intl: ^0.18.1
   qr_code_scanner: ^1.0.1
+  google_maps_flutter: ^2.3.0
 
 dev_dependencies:
   flutter_test:

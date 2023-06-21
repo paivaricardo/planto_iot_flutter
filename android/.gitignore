@@ -11,3 +11,6 @@ GeneratedPluginRegistrant.java
 key.properties
 **/*.keystore
 **/*.jks
+
+# AndroidManifest.xml will be excluded from package when building Android Apps.
+./app/src/main/AndroidManifest.xml
