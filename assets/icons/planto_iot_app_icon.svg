@@ -7,7 +7,7 @@
    viewBox="0 0 210 297"
    version="1.1"
    id="svg5"
-   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   inkscape:version="1.3-beta (cedbd6c6ff, 2023-05-28)"
    sodipodi:docname="planto_iot_app_icon.svg"
    xml:space="preserve"
    inkscape:export-filename="planto_iot_app_icon_raw.png"
@@ -29,12 +29,12 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="0.73042535"
-     inkscape:cx="312.83142"
+     inkscape:cx="0"
      inkscape:cy="405.92786"
      inkscape:window-width="1920"
-     inkscape:window-height="1000"
-     inkscape:window-x="1920"
-     inkscape:window-y="44"
+     inkscape:window-height="1057"
+     inkscape:window-x="1912"
+     inkscape:window-y="-8"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1" /><defs
      id="defs2"><linearGradient
@@ -65,8 +65,8 @@
        x="35.328133"
        y="34.167416"
        inkscape:export-filename="./planto_iot_app_icon.png"
-       inkscape:export-xdpi="100"
-       inkscape:export-ydpi="100" /><g
+       inkscape:export-xdpi="85.798767"
+       inkscape:export-ydpi="85.798767" /><g
        id="g2902"
        transform="translate(-12.812363,0.16492996)"><text
          xml:space="preserve"
@@ -76,7 +76,7 @@
          id="text951"><tspan
            sodipodi:role="line"
            id="tspan949"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:33.8667px;font-family:'Fredoka One';-inkscape-font-specification:'Fredoka One';text-align:center;text-anchor:middle;fill:#fefefd;fill-opacity:1;stroke-width:0.265"
+           style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:33.8667px;font-family:Fredoka;-inkscape-font-specification:'Fredoka Semi-Bold';text-align:center;text-anchor:middle;fill:#fefefd;fill-opacity:1;stroke-width:0.265"
            x="110.69143"
            y="101.6597">Plant</tspan><tspan
            sodipodi:role="line"
@@ -99,7 +99,7 @@
          id="text2890"><tspan
            sodipodi:role="line"
            id="tspan2886"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:33.8667px;font-family:'Fredoka One';-inkscape-font-specification:'Fredoka One';text-align:center;text-anchor:middle;fill:#fefefd;fill-opacity:1;stroke-width:0.265"
+           style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:33.8667px;font-family:Fredoka;-inkscape-font-specification:'Fredoka Semi-Bold';text-align:center;text-anchor:middle;fill:#fefefd;fill-opacity:1;stroke-width:0.265"
            x="83.932808"
            y="144.33018">I</tspan><tspan
            sodipodi:role="line"
@@ -114,7 +114,7 @@
          id="text2896"><tspan
            sodipodi:role="line"
            id="tspan2892"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:33.8667px;font-family:'Fredoka One';-inkscape-font-specification:'Fredoka One';text-align:center;text-anchor:middle;fill:#fefefd;fill-opacity:1;stroke-width:0.265"
+           style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:33.8667px;font-family:Fredoka;-inkscape-font-specification:'Fredoka Semi-Bold';text-align:center;text-anchor:middle;fill:#fefefd;fill-opacity:1;stroke-width:0.265"
            x="130.26074"
            y="144.33018">T</tspan><tspan
            sodipodi:role="line"
