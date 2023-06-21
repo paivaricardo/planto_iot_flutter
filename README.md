@@ -30,6 +30,8 @@ Com o Planto IoT, você terá controle total sobre o monitoramento agrícola, pe
 
 # Notas das versões
 
+**0.6.0 (21/06/2023)**: Implementada integração com a API do Google, para seleção de localização do sensor no mapa e para visualização da localização.
+
 **0.4.0 (20/06/2023)**: 
 
 **0.3.0 (19/06/2023)**: Implementada a tabela de últimas leituras do sensor, na tela de detalhamento do sensor."
@@ -40,7 +42,7 @@ Com o Planto IoT, você terá controle total sobre o monitoramento agrícola, pe
 
 # Instruções para a instalação
 
-- Acrecentar o arquivo app_config.dart, de acordo com o modelo app_config_template.dart
+- Acrecentar o arquivo app_config.dart, em lib/config/app_config.dart, de acordo com o modelo app_config_template.dart.
 - Acrecentar o arquivo AndroidManifest.xml, em /android/app/src/main/AndroidManifest.xml, de acordo com o modelo AndroidManifest_template.xml. O arquivo AndroidManifest.xml deve conter a chave de API do Google Maps.
 - Adicione o key.properties em /android/key.properties, de acordo com o modelo key_template.properties.
-- Adicione o arquivo upload-keystore.jks em /android/app/upload-keystore.jks.
+- Adicione o arquivo upload-keystore.jks em /android/app/upload-keystore.jks. Essa é a chave para assinatura da aplicação.

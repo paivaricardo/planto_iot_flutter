@@ -6,6 +6,7 @@ import 'package:planto_iot_flutter/model/area_model.dart';
 import 'package:planto_iot_flutter/model/cultura_model.dart';
 import 'package:planto_iot_flutter/model/sensor_atuador_info_model.dart';
 import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
+import 'package:planto_iot_flutter/utils/google_maps_api_selector_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/planto_iot_background_builder.dart';
@@ -149,7 +150,8 @@ class _CadastroSensorAtuadorScreenState
                     ),
                     SelectableText(
                       _sensorAtuadorInitialInfo!.tipoSensor.nomeTipoSensor,
-                      style: const TextStyle(fontFamily: 'Josefin Sans', color: Colors.white),
+                      style: const TextStyle(
+                          fontFamily: 'Josefin Sans', color: Colors.white),
                     ),
                     const Padding(
                       padding: EdgeInsets.only(top: 16.0),
@@ -163,7 +165,8 @@ class _CadastroSensorAtuadorScreenState
                     ),
                     SelectableText(
                       _sensorAtuadorInitialInfo!.uuidSensorAtuador,
-                      style: const TextStyle(fontFamily: 'Josefin Sans', color: Colors.white),
+                      style: const TextStyle(
+                          fontFamily: 'Josefin Sans', color: Colors.white),
                     ),
                     const Padding(
                       padding: EdgeInsets.only(top: 16.0),
@@ -181,7 +184,8 @@ class _CadastroSensorAtuadorScreenState
                               .usuarioCadastrante!.nomeUsuario
                           : loggedInUser!.displayName ??
                               'Usuário não encontrado',
-                      style: const TextStyle(fontFamily: 'Josefin Sans',color: Colors.white),
+                      style: const TextStyle(
+                          fontFamily: 'Josefin Sans', color: Colors.white),
                     ),
                   ],
                 );
@@ -191,12 +195,13 @@ class _CadastroSensorAtuadorScreenState
           TextFormField(
             controller: _nomeSensorController,
             decoration: InputDecoration(
-                labelText: _isSensorOrAtuador == 1
-                    ? 'Nome do Sensor'
-                    : 'Nome do Atuador', labelStyle: TextStyle(
+              labelText: _isSensorOrAtuador == 1
+                  ? 'Nome do Sensor'
+                  : 'Nome do Atuador',
+              labelStyle: TextStyle(
                 color: Colors.white,
-            ),
-            /*
+              ),
+              /*
             focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.white),
             )
@@ -206,12 +211,9 @@ class _CadastroSensorAtuadorScreenState
               ),
             ),
             maxLength: 255,
-
-            style:
-            TextStyle(
+            style: TextStyle(
               color: Colors.white,
             ),
-
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return _isSensorOrAtuador == 1
@@ -223,7 +225,9 @@ class _CadastroSensorAtuadorScreenState
           ),
           TextFormField(
             controller: _latitudeController,
-            decoration: const InputDecoration(labelText: 'Latitude',labelStyle: TextStyle(color: Colors.white),
+            decoration: const InputDecoration(
+              labelText: 'Latitude',
+              labelStyle: TextStyle(color: Colors.white),
               enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.white),
               ),
@@ -249,10 +253,13 @@ class _CadastroSensorAtuadorScreenState
           TextFormField(
             controller: _longitudeController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(labelText: 'Longitude', labelStyle: TextStyle(color: Colors.white),
-                enabledBorder: UnderlineInputBorder(
+            decoration: const InputDecoration(
+              labelText: 'Longitude',
+              labelStyle: TextStyle(color: Colors.white),
+              enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.white),
-          ),),
+              ),
+            ),
             style: TextStyle(color: Colors.white),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -272,7 +279,10 @@ class _CadastroSensorAtuadorScreenState
           ),
           ElevatedButton.icon(
               onPressed: _handleMapButtonPressed,
-              icon: const Icon(Icons.map_rounded, color: Colors.white,),
+              icon: const Icon(
+                Icons.map_rounded,
+                color: Colors.white,
+              ),
               label: const Text("Localizar no mapa")),
           FutureBuilder<List<CulturaModel>>(
             future: _culturasFuture,
@@ -289,18 +299,24 @@ class _CadastroSensorAtuadorScreenState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Cultura",
-                        style: TextStyle(color: Colors.white),),
+                      const Text(
+                        "Cultura",
+                        style: TextStyle(color: Colors.white),
+                      ),
                       Row(
                         children: [
                           Expanded(
                             child: DropdownButtonFormField<int>(
                               value: _sensorAtuadorInitialInfo?.idCultura,
-                              hint: const Text('Selecione a cultura',style: TextStyle(color: Colors.white),),
+                              hint: const Text(
+                                'Selecione a cultura',
+                                style: TextStyle(color: Colors.white),
+                              ),
                               items: culturas.map((cultura) {
                                 return DropdownMenuItem<int>(
                                   value: cultura.idCultura,
-                                  child: Text(cultura.nomeCultura,
+                                  child: Text(
+                                    cultura.nomeCultura,
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 );
@@ -308,7 +324,6 @@ class _CadastroSensorAtuadorScreenState
                               decoration: const InputDecoration(
                                 enabledBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(color: Colors.white),
-
                                 ),
                               ),
                               onChanged: (value) {
@@ -324,11 +339,15 @@ class _CadastroSensorAtuadorScreenState
                             ),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.edit, color: Colors.white,),
+                            icon: const Icon(
+                              Icons.edit,
+                              color: Colors.white,
+                            ),
                             onPressed: () {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Funcionalidade a ser implementada futuramente!')),
+                                const SnackBar(
+                                    content: Text(
+                                        'Funcionalidade a ser implementada futuramente!')),
                               );
                             },
                           ),
@@ -355,29 +374,38 @@ class _CadastroSensorAtuadorScreenState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Área",style: TextStyle(color: Colors.white),),
+                      const Text(
+                        "Área",
+                        style: TextStyle(color: Colors.white),
+                      ),
                       Row(
                         children: [
                           Expanded(
                             child: DropdownButtonFormField<int>(
                               value: _sensorAtuadorInitialInfo?.idArea,
-                              hint: const Text('Selecione a área', style: TextStyle(color: Colors.white),),
+                              hint: const Text(
+                                'Selecione a área',
+                                style: TextStyle(color: Colors.white),
+                              ),
                               items: areas.map((area) {
                                 return DropdownMenuItem<int>(
                                   value: area.idArea,
-                                  child: Text(area.nomeArea,style: TextStyle(color: Colors.white,),),
+                                  child: Text(
+                                    area.nomeArea,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                 );
                               }).toList(),
                               decoration: const InputDecoration(
                                 enabledBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(color: Colors.white),
                                 ),
-
                               ),
                               onChanged: (value) {
                                 // Handle the selected area value
                                 _idAreaController.text = value.toString();
-
                               },
                               validator: (value) {
                                 if (value == null) {
@@ -388,12 +416,16 @@ class _CadastroSensorAtuadorScreenState
                             ),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.edit,color: Colors.white,),
+                            icon: const Icon(
+                              Icons.edit,
+                              color: Colors.white,
+                            ),
                             onPressed: () {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                    content: Text('Funcionalidade a ser implementada futuramente!',)),
-
+                                    content: Text(
+                                  'Funcionalidade a ser implementada futuramente!',
+                                )),
                               );
                             },
                           ),
@@ -407,10 +439,14 @@ class _CadastroSensorAtuadorScreenState
           ),
           TextFormField(
             controller: _observacoesController,
-            decoration: const InputDecoration(labelText: 'Observações',labelStyle: TextStyle(color: Colors.white),enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-            ),),
-            style: TextStyle(color:Colors.white),
+            decoration: const InputDecoration(
+              labelText: 'Observações',
+              labelStyle: TextStyle(color: Colors.white),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white),
+              ),
+            ),
+            style: TextStyle(color: Colors.white),
             keyboardType: TextInputType.multiline,
             maxLength: 1000,
             minLines: 1,
@@ -520,10 +556,34 @@ class _CadastroSensorAtuadorScreenState
   }
 
   void _handleMapButtonPressed() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-          content: Text('Funcionalidade a ser implementada futuramente!')),
-    );
+    if (_latitudeController.text.isNotEmpty ||
+        _longitudeController.text.isNotEmpty) {
+      Navigator.of(context)
+          .push(MaterialPageRoute(
+              builder: (context) => GoogleMapsAPISelectorWidget(
+                  latitude: double.parse(_latitudeController.text),
+                  longitude: double.parse(_longitudeController.text))))
+          .then((selectedLatLng) => {
+                if (selectedLatLng != null)
+                  {
+                    _latitudeController.text =
+                        selectedLatLng.latitude.toString(),
+                    _longitudeController.text =
+                        selectedLatLng.longitude.toString()
+                  }
+              });
+    } else {
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => const GoogleMapsAPISelectorWidget())).then((selectedLatLng) => {
+        if (selectedLatLng != null)
+          {
+            _latitudeController.text =
+                selectedLatLng.latitude.toString(),
+            _longitudeController.text =
+                selectedLatLng.longitude.toString()
+          }
+      });;
+    }
   }
 
   @override
@@ -543,20 +603,22 @@ class _CadastroSensorAtuadorScreenState
       decoration: PlantoIoTBackgroundBuilder().buildPlantoIoTAppBackGround(
           firstRadialColor: 0xFF0D6D0B, secondRadialColor: 0xFF0B3904),
       child: Stack(
-        children: [FutureBuilder<Map<String, dynamic>>(
-          future: _sensorInfoFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return _buildLoadingScreen();
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Text('Error: ${snapshot.error}'),
-              );
-            } else {
-              return _buildForm();
-            }
-          },
-        )],
+        children: [
+          FutureBuilder<Map<String, dynamic>>(
+            future: _sensorInfoFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return _buildLoadingScreen();
+              } else if (snapshot.hasError) {
+                return Center(
+                  child: Text('Error: ${snapshot.error}'),
+                );
+              } else {
+                return _buildForm();
+              }
+            },
+          )
+        ],
       ),
     );
   }
@@ -572,7 +634,8 @@ class _CadastroSensorAtuadorScreenState
                 const PlantoIOTTitleComponent(size: 18),
                 Text(
                     "${_isUpdate ? 'Atualizar' : 'Cadastrar'} ${_isSensorOrAtuador == 1 ? 'Sensor' : 'Atuador'}",
-                    style: const TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
+                    style: const TextStyle(
+                        fontSize: 18.0, fontFamily: 'FredokaOne')),
               ],
             ),
           ],

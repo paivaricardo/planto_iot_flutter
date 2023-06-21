@@ -1,9 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sempreceub.plantoiot.planto_iot_flutter">
-   <application
+    <application
         android:label="Planto IoT"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <!--        Google Maps API Keys -->
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="MY API KEY"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -17,11 +22,9 @@
                  while the Flutter UI initializes. After that, this theme continues
                  to determine the Window background behind the Flutter UI. -->
             <meta-data
-              android:name="io.flutter.embedding.android.NormalTheme"
-              android:resource="@style/NormalTheme"
-              />
-            <meta-data android:name="com.google.android.geo.API_KEY"
-                android:value="YOUR KEY HERE"/>
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme"
+            />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -33,6 +36,10 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+
+    <!--    User permissions -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 </manifest>

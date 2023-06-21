@@ -125,10 +125,6 @@ class _QRViewScannerState extends State<QRViewScanner> {
       persistentFooterButtons: [
         TextButton(
             onPressed: () {
-              controller!.pauseCamera();
-              print(result!.code);
-              controller!.dispose();
-
               Navigator.of(context).pop();
             },
             child: const Text('Cancelar')),

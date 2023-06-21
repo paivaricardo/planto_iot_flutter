@@ -9,6 +9,7 @@ import 'package:planto_iot_flutter/components/planto_iot_title_component.dart';
 import 'package:planto_iot_flutter/model/sensor_atuador_model.dart';
 import 'package:planto_iot_flutter/screens/sensores/cadastro_sensor_atuador_screen.dart';
 import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
+import 'package:planto_iot_flutter/utils/google_maps_api_view_widget.dart';
 import 'package:planto_iot_flutter/utils/json_leitura_keys_parser.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -435,6 +436,16 @@ class _MonitorarSensorAtuadorEspecificoCarregadoState
               title: const Text('Latitude e Longitude'),
               subtitle: Text(
                   "Latitude: ${widget.sensorAtuadorCarregado.latitude}, Longitude: ${widget.sensorAtuadorCarregado.longitude}")),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SizedBox(
+              height: 320,
+              width: 320,
+              child: GoogleMapsApiViewWidget(
+                  latitude: widget.sensorAtuadorCarregado.latitude,
+                  longitude: widget.sensorAtuadorCarregado.longitude),
+            ),
+          ),
         ],
       ),
     );
@@ -748,7 +759,9 @@ class _AcionarAtuadorWidgetState extends State<AcionarAtuadorWidget> {
             ),
             keyboardType: const TextInputType.numberWithOptions(decimal: false),
             validator: (value) {
-              if (value == null || value.isEmpty || double.tryParse(value) == null) {
+              if (value == null ||
+                  value.isEmpty ||
+                  double.tryParse(value) == null) {
                 return 'Por favor, insira um valor numérico,';
               }
 
@@ -783,22 +796,26 @@ class _AcionarAtuadorWidgetState extends State<AcionarAtuadorWidget> {
                         });
                         try {
                           // Arredondar o valor numérico encontrado para o inteiro mais próximo
-                          final int fatorAcionamento = double.parse(_fatorAcionamentoController.text).round();
+                          final int fatorAcionamento =
+                              double.parse(_fatorAcionamentoController.text)
+                                  .round();
 
                           // Se o formulário for válido, acionar o atuador
-                          final Map<String, dynamic> responseAtivarAtuador = await _acionarAtuador(fatorAcionamento);
+                          final Map<String, dynamic> responseAtivarAtuador =
+                              await _acionarAtuador(fatorAcionamento);
 
                           // Se o atuador foi acionado com sucesso, mostrar uma mensagem de sucesso
                           if (responseAtivarAtuador['status'] == 'success') {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Atuador acionado com sucesso!')));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content:
+                                    Text('Atuador acionado com sucesso!')));
                           } else {
                             throw Exception(responseAtivarAtuador['message']);
                           }
                         } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Erro ao tentar acionar o atuador: ${e.toString()})')
-                          ));
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                  'Erro ao tentar acionar o atuador: ${e.toString()})')));
                         } finally {
                           setState(() {
                             _isProcessing = false;
@@ -819,6 +836,7 @@ class _AcionarAtuadorWidgetState extends State<AcionarAtuadorWidget> {
 
   Future<Map<String, dynamic>> _acionarAtuador(int fatorAcionamento) {
     // Acionar o atuador
-    return BackendService.ativarAtuador(widget.sensorAtuadorModel.uuidSensorAtuador, fatorAcionamento);
+    return BackendService.ativarAtuador(
+        widget.sensorAtuadorModel.uuidSensorAtuador, fatorAcionamento);
   }
 }
