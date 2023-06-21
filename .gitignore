@@ -45,3 +45,6 @@ app.*.map.json
 
 # Exclude AppConfig
 /lib/config/app_config.dart
+
+# Exclude AndroidManifest
+/android/app/src/main/AndroidManifest.xml

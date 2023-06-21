@@ -37,3 +37,10 @@ Com o Planto IoT, você terá controle total sobre o monitoramento agrícola, pe
 **0.2.0 (18/06/2023)**: Implementada a lista de sensores conectados, tela de conexão a novos sensores, cadastro/atualização de sensores e também tela de informações detalhadas de sensores/atuadores.
 
 **0.1.0 (18/03/2023)**: Primeira versão do aplicativo Planto IoT. Implementada a funcionada de login e cadastro via provedor de identidade do Google. Implementado o dashboard e placeholders para as funcionalidades de sensores, configurações. Implementada a funcionalidade de logout.
+
+# Instruções para a instalação
+
+- Acrecentar o arquivo app_config.dart, de acordo com o modelo app_config_template.dart
+- Acrecentar o arquivo AndroidManifest.xml, em /android/app/src/main/AndroidManifest.xml, de acordo com o modelo AndroidManifest_template.xml. O arquivo AndroidManifest.xml deve conter a chave de API do Google Maps.
+- Adicione o key.properties em /android/key.properties, de acordo com o modelo key_template.properties.
+- Adicione o arquivo upload-keystore.jks em /android/app/upload-keystore.jks.
