@@ -4,6 +4,7 @@ import 'package:planto_iot_flutter/components/planto_iot_appbar_background.dart'
 import 'package:planto_iot_flutter/components/planto_iot_background_builder.dart';
 import 'package:planto_iot_flutter/components/planto_iot_title_component.dart';
 import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
+import 'package:planto_iot_flutter/utils/qr_view_scanner.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -120,6 +121,24 @@ class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
     super.dispose();
   }
 
+  void _scanQRCode() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) {
+          return const QRViewScanner(); // Replace with your QR code scanner widget
+        },
+      ),
+    ).then((resultQRCode) {
+      if (resultQRCode != null) {
+        // Handle the scanned QR code result here
+        setState(() {
+          _qrCodeFieldController.text = resultQRCode.code!.toString();
+        });
+      }
+    });
+  }
+
   String? _validateUuid(String? value) {
     try {
       if (value == null || value.isEmpty) {
@@ -143,8 +162,7 @@ class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TextFormField(
-            style: TextStyle(
-                color:Colors.white),
+            style: const TextStyle(color: Colors.white),
             controller: _qrCodeFieldController,
             validator: _validateUuid,
             maxLength: 36,
@@ -163,14 +181,7 @@ class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
           ),
           const SizedBox(height: 16.0),
           ElevatedButton.icon(
-            onPressed: () {
-              // TODO: Implementar a lógica de escaneamento do QR Code aqui
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Funcionalidade não implementada ainda!'),
-                ),
-              );
-            },
+            onPressed: _scanQRCode,
             icon: const Icon(Icons.qr_code),
             label: const Text('Escanear QR Code'),
           ),
@@ -219,10 +230,14 @@ class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
 
                   // 4 - Sensor/atuador encontrado e o usuário possui permissão de ADMINISTRADOR sobre o sensor, mas o cadastro não está completo. Redireciona para completar o cadastro do sensor
                   case 4:
-                    int isSensorOrAtuador =
-                        result['content']['sensor_atuador_info']['id_tipo_sensor'] < 20000 ? 1 : 2;
+                    int isSensorOrAtuador = result['content']
+                                ['sensor_atuador_info']['id_tipo_sensor'] <
+                            20000
+                        ? 1
+                        : 2;
 
-                    bool isUpdate = !result['content']['sensor_atuador_foi_cadastrado'];
+                    bool isUpdate =
+                        !result['content']['sensor_atuador_foi_cadastrado'];
 
                     Navigator.of(context).pop();
                     Navigator.push(
