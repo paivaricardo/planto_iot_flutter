@@ -46,7 +46,7 @@ body {
   align-items: center;
 }
 
-.texto-politica {
+.texto-politica, .texto-exclusao {
   color: #fff;
   font-size: 20px;
   margin-top: 5rem;
@@ -96,7 +96,7 @@ body {
     margin-top: -70em;
   }
 
-  .subtitulo, .texto-politica {
+  .subtitulo, .texto-politica, .texto-exclusao {
     font-size: 40px;
   }
 
