@@ -5,6 +5,7 @@ import 'package:planto_iot_flutter/components/planto_iot_title_component.dart';
 import 'package:planto_iot_flutter/model/area_model.dart';
 import 'package:planto_iot_flutter/model/cultura_model.dart';
 import 'package:planto_iot_flutter/model/sensor_atuador_info_model.dart';
+import 'package:planto_iot_flutter/screens/areas/gerenciar_areas_screen.dart';
 import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
 import 'package:planto_iot_flutter/utils/google_maps_api_selector_widget.dart';
 import 'package:provider/provider.dart';
@@ -421,12 +422,11 @@ class _CadastroSensorAtuadorScreenState
                               color: Colors.white,
                             ),
                             onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                  'Funcionalidade a ser implementada futuramente!',
-                                )),
-                              );
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          const GerenciarAreasScreen()))
+                                  .then((value) => setState(() {}));
                             },
                           ),
                         ],
@@ -573,16 +573,19 @@ class _CadastroSensorAtuadorScreenState
                   }
               });
     } else {
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => const GoogleMapsAPISelectorWidget())).then((selectedLatLng) => {
-        if (selectedLatLng != null)
-          {
-            _latitudeController.text =
-                selectedLatLng.latitude.toString(),
-            _longitudeController.text =
-                selectedLatLng.longitude.toString()
-          }
-      });;
+      Navigator.of(context)
+          .push(MaterialPageRoute(
+              builder: (context) => const GoogleMapsAPISelectorWidget()))
+          .then((selectedLatLng) => {
+                if (selectedLatLng != null)
+                  {
+                    _latitudeController.text =
+                        selectedLatLng.latitude.toString(),
+                    _longitudeController.text =
+                        selectedLatLng.longitude.toString()
+                  }
+              });
+      ;
     }
   }
 

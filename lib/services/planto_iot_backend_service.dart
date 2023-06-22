@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
+import 'package:planto_iot_flutter/model/area_managing_model.dart';
 import 'package:planto_iot_flutter/model/leitura_model.dart';
 import 'package:planto_iot_flutter/model/sensor_atuador_cadastro_completo_model.dart';
 import 'package:planto_iot_flutter/model/sensor_atuador_model.dart';
@@ -196,6 +197,25 @@ class BackendService {
     }
   }
 
+  static Future<List<AreaManagingModel>> obterTodasAreasGerenciar() async {
+    final url = Uri.http(
+        AppConfig.backendAuthority, "/areas", {"retrieve_status": "True"});
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+
+      final List<AreaManagingModel> areasManaging =
+          List<AreaManagingModel>.from(jsonResponse.map(
+              (areaObjetoJson) => AreaManagingModel.fromJson(areaObjetoJson)));
+
+      return areasManaging;
+    } else {
+      throw Exception("Falha ao obter áreas do backend");
+    }
+  }
+
   static Future<Map<String, dynamic>> cadastrarSensorAtuador(
       SensorAtuadorCadastroCompletoModel
           sensorAtuadorCadastroCompletoModel) async {
@@ -271,6 +291,43 @@ class BackendService {
     } catch (e) {
       print(e);
       throw Exception("Falha ao ativar atuador $uuidSensorAtuador");
+    }
+  }
+
+  static criarArea(String nomeArea) async {
+    final url = Uri.http(AppConfig.backendAuthority, "/areas");
+
+    final requestBody = jsonEncode({
+      'nome_area': nomeArea,
+    });
+
+    final criarAreaReponse = await http.post(url,
+        headers: {'Content-Type': 'application/json'}, body: requestBody);
+
+    if (criarAreaReponse.statusCode == 200) {
+      final jsonResponse = jsonDecode(utf8.decode(criarAreaReponse.bodyBytes));
+      return jsonResponse;
+    } else {
+      throw Exception("Falha ao criar área");
+    }
+  }
+
+  static atualizarArea(String nomeArea, int idArea) async {
+    final url = Uri.http(AppConfig.backendAuthority, "/areas/$idArea");
+
+    final requestBody = jsonEncode({
+      'nome_area': nomeArea,
+    });
+
+    final atualizarAreaReponse = await http.put(url,
+        headers: {'Content-Type': 'application/json'}, body: requestBody);
+
+    if (atualizarAreaReponse.statusCode == 200) {
+      final jsonResponse =
+          jsonDecode(utf8.decode(atualizarAreaReponse.bodyBytes));
+      return jsonResponse;
+    } else {
+      throw Exception("Falha ao atualizar área");
     }
   }
 }
