@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:planto_iot_flutter/model/area_managing_model.dart';
+import 'package:planto_iot_flutter/model/cultura_managing_model.dart';
 import 'package:planto_iot_flutter/model/leitura_model.dart';
 import 'package:planto_iot_flutter/model/sensor_atuador_cadastro_completo_model.dart';
 import 'package:planto_iot_flutter/model/sensor_atuador_model.dart';
@@ -197,6 +198,26 @@ class BackendService {
     }
   }
 
+  static Future<List<CulturaManagingModel>>
+      obterTodasCulturasGerenciar() async {
+    final url = Uri.http(
+        AppConfig.backendAuthority, "/culturas", {"retrieve_status": "True"});
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+
+      final List<CulturaManagingModel> culturasManaging =
+          List<CulturaManagingModel>.from(jsonResponse.map((areaObjetoJson) =>
+              CulturaManagingModel.fromJson(areaObjetoJson)));
+
+      return culturasManaging;
+    } else {
+      throw Exception("Falha ao obter culturas do backend");
+    }
+  }
+
   static Future<List<AreaManagingModel>> obterTodasAreasGerenciar() async {
     final url = Uri.http(
         AppConfig.backendAuthority, "/areas", {"retrieve_status": "True"});
@@ -312,7 +333,8 @@ class BackendService {
     }
   }
 
-  static atualizarArea(String nomeArea, int idArea) async {
+  static Future<Map<String, dynamic>> atualizarArea(
+      String nomeArea, int idArea) async {
     final url = Uri.http(AppConfig.backendAuthority, "/areas/$idArea");
 
     final requestBody = jsonEncode({
@@ -328,6 +350,73 @@ class BackendService {
       return jsonResponse;
     } else {
       throw Exception("Falha ao atualizar área");
+    }
+  }
+
+  static Future<Map<String, dynamic>> deletarArea(int idArea) async {
+    final url = Uri.http(AppConfig.backendAuthority, "/areas/$idArea");
+
+    final deletarAreaReponse = await http.delete(url);
+
+    if (deletarAreaReponse.statusCode == 200) {
+      final jsonResponse =
+          jsonDecode(utf8.decode(deletarAreaReponse.bodyBytes));
+      return jsonResponse;
+    } else {
+      throw Exception("Falha ao deletar área");
+    }
+  }
+
+  static criarCultura(String nomeCultura) async {
+    final url = Uri.http(AppConfig.backendAuthority, "/culturas");
+
+    final requestBody = jsonEncode({
+      'nome_cultura': nomeCultura,
+    });
+
+    final criarCulturaReponse = await http.post(url,
+        headers: {'Content-Type': 'application/json'}, body: requestBody);
+
+    if (criarCulturaReponse.statusCode == 200) {
+      final jsonResponse =
+          jsonDecode(utf8.decode(criarCulturaReponse.bodyBytes));
+      return jsonResponse;
+    } else {
+      throw Exception("Falha ao criar cultura");
+    }
+  }
+
+  static Future<Map<String, dynamic>> atualizarCultura(
+      String nomeCultura, int idCultura) async {
+    final url = Uri.http(AppConfig.backendAuthority, "/culturas/$idCultura");
+
+    final requestBody = jsonEncode({
+      'nome_cultura': nomeCultura,
+    });
+
+    final atualizarCulturaReponse = await http.put(url,
+        headers: {'Content-Type': 'application/json'}, body: requestBody);
+
+    if (atualizarCulturaReponse.statusCode == 200) {
+      final jsonResponse =
+          jsonDecode(utf8.decode(atualizarCulturaReponse.bodyBytes));
+      return jsonResponse;
+    } else {
+      throw Exception("Falha ao atualizar cultura");
+    }
+  }
+
+  static Future<Map<String, dynamic>> deletarCultura(int idCultura) async {
+    final url = Uri.http(AppConfig.backendAuthority, "/culturas/$idCultura");
+
+    final deletarCulturaReponse = await http.delete(url);
+
+    if (deletarCulturaReponse.statusCode == 200) {
+      final jsonResponse =
+          jsonDecode(utf8.decode(deletarCulturaReponse.bodyBytes));
+      return jsonResponse;
+    } else {
+      throw Exception("Falha ao deletar cultura");
     }
   }
 }

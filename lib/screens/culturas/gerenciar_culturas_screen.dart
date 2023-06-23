@@ -3,18 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:planto_iot_flutter/components/planto_iot_appbar_background.dart';
 import 'package:planto_iot_flutter/components/planto_iot_background_builder.dart';
 import 'package:planto_iot_flutter/components/planto_iot_title_component.dart';
-import 'package:planto_iot_flutter/model/area_managing_model.dart';
+import 'package:planto_iot_flutter/model/cultura_managing_model.dart';
 import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
 import 'package:provider/provider.dart';
 
-class GerenciarAreasScreen extends StatefulWidget {
-  const GerenciarAreasScreen({super.key});
+class GerenciarCulturasScreen extends StatefulWidget {
+  const GerenciarCulturasScreen({super.key});
 
   @override
-  State<GerenciarAreasScreen> createState() => _GerenciarAreasScreenState();
+  State<GerenciarCulturasScreen> createState() =>
+      _GerenciarCulturasScreenState();
 }
 
-class _GerenciarAreasScreenState extends State<GerenciarAreasScreen> {
+class _GerenciarCulturasScreenState extends State<GerenciarCulturasScreen> {
   late User loggedInUser;
 
   @override
@@ -47,7 +48,7 @@ class _GerenciarAreasScreenState extends State<GerenciarAreasScreen> {
 
   _buildFloatingActionButton() {
     return FloatingActionButton(
-      onPressed: () => _showCreateUpdateAreaDialog(context),
+      onPressed: () => _showCreateUpdateCulturaDialog(context),
       child: const Icon(Icons.add),
     );
   }
@@ -61,7 +62,7 @@ class _GerenciarAreasScreenState extends State<GerenciarAreasScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: const [
                 PlantoIOTTitleComponent(size: 18),
-                Text("Gerenciar Áreas",
+                Text("Gerenciar Culturas",
                     style: TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
               ],
             ),
@@ -78,18 +79,18 @@ class _GerenciarAreasScreenState extends State<GerenciarAreasScreen> {
 
   _buildContent() {
     return FutureBuilder(
-      future: BackendService.obterTodasAreasGerenciar(),
+      future: BackendService.obterTodasCulturasGerenciar(),
       builder: (BuildContext context,
-          AsyncSnapshot<List<AreaManagingModel>> snapshot) {
+          AsyncSnapshot<List<CulturaManagingModel>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _buildLoadingScreen();
         } else if (snapshot.hasError) {
           return _buildErrorScren(snapshot.error);
         } else if (snapshot.hasData) {
           // Carregar a lista de áreas a serem gerenciadas
-          List<AreaManagingModel> areas = snapshot.data!;
+          List<CulturaManagingModel> culturas = snapshot.data!;
 
-          return _buildManagingAreasList(areas);
+          return _buildManagingCulturasList(culturas);
         } else {
           return _buildErrorScren(snapshot.error);
         }
@@ -112,32 +113,32 @@ class _GerenciarAreasScreenState extends State<GerenciarAreasScreen> {
     );
   }
 
-  _buildManagingAreasList(List<AreaManagingModel> areas) {
+  _buildManagingCulturasList(List<CulturaManagingModel> culturas) {
     return ListView.builder(
-      itemCount: areas.length,
+      itemCount: culturas.length,
       itemBuilder: (BuildContext context, int index) {
-        return _buildManagingAreaCard(areas[index]);
+        return _buildManagingCulturaCard(culturas[index]);
       },
     );
   }
 
-  _buildManagingAreaCard(AreaManagingModel area) {
+  _buildManagingCulturaCard(CulturaManagingModel cultura) {
     return Card(
       child: ListTile(
-        title: Text(area.nomeArea),
+        title: Text(cultura.nomeCultura),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (area.updatable)
+            if (cultura.updatable)
               IconButton(
                   onPressed: () {
-                    _showCreateUpdateAreaDialog(context, area: area);
+                    _showCreateUpdateCulturaDialog(context, cultura: cultura);
                   },
                   icon: const Icon(Icons.edit, color: Colors.green)),
-            if (area.deletable)
+            if (cultura.deletable)
               IconButton(
                   onPressed: () {
-                    _showConfirmDeleteAreaDialog(context, area);
+                    _showConfirmDeleteCulturaDialog(context, cultura);
                   },
                   icon: const Icon(Icons.delete, color: Colors.red)),
           ],
@@ -164,7 +165,7 @@ class _GerenciarAreasScreenState extends State<GerenciarAreasScreen> {
                     'Esta tela contém informações gerais sobre o aplicativo e o projeto Planto IoT, assim como sobre a equipe de desenvolvimento. Também possui o histórico de versões do aplicativo.',
                     textAlign: TextAlign.justify,
                     style:
-                    TextStyle(fontFamily: "Josefin Sans", fontSize: 16.0),
+                        TextStyle(fontFamily: "Josefin Sans", fontSize: 16.0),
                   )
                 ],
               ),
@@ -180,47 +181,46 @@ class _GerenciarAreasScreenState extends State<GerenciarAreasScreen> {
         });
   }
 
-
-  void _showCreateUpdateAreaDialog(BuildContext context,
-      {AreaManagingModel? area}) async {
+  void _showCreateUpdateCulturaDialog(BuildContext context,
+      {CulturaManagingModel? cultura}) async {
     await showDialog(
         context: context,
         builder: (BuildContext context) {
-          return GerenciarAreaCriarAtualizarWidget(area: area);
+          return GerenciarCulturaCriarAtualizarWidget(cultura: cultura);
         });
 
     setState(() {});
   }
 
-  void _showConfirmDeleteAreaDialog(
-      BuildContext context, AreaManagingModel area) async {
+  void _showConfirmDeleteCulturaDialog(
+      BuildContext context, CulturaManagingModel cultura) async {
     await showDialog(
         context: context,
         builder: (BuildContext context) {
-          return GerenciarAreaDeletarWidget(area: area);
+          return GerenciarCulturaDeletarWidget(cultura: cultura);
         });
 
     setState(() {});
   }
 }
 
-class GerenciarAreaCriarAtualizarWidget extends StatefulWidget {
-  final AreaManagingModel? area;
+class GerenciarCulturaCriarAtualizarWidget extends StatefulWidget {
+  final CulturaManagingModel? cultura;
 
-  const GerenciarAreaCriarAtualizarWidget({this.area, super.key});
+  const GerenciarCulturaCriarAtualizarWidget({this.cultura, super.key});
 
   @override
-  State<GerenciarAreaCriarAtualizarWidget> createState() =>
-      _GerenciarAreaCriarAtualizarWidgetState();
+  State<GerenciarCulturaCriarAtualizarWidget> createState() =>
+      _GerenciarCulturaCriarAtualizarWidgetState();
 }
 
-class _GerenciarAreaCriarAtualizarWidgetState
-    extends State<GerenciarAreaCriarAtualizarWidget> {
+class _GerenciarCulturaCriarAtualizarWidgetState
+    extends State<GerenciarCulturaCriarAtualizarWidget> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  late final AreaManagingModel? area;
+  late final CulturaManagingModel? cultura;
 
-  final TextEditingController nomeAreaController = TextEditingController();
+  final TextEditingController nomeCulturaController = TextEditingController();
 
   bool isProcessing = false;
 
@@ -228,23 +228,23 @@ class _GerenciarAreaCriarAtualizarWidgetState
   void initState() {
     super.initState();
 
-    area = widget.area;
+    cultura = widget.cultura;
 
-    if (area != null) {
-      nomeAreaController.text = area!.nomeArea;
+    if (cultura != null) {
+      nomeCulturaController.text = cultura!.nomeCultura;
     }
   }
 
   @override
   void dispose() {
-    nomeAreaController.dispose();
+    nomeCulturaController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(area != null ? 'Atualizar Área' : 'Criar Área'),
+      title: Text(cultura != null ? 'Atualizar Cultura' : 'Criar Cultura'),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -252,17 +252,17 @@ class _GerenciarAreaCriarAtualizarWidgetState
             Form(
                 key: _formKey,
                 child: TextFormField(
-                  controller: nomeAreaController,
+                  controller: nomeCulturaController,
                   maxLength: 255,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Por favor, insira um nome para a área';
+                      return 'Por favor, insira um nome para a cultura.';
                     }
 
                     return null;
                   },
                   decoration: const InputDecoration(
-                    labelText: 'Nome da Área',
+                    labelText: 'Nome da Cultura',
                   ),
                 ))
           ],
@@ -283,13 +283,14 @@ class _GerenciarAreaCriarAtualizarWidgetState
                     });
 
                     try {
-                      Map<String, dynamic> response = await (area != null
-                          ? BackendService.atualizarArea(
-                              nomeAreaController.text, area!.idArea)
-                          : BackendService.criarArea(nomeAreaController.text));
+                      Map<String, dynamic> response = await (cultura != null
+                          ? BackendService.atualizarCultura(
+                              nomeCulturaController.text, cultura!.idCultura)
+                          : BackendService.criarCultura(
+                              nomeCulturaController.text));
 
                       if (response['status'] == 'success') {
-                        Navigator.of(context).pop({'areaUpdated': true});
+                        Navigator.of(context).pop({'culturaUpdated': true});
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text(response['message']),
@@ -313,24 +314,24 @@ class _GerenciarAreaCriarAtualizarWidgetState
                       Text('Processando...')
                     ],
                   )
-                : Text(area == null ? 'Criar' : 'Atualizar')),
+                : Text(cultura == null ? 'Criar' : 'Atualizar')),
       ],
     );
   }
 }
 
-class GerenciarAreaDeletarWidget extends StatefulWidget {
-  final AreaManagingModel area;
+class GerenciarCulturaDeletarWidget extends StatefulWidget {
+  final CulturaManagingModel cultura;
 
-  const GerenciarAreaDeletarWidget({required this.area, super.key});
+  const GerenciarCulturaDeletarWidget({required this.cultura, super.key});
 
   @override
-  State<GerenciarAreaDeletarWidget> createState() =>
-      _GerenciarAreaDeletarWidgetState();
+  State<GerenciarCulturaDeletarWidget> createState() =>
+      _GerenciarCulturaDeletarWidgetState();
 }
 
-class _GerenciarAreaDeletarWidgetState
-    extends State<GerenciarAreaDeletarWidget> {
+class _GerenciarCulturaDeletarWidgetState
+    extends State<GerenciarCulturaDeletarWidget> {
   bool _isProcessing = false;
 
   @override
@@ -342,10 +343,10 @@ class _GerenciarAreaDeletarWidgetState
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
-                'Tem certeza que deseja excluir esta área? Esta ação não poderá ser desfeita.'),
+                'Tem certeza que deseja excluir esta cultura? Esta ação não poderá ser desfeita.'),
             const SizedBox(height: 16.0),
             Text(
-              widget.area.nomeArea,
+              widget.cultura.nomeCultura,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
@@ -363,7 +364,7 @@ class _GerenciarAreaDeletarWidgetState
                 _isProcessing = true;
               });
               try {
-                await BackendService.deletarArea(widget.area.idArea);
+                await BackendService.deletarCultura(widget.cultura.idCultura);
                 Navigator.of(context).pop({'areaUpdated': true});
               } catch (e) {
                 setState(() {

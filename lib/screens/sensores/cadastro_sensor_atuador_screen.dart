@@ -6,6 +6,7 @@ import 'package:planto_iot_flutter/model/area_model.dart';
 import 'package:planto_iot_flutter/model/cultura_model.dart';
 import 'package:planto_iot_flutter/model/sensor_atuador_info_model.dart';
 import 'package:planto_iot_flutter/screens/areas/gerenciar_areas_screen.dart';
+import 'package:planto_iot_flutter/screens/culturas/gerenciar_culturas_screen.dart';
 import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
 import 'package:planto_iot_flutter/utils/google_maps_api_selector_widget.dart';
 import 'package:provider/provider.dart';
@@ -78,8 +79,8 @@ class _CadastroSensorAtuadorScreenState
       uuid: widget.uuid,
       email: widget.loggedInUseremail,
     );
-    _culturasFuture = BackendService.obterTodasCulturas();
-    _areasFuture = BackendService.obterTodasAreas();
+    _culturasFuture = _loadCulturas();
+    _areasFuture = _loadAreas();
   }
 
   Widget _buildLoadingScreen() {
@@ -345,11 +346,13 @@ class _CadastroSensorAtuadorScreenState
                               color: Colors.white,
                             ),
                             onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'Funcionalidade a ser implementada futuramente!')),
-                              );
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          const GerenciarCulturasScreen()))
+                                  .then((value) => setState(() {
+                                        _culturasFuture = _loadCulturas();
+                                      }));
                             },
                           ),
                         ],
@@ -426,7 +429,9 @@ class _CadastroSensorAtuadorScreenState
                                   .push(MaterialPageRoute(
                                       builder: (context) =>
                                           const GerenciarAreasScreen()))
-                                  .then((value) => setState(() {}));
+                                  .then((value) => setState(() {
+                                        _areasFuture = _loadAreas();
+                                      }));
                             },
                           ),
                         ],
@@ -701,5 +706,13 @@ class _CadastroSensorAtuadorScreenState
       _observacoesController.text =
           sensorAtuadorInitialInfo.observacoes?.toString() ?? "";
     }
+  }
+
+  Future<List<AreaModel>> _loadAreas() {
+    return BackendService.obterTodasAreas();
+  }
+
+  Future<List<CulturaModel>> _loadCulturas() {
+    return BackendService.obterTodasCulturas();
   }
 }
