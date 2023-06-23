@@ -30,6 +30,8 @@ Com o Planto IoT, você terá controle total sobre o monitoramento agrícola, pe
 
 # Notas das versões
 
+**0.7.0 (23/06/2023)**: Implementadas telas para gerenciamento de áreas e culturas, acessíveis a partir da tela de cadastro/atualização de cadastro de sensores e atuadores.
+
 **0.6.0 (21/06/2023)**: Implementada integração com a API do Google, para seleção de localização do sensor no mapa e para visualização da localização.
 
 **0.4.0 (20/06/2023)**: 
