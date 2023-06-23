@@ -66,6 +66,7 @@ class _CadastroSensorAtuadorScreenState
   // Controla se se trata de cadastro de sensor ou de um atuador. 1 para sensor, 2 para atuador
   int _isSensorOrAtuador = 1;
 
+
   @override
   void initState() {
     super.initState();
@@ -200,7 +201,7 @@ class _CadastroSensorAtuadorScreenState
               labelText: _isSensorOrAtuador == 1
                   ? 'Nome do Sensor'
                   : 'Nome do Atuador',
-              labelStyle: TextStyle(
+              labelStyle: const TextStyle(
                 color: Colors.white,
               ),
               /*
@@ -208,12 +209,12 @@ class _CadastroSensorAtuadorScreenState
               borderSide: BorderSide(color: Colors.white),
             )
              */
-              enabledBorder: UnderlineInputBorder(
+              enabledBorder: const UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.white),
               ),
             ),
             maxLength: 255,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
             ),
             validator: (value) {
@@ -234,7 +235,7 @@ class _CadastroSensorAtuadorScreenState
                 borderSide: BorderSide(color: Colors.white),
               ),
             ),
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -262,7 +263,7 @@ class _CadastroSensorAtuadorScreenState
                 borderSide: BorderSide(color: Colors.white),
               ),
             ),
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Por favor, insira a longitude';
@@ -308,36 +309,43 @@ class _CadastroSensorAtuadorScreenState
                       Row(
                         children: [
                           Expanded(
-                            child: DropdownButtonFormField<int>(
-                              value: _sensorAtuadorInitialInfo?.idCultura,
-                              hint: const Text(
-                                'Selecione a cultura',
-                                style: TextStyle(color: Colors.white),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.white),
+                                borderRadius: BorderRadius.circular(4),
+                                color: Colors.white,
                               ),
-                              items: culturas.map((cultura) {
-                                return DropdownMenuItem<int>(
-                                  value: cultura.idCultura,
-                                  child: Text(
-                                    cultura.nomeCultura,
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                );
-                              }).toList(),
-                              decoration: const InputDecoration(
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white),
+                              child: DropdownButtonFormField<int>(
+                                value: _sensorAtuadorInitialInfo?.idCultura,
+                                hint: const Text(
+                                  'Selecione a cultura',
+                                  style: TextStyle(color: Colors.white),
                                 ),
+                                items: culturas.map((cultura) {
+                                  return DropdownMenuItem<int>(
+                                    value: cultura.idCultura,
+                                    child: Text(
+                                      cultura.nomeCultura,
+                                      style: const TextStyle(color: Colors.black),
+                                    ),
+                                  );
+                                }).toList(),
+                                decoration: const InputDecoration(
+                                  enabledBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                  ),
+                                ),
+                                onChanged: (value) {
+                                  // Handle the selected culture value
+                                  _idCulturaController.text = value.toString();
+                                },
+                                validator: (value) {
+                                  if (value == null) {
+                                    return 'Por favor, selecione a cultura';
+                                  }
+                                  return null;
+                                },
                               ),
-                              onChanged: (value) {
-                                // Handle the selected culture value
-                                _idCulturaController.text = value.toString();
-                              },
-                              validator: (value) {
-                                if (value == null) {
-                                  return 'Por favor, selecione a cultura';
-                                }
-                                return null;
-                              },
                             ),
                           ),
                           IconButton(
@@ -385,38 +393,46 @@ class _CadastroSensorAtuadorScreenState
                       Row(
                         children: [
                           Expanded(
-                            child: DropdownButtonFormField<int>(
-                              value: _sensorAtuadorInitialInfo?.idArea,
-                              hint: const Text(
-                                'Selecione a área',
-                                style: TextStyle(color: Colors.white),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: Colors.white),
+                                borderRadius: BorderRadius.circular(4.0),
                               ),
-                              items: areas.map((area) {
-                                return DropdownMenuItem<int>(
-                                  value: area.idArea,
-                                  child: Text(
-                                    area.nomeArea,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                              decoration: const InputDecoration(
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white),
+                              child: DropdownButtonFormField<int>(
+                                value: _sensorAtuadorInitialInfo?.idArea,
+                                hint: const Text(
+                                  'Selecione a área',
+                                  style: TextStyle(color: Colors.white),
                                 ),
+                                items: areas.map((area) {
+                                  return DropdownMenuItem<int>(
+                                    value: area.idArea,
+                                    child: Text(
+                                      area.nomeArea,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                                decoration: const InputDecoration(
+                                  enabledBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                  ),
+                                ),
+                                onChanged: (value) {
+                                  // Handle the selected area value
+                                  _idAreaController.text = value.toString();
+
+                                },
+                                validator: (value) {
+                                  if (value == null) {
+                                    return 'Por favor, selecione a área';
+                                  }
+                                  return null;
+                                },
                               ),
-                              onChanged: (value) {
-                                // Handle the selected area value
-                                _idAreaController.text = value.toString();
-                              },
-                              validator: (value) {
-                                if (value == null) {
-                                  return 'Por favor, selecione a área';
-                                }
-                                return null;
-                              },
                             ),
                           ),
                           IconButton(
@@ -451,7 +467,7 @@ class _CadastroSensorAtuadorScreenState
                 borderSide: BorderSide(color: Colors.white),
               ),
             ),
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
             keyboardType: TextInputType.multiline,
             maxLength: 1000,
             minLines: 1,
