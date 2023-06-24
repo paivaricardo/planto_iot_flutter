@@ -163,6 +163,22 @@ class BackendService {
     }
   }
 
+  static Future<Map<String, dynamic>> desconectarSensorAtuadorUsuario(
+      {required String uuid, required String email}) async {
+    final url = Uri.http(AppConfig.backendAuthority,
+        "/desconectar-sensor-atuador/$uuid", {"email_usuario": email});
+
+    final response = await http.put(url);
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      return jsonResponse;
+    } else {
+      throw Exception("Falha ao desconectar do sensor/atuador");
+    }
+  }
+
+
   static Future<List<CulturaModel>> obterTodasCulturas() async {
     final url = Uri.http(AppConfig.backendAuthority, "/culturas");
 

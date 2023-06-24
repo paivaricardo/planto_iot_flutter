@@ -18,10 +18,35 @@ class SensoresScreen extends StatefulWidget {
 }
 
 class _SensoresScreenState extends State<SensoresScreen> {
+  late User loggedInUser;
+
+  late Future<List<SensorAtuadorModel>>
+  _futureListarSensoresAtuadoresConectadosUsuario;
+
+  Future<List<SensorAtuadorModel>>
+  _loadListarSensoresAtuadoresConectadosUsuario() {
+    return BackendService.listarSensoresAtuadoresConectadosUsuario(
+        loggedInUser.email!);
+  }
+
+  @override
+  void didChangeDependencies() {
+    loggedInUser = Provider.of<User?>(context)!;
+
+    _futureListarSensoresAtuadoresConectadosUsuario =
+        _loadListarSensoresAtuadoresConectadosUsuario();
+    super.didChangeDependencies();
+  }
+
+  void reloadSensoresAtuadoresConectadosList() {
+    setState(() {
+      _futureListarSensoresAtuadoresConectadosUsuario =
+          _loadListarSensoresAtuadoresConectadosUsuario();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final User loggedInUser = Provider.of<User?>(context)!;
-
     return Scaffold(
       appBar: _buildAppBar(context),
       body: Container(
@@ -32,8 +57,7 @@ class _SensoresScreenState extends State<SensoresScreen> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: FutureBuilder(
-            future: BackendService.listarSensoresAtuadoresConectadosUsuario(
-                loggedInUser.email!),
+            future: _futureListarSensoresAtuadoresConectadosUsuario,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Column(
@@ -65,6 +89,8 @@ class _SensoresScreenState extends State<SensoresScreen> {
               } else if (snapshot.hasData) {
                 final listaSensoresAtuadores = snapshot.data!;
                 return ListaSensoresAtuadores(
+                    reloadSensoresAtuadoresConectadosList:
+                        reloadSensoresAtuadoresConectadosList,
                     listaSensoresAtuadores: listaSensoresAtuadores);
               } else {
                 return Column(
@@ -154,10 +180,12 @@ class _SensoresScreenState extends State<SensoresScreen> {
 }
 
 class ListaSensoresAtuadores extends StatefulWidget {
+  final void Function() reloadSensoresAtuadoresConectadosList;
+
   final List<SensorAtuadorModel> listaSensoresAtuadores;
 
   const ListaSensoresAtuadores(
-      {super.key, required this.listaSensoresAtuadores});
+      {super.key, required this.reloadSensoresAtuadoresConectadosList, required this.listaSensoresAtuadores});
 
   @override
   State<ListaSensoresAtuadores> createState() => _ListaSensoresAtuadoresState();
@@ -209,12 +237,14 @@ class _ListaSensoresAtuadoresState extends State<ListaSensoresAtuadores> {
                         sensorAtuador.tipoSensor.idTipoSensor < 20000 ? 1 : 2;
 
                     // Chamar a tela de detalhes do sensor ou do atuador
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) =>
-                            MonitorarSensorAtuadorEspecificoScreen(
-                              uuid: sensorAtuador.uuidSensorAtuador,
-                              isSensorOrAtuador: isSensorOrAtuador,
-                            ))).then((value) => setState(() {}));
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(
+                            builder: (context) =>
+                                MonitorarSensorAtuadorEspecificoScreen(
+                                  uuid: sensorAtuador.uuidSensorAtuador,
+                                  isSensorOrAtuador: isSensorOrAtuador,
+                                )))
+                        .then((value) => widget.reloadSensoresAtuadoresConectadosList());
                   },
                 ),
               );

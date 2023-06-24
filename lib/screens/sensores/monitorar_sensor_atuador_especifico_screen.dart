@@ -267,14 +267,6 @@ class _MonitorarSensorAtuadorEspecificoScreenState
       }
     });
   }
-
-  void _handleEditCadastro() {
-    // Implement the logic for editing the cadastro
-  }
-
-  void _handleGerenciarAutorizacoes() {
-    // Implement the logic for managing autorizacoes
-  }
 }
 
 class MonitorarSensorAtuadorEspecificoCarregado extends StatefulWidget {
@@ -292,6 +284,8 @@ class MonitorarSensorAtuadorEspecificoCarregado extends StatefulWidget {
 class _MonitorarSensorAtuadorEspecificoCarregadoState
     extends State<MonitorarSensorAtuadorEspecificoCarregado> {
   User? loggedInUser;
+
+  bool _desconectarButtonProcessing = false;
 
   @override
   Widget build(BuildContext context) {
@@ -535,22 +529,103 @@ class _MonitorarSensorAtuadorEspecificoCarregadoState
   _buildDesconectarButton() {
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton.icon(
-          onPressed: () {
-            // Desconectar o sensor
-            // TODO: Implementar a funcionalidade de desconexão do sensor
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Funcionalidade não implementada ainda!'),
-              ),
-            );
-          },
-          icon: const Icon(Icons.sensors_off_rounded),
+      child: ElevatedButton(
+          onPressed: _desconectarButtonProcessing
+              ? () {}
+              : () async {
+                  // Desconectar o sensor
+                  setState(() {
+                    _desconectarButtonProcessing = true;
+                  });
+
+                  try {
+                    Map<String, dynamic> desconectarSensoresAtuadoresResposta =
+                        await BackendService.desconectarSensorAtuadorUsuario(
+                            uuid:
+                                widget.sensorAtuadorCarregado.uuidSensorAtuador,
+                            email: loggedInUser!.email!);
+
+                    if (desconectarSensoresAtuadoresResposta['cod_status_desconexao'] == 1) {
+                      // Sensor desconectado com sucesso
+                      setState(() {
+                        _desconectarButtonProcessing = false;
+                      });
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              "Sensor ${widget.sensorAtuadorCarregado.nomeSensor} desconectado com sucesso."),
+                        ),
+                      );
+
+                      // Voltar para a tela anterior
+                      Navigator.pop(context);
+                    } else {
+                      // Erro ao desconectar o sensor
+                      setState(() {
+                        _desconectarButtonProcessing = false;
+                      });
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              "Erro ao desconectar o sensor ${widget.sensorAtuadorCarregado.nomeSensor}!"),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    print(e);
+
+                    setState(() {
+                      _desconectarButtonProcessing = false;
+                    });
+
+                    // Erro ao desconectar o sensor - Exceção lançada
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                            "Erro (exceção) ao desconectar o sensor ${widget.sensorAtuadorCarregado.nomeSensor}."),
+                      ),
+                    );
+                  }
+                },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.red,
           ),
-          label: Text(
-              "Desconectar ${widget.isSensorOrAtuador == 1 ? 'sensor' : 'atuador'}")),
+          child: _desconectarButtonProcessing
+              ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16.0),
+                      child: Text(
+                          "Desconectando ${widget.isSensorOrAtuador == 1 ? 'sensor' : 'atuador'}"),
+                    )
+                  ],
+                )
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.sensors_off_rounded),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16.0),
+                      child: Text(
+                          "Desconectar ${widget.isSensorOrAtuador == 1 ? 'sensor' : 'atuador'}"),
+                    ),
+                  ],
+                )),
     );
   }
 
@@ -806,9 +881,10 @@ class _AcionarAtuadorWidgetState extends State<AcionarAtuadorWidget> {
 
                           // Se o atuador foi acionado com sucesso, mostrar uma mensagem de sucesso
                           if (responseAtivarAtuador['status'] == 'success') {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content:
-                                    Text('Atuador acionado com sucesso!')));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                        Text('Atuador acionado com sucesso!')));
                           } else {
                             throw Exception(responseAtivarAtuador['message']);
                           }

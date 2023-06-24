@@ -4,6 +4,12 @@ class VersionInfoMain {
   static VersionInfo currentVersion = versionHistory.first;
 
   static List<VersionInfo> versionHistory = [
+      VersionInfo(
+          versionName: "0.8.0",
+          versionNumberPlayStore: "8",
+          date: "24/06/2023",
+          notes:
+          "Implementada a funcionalidade de desconectar um sensor/atuador a partir da tela de monitoramento de sensores e atuadores."),
     VersionInfo(
         versionName: "0.7.0",
         versionNumberPlayStore: "7",
