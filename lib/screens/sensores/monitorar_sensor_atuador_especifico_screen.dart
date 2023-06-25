@@ -7,6 +7,7 @@ import 'package:planto_iot_flutter/components/planto_iot_appbar_background.dart'
 import 'package:planto_iot_flutter/components/planto_iot_background_builder.dart';
 import 'package:planto_iot_flutter/components/planto_iot_title_component.dart';
 import 'package:planto_iot_flutter/model/sensor_atuador_model.dart';
+import 'package:planto_iot_flutter/screens/autorizacoes/gerenciar_autorizacoes_screen.dart';
 import 'package:planto_iot_flutter/screens/sensores/cadastro_sensor_atuador_screen.dart';
 import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
 import 'package:planto_iot_flutter/utils/google_maps_api_view_widget.dart';
@@ -264,6 +265,12 @@ class _MonitorarSensorAtuadorEspecificoScreenState
             .then((value) => setState(() {}));
       } else if (value == 'manage') {
         // Handle the 'Gerenciar autorizações' option
+        Navigator.of(context)
+            .push(MaterialPageRoute(
+                builder: (context) => GerenciarAutorizacoesScreen(
+                  uuidSensorAtuador: widget.uuid,
+                    )))
+            .then((value) => setState(() {}));
       }
     });
   }

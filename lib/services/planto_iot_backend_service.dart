@@ -178,7 +178,6 @@ class BackendService {
     }
   }
 
-
   static Future<List<CulturaModel>> obterTodasCulturas() async {
     final url = Uri.http(AppConfig.backendAuthority, "/culturas");
 
@@ -433,6 +432,50 @@ class BackendService {
       return jsonResponse;
     } else {
       throw Exception("Falha ao deletar cultura");
+    }
+  }
+
+  static Future<Map<String, dynamic>> deletarAutorizacao(
+      int idAutorizacaoSensor) async {
+    final url = Uri.http(
+        AppConfig.backendAuthority, "/autorizacoes/$idAutorizacaoSensor");
+
+    final deletarAutorizacaoResponse = await http.delete(url);
+
+    if (deletarAutorizacaoResponse.statusCode == 200) {
+      final jsonResponse =
+          jsonDecode(utf8.decode(deletarAutorizacaoResponse.bodyBytes));
+      return jsonResponse;
+    } else {
+      throw Exception("Falha ao deletar autorização");
+    }
+  }
+
+  static Future<Map<String, dynamic>> criarAutorizacao(
+      {required int idSensorAtuador,
+      required String emailUsuario,
+      required int idPerfilAutorizacao,
+      bool conectar = false}) async {
+    final url = Uri.http(
+        AppConfig.backendAuthority, "/autorizacoes");
+
+    final requestBody = jsonEncode({
+      'id_sensor_atuador': idSensorAtuador,
+      'email_usuario': emailUsuario,
+      'id_perfil_autorizacao': idPerfilAutorizacao,
+      'conectar': conectar,
+    });
+
+    final criarAutorizacaoResponse = await http.post(url, headers: {
+      'Content-Type': 'application/json'
+    }, body: requestBody);
+
+    if (criarAutorizacaoResponse.statusCode == 200) {
+      final jsonResponse =
+          jsonDecode(utf8.decode(criarAutorizacaoResponse.bodyBytes));
+      return jsonResponse;
+    } else {
+      throw Exception("Falha ao deletar autorização");
     }
   }
 }
