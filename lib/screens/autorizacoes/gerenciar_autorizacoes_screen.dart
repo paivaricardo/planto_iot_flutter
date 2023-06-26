@@ -322,7 +322,9 @@ class _GerenciarAutorizacoesScreenState
                             onPressed: () {
                               if (formKey.currentState!.validate()) {
                                 _createAutorizacao(
-                                    context, emailController.text, setProcessingCreateAutorizacao);
+                                    context,
+                                    emailController.text,
+                                    setProcessingCreateAutorizacao);
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
@@ -351,6 +353,8 @@ class _GerenciarAutorizacoesScreenState
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Autorização criada com sucesso.')));
 
+        _reloadAutorizacoesFuture();
+
         Navigator.of(context).pop();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -360,8 +364,6 @@ class _GerenciarAutorizacoesScreenState
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Erro ao criar autorização.')));
     } finally {
-      _reloadAutorizacoesFuture();
-
       setProcessingCreateAutorizacao(false);
     }
   }
@@ -449,6 +451,7 @@ class _GerenciarAutorizacoesSensorCarregadoState
         ),
         ListView.builder(
           shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
           itemCount: widget.autorizacoes.length,
           itemBuilder: (context, index) {
             return _buildAutorizacaoItem(widget.autorizacoes[index]);
@@ -466,10 +469,32 @@ class _GerenciarAutorizacoesSensorCarregadoState
           style: const TextStyle(
               color: Colors.black, fontFamily: "Josefin Sans", fontSize: 16.0),
         ),
-        subtitle: Text(
-          autorizacao.usuario.emailUsuario,
-          style: const TextStyle(
-              color: Colors.black, fontFamily: "Josefin Sans", fontSize: 12.0),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              autorizacao.usuario.emailUsuario,
+              style: const TextStyle(
+                  color: Colors.black,
+                  fontFamily: "Josefin Sans",
+                  fontSize: 12.0),
+            ),
+            Text(
+              autorizacao.perfilAutorizacao.nmePerfilAutorizacao,
+              style: const TextStyle(
+                  color: Colors.black,
+                  fontFamily: "Josefin Sans",
+                  fontSize: 12.0),
+            ),
+            Text(
+              autorizacao.visualizacaoAtiva ? "Conectado" : "Não conectado",
+              style: TextStyle(
+                  color:
+                      autorizacao.visualizacaoAtiva ? Colors.green : Colors.red,
+                  fontFamily: "Josefin Sans",
+                  fontSize: 12.0),
+            ),
+          ],
         ),
         trailing: Visibility(
           visible:
@@ -556,12 +581,24 @@ class _GerenciarAutorizacoesSensorCarregadoState
             autorizacao.idAutorizacaoSensor);
 
     if (autorizacaoSensorResponse['status'] == 'success') {
-      widget.reloadAutorizacoesParent();
       setDeleteButtonProcessing(false);
 
-      Navigator.of(context).pop();
-    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Autorização removida.',
+            style: TextStyle(
+                color: Colors.white,
+                fontFamily: "Josefin Sans",
+                fontSize: 16.0),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+
       widget.reloadAutorizacoesParent();
+    } else {
+      setDeleteButtonProcessing(false);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -575,8 +612,7 @@ class _GerenciarAutorizacoesSensorCarregadoState
           backgroundColor: Colors.red,
         ),
       );
-
-      setDeleteButtonProcessing(false);
+      widget.reloadAutorizacoesParent();
     }
   }
 }

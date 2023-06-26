@@ -475,7 +475,7 @@ class BackendService {
           jsonDecode(utf8.decode(criarAutorizacaoResponse.bodyBytes));
       return jsonResponse;
     } else {
-      throw Exception("Falha ao deletar autorização");
+      throw Exception("Falha ao criar autorização");
     }
   }
 }

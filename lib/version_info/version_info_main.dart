@@ -4,6 +4,12 @@ class VersionInfoMain {
   static VersionInfo currentVersion = versionHistory.first;
 
   static List<VersionInfo> versionHistory = [
+    VersionInfo(
+        versionName: "0.9.0",
+        versionNumberPlayStore: "9",
+        date: "25/06/2023",
+        notes:
+        "Implementada tela de controle de autorizações para sensores e atuadores."),
       VersionInfo(
           versionName: "0.8.0",
           versionNumberPlayStore: "8",

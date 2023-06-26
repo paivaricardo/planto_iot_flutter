@@ -121,38 +121,38 @@ class SobreScreen extends StatelessWidget {
                 ),
                 const Padding(
                   padding: EdgeInsets.only(top: 16.0),
-                  child: Text("Isadora Montserrat de Freitas Pereira",
+                  child: Text("I. M. F. P.",
                       textAlign: TextAlign.justify,
                       style: TextStyle(
                           fontFamily: 'Josefin Sans',
                           color: Colors.white,
                           fontSize: 18.0)),
                 ),
-                const Text("Ivan Schwanka Penna",
+                const Text("I. S. P.",
                     textAlign: TextAlign.justify,
                     style: TextStyle(
                         fontFamily: 'Josefin Sans',
                         color: Colors.white,
                         fontSize: 18.0)),
-                const Text("Moisés Soares Portela",
+                const Text("M. S. P.",
                     textAlign: TextAlign.justify,
                     style: TextStyle(
                         fontFamily: 'Josefin Sans',
                         color: Colors.white,
                         fontSize: 18.0)),
-                const Text("Ricardo Corrêa Leal Paiva",
+                const Text("R. C. L. P.",
                     textAlign: TextAlign.justify,
                     style: TextStyle(
                         fontFamily: 'Josefin Sans',
                         color: Colors.white,
                         fontSize: 18.0)),
-                const Text("Sander Rodrigues Campo Dallorto",
+                const Text("S. R. C. D.",
                     textAlign: TextAlign.justify,
                     style: TextStyle(
                         fontFamily: 'Josefin Sans',
                         color: Colors.white,
                         fontSize: 18.0)),
-                const Text("Ulisses de Sousa Penna",
+                const Text("U. S. P.",
                     textAlign: TextAlign.justify,
                     style: TextStyle(
                         fontFamily: 'Josefin Sans',
@@ -169,6 +169,7 @@ class SobreScreen extends StatelessWidget {
                 ),
                 ListView.builder(
                     shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: VersionInfoMain.versionHistory.length,
                     itemBuilder: (context, index) {
                       return Padding(
