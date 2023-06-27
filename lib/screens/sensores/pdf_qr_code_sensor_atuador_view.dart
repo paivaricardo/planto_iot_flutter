@@ -1,13 +1,12 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart' as mt;
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 import 'package:planto_iot_flutter/components/planto_iot_appbar_background.dart';
 import 'package:planto_iot_flutter/components/planto_iot_title_component.dart';
 import 'package:planto_iot_flutter/model/sensor_atuador_precadastrado_info_model.dart';
 import 'package:printing/printing.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
 
 class PDFQRCodeSensorAtuadorView extends StatelessWidget {
   final SensorAtuadorPrecadastradoInfoModel sensorAtuadorPrecadastradoInfoModel;
@@ -41,6 +40,10 @@ class PDFQRCodeSensorAtuadorView extends StatelessWidget {
 
   _buildBody(BuildContext context) {
     return PdfPreview(
+        pdfFileName:
+            'qr_code_${sensorAtuadorPrecadastradoInfoModel.idTipoSensor < 20000 ? "sensor" : "atuador"}-${sensorAtuadorPrecadastradoInfoModel.uuidSensorAtuador.substring(0, 8)}',
+        canDebug: false,
+        initialPageFormat: PdfPageFormat.a4,
         build: (PdfPageFormat format) => _generatePdfLayout(format));
   }
 
@@ -53,7 +56,9 @@ class PDFQRCodeSensorAtuadorView extends StatelessWidget {
   }
 
   Future<Uint8List> _generatePdfLayout(PdfPageFormat format) async {
-    final pdf = pw.Document();
+    final pdf = pw.Document(
+        title:
+            'qr_code_sensor_atuador-${sensorAtuadorPrecadastradoInfoModel.uuidSensorAtuador}');
 
     pdf.addPage(pw.Page(
         theme: pw.ThemeData.withFont(
