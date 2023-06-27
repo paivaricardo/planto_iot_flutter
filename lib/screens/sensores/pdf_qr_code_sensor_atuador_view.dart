@@ -41,7 +41,7 @@ class PDFQRCodeSensorAtuadorView extends StatelessWidget {
   _buildBody(BuildContext context) {
     return PdfPreview(
         pdfFileName:
-            'qr_code_${sensorAtuadorPrecadastradoInfoModel.idTipoSensor < 20000 ? "sensor" : "atuador"}-${sensorAtuadorPrecadastradoInfoModel.uuidSensorAtuador.substring(0, 8)}',
+            'qr_code_${sensorAtuadorPrecadastradoInfoModel.idTipoSensor < 20000 ? "sensor" : "atuador"}-${sensorAtuadorPrecadastradoInfoModel.uuidSensorAtuador.substring(0, 8)}.pdf',
         canDebug: false,
         initialPageFormat: PdfPageFormat.a4,
         build: (PdfPageFormat format) => _generatePdfLayout(format));

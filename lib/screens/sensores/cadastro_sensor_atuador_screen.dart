@@ -622,8 +622,8 @@ class _CadastroSensorAtuadorScreenState
 
   _buildBody() {
     return Container(
-      height: MediaQuery.of(context).size.height,
-      width: MediaQuery.of(context).size.width,
+      height: double.infinity,
+      width: double.infinity,
       decoration: PlantoIoTBackgroundBuilder().buildPlantoIoTAppBackGround(
           firstRadialColor: 0xFF0D6D0B, secondRadialColor: 0xFF0B3904),
       child: Stack(

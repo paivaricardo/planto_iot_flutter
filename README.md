@@ -30,6 +30,8 @@ Com o Planto IoT, você terá controle total sobre o monitoramento agrícola, pe
 
 # Notas das versões
 
+**0.10.1 (11) (27/06/2023)**: Correção de bugs no pré-cadastro de sensores/atuadores.
+
 **0.10.0 (26/06/2023)**: Implementada a funcionalidade de pré-cadastro de sensores e atuadores, com geração dos PDFs. Acessível por meio da tela de conexão com sensores/atuadores.
 
 **0.8.0 (24/06/2023)**: Implementada a funcionalidade de desconectar um sensor/atuador a partir da tela de monitoramento de sensores e atuadores.
