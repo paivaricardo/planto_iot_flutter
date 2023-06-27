@@ -7,6 +7,7 @@ import 'package:planto_iot_flutter/model/cultura_managing_model.dart';
 import 'package:planto_iot_flutter/model/leitura_model.dart';
 import 'package:planto_iot_flutter/model/sensor_atuador_cadastro_completo_model.dart';
 import 'package:planto_iot_flutter/model/sensor_atuador_model.dart';
+import 'package:planto_iot_flutter/model/tipo_sensor_model.dart';
 
 import '../config/app_config.dart';
 import '../model/area_model.dart';
@@ -456,8 +457,7 @@ class BackendService {
       required String emailUsuario,
       required int idPerfilAutorizacao,
       bool conectar = false}) async {
-    final url = Uri.http(
-        AppConfig.backendAuthority, "/autorizacoes");
+    final url = Uri.http(AppConfig.backendAuthority, "/autorizacoes");
 
     final requestBody = jsonEncode({
       'id_sensor_atuador': idSensorAtuador,
@@ -466,9 +466,8 @@ class BackendService {
       'conectar': conectar,
     });
 
-    final criarAutorizacaoResponse = await http.post(url, headers: {
-      'Content-Type': 'application/json'
-    }, body: requestBody);
+    final criarAutorizacaoResponse = await http.post(url,
+        headers: {'Content-Type': 'application/json'}, body: requestBody);
 
     if (criarAutorizacaoResponse.statusCode == 200) {
       final jsonResponse =
@@ -476,6 +475,52 @@ class BackendService {
       return jsonResponse;
     } else {
       throw Exception("Falha ao criar autorização");
+    }
+  }
+
+  static Future<List<TipoSensorModel>> getTiposSensores() async {
+    final url = Uri.http(AppConfig.backendAuthority, "/tipos-sensores");
+
+    final http.Response tiposSensoresResponse = await http.get(url);
+
+    if (tiposSensoresResponse.statusCode == 200) {
+      final jsonResponse =
+          jsonDecode(utf8.decode(tiposSensoresResponse.bodyBytes));
+      final tiposSensores = jsonResponse
+          .map<TipoSensorModel>((json) => TipoSensorModel.fromJson(json))
+          .toList();
+      return tiposSensores;
+    } else {
+      throw Exception("Falha ao buscar tipos de sensores");
+    }
+  }
+
+  static Future<Map<String, dynamic>> precadastrarSensorAtuador(
+      {required String idSensorAtuador,
+      String? uuid,
+      required String email}) async {
+    final url = uuid == null
+        ? Uri.http(
+            AppConfig.backendAuthority, "/pre-cadastrar-sensor-atuador", {
+            'id_tipo_sensor': idSensorAtuador.toString(),
+            'email_usuario': email,
+          })
+        : Uri.http(
+            AppConfig.backendAuthority, "/pre-cadastrar-sensor-atuador", {
+            'id_tipo_sensor': idSensorAtuador.toString(),
+            'uuid_selecionado': uuid,
+            'email_usuario': email,
+          });
+
+    final http.Response precadastrarSensorAtuadorResponse =
+        await http.post(url);
+
+    if (precadastrarSensorAtuadorResponse.statusCode == 201) {
+      final jsonResponse =
+          jsonDecode(utf8.decode(precadastrarSensorAtuadorResponse.bodyBytes));
+      return jsonResponse;
+    } else {
+      throw Exception("Falha ao precadastrar sensor");
     }
   }
 }

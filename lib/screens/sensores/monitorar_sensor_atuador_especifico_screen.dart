@@ -61,9 +61,9 @@ class _MonitorarSensorAtuadorEspecificoScreenState
   }
 
   Widget _buildLoadingScreen() {
-    return Column(
+    return const Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: const [
+      children: [
         CircularProgressIndicator(
           color: Colors.white,
         ),
@@ -182,10 +182,10 @@ class _MonitorarSensorAtuadorEspecificoScreenState
               'Sobre',
               style: TextStyle(fontFamily: "FredokaOne", fontSize: 24.0),
             ),
-            content: SingleChildScrollView(
+            content: const SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Text(
                     'Esta tela permite que você cadastre, monitore e controle seus sensores e atuadores para uso agrícola. Ainda está em construção. Volte em breve para novidades.',
                     textAlign: TextAlign.justify,
@@ -207,9 +207,9 @@ class _MonitorarSensorAtuadorEspecificoScreenState
   }
 
   Widget _buildNotAuthorizedScreen() {
-    return Column(
+    return const Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: const [
+      children: [
         Text(
           'O usuário não possui permissão para acessar os dados do sensor, ou o sensor não foi corretamente cadastrado.',
           style: TextStyle(color: Colors.white),
@@ -738,11 +738,11 @@ class _UltimasLeiturasStatefulWidgetState
   }
 
   Widget _buildLoadingScreen() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 16.0),
       child: Center(
         child: Column(
-          children: const [
+          children: [
             CircularProgressIndicator(),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 8.0),
@@ -859,8 +859,8 @@ class _AcionarAtuadorWidgetState extends State<AcionarAtuadorWidget> {
             child: _isProcessing
                 ? ElevatedButton(
                     onPressed: () {},
-                    child: Row(
-                      children: const [
+                    child: const Row(
+                      children: [
                         CircularProgressIndicator(
                           color: Colors.white,
                         ),

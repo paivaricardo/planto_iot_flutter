@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:planto_iot_flutter/components/planto_iot_appbar_background.dart';
 import 'package:planto_iot_flutter/components/planto_iot_background_builder.dart';
 import 'package:planto_iot_flutter/components/planto_iot_title_component.dart';
+import 'package:planto_iot_flutter/screens/sensores/precadastrar_sensores_screen.dart';
 import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
 import 'package:planto_iot_flutter/utils/qr_view_scanner.dart';
 import 'package:provider/provider.dart';
@@ -45,10 +46,10 @@ class _ConectarSensoresScreenState extends State<ConectarSensoresScreen> {
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [
+              children: [
                 PlantoIOTTitleComponent(size: 18),
                 Text("Conectar Sensor/Atuador",
-                    style: TextStyle(fontSize: 18.0, fontFamily: 'FredokaOne')),
+                    style: TextStyle(fontSize: 16.0, fontFamily: 'FredokaOne')),
               ],
             ),
           ],
@@ -58,8 +59,52 @@ class _ConectarSensoresScreenState extends State<ConectarSensoresScreen> {
               onPressed: () => _showHelpDialog(context),
               icon: const Icon(Icons.help_outline_rounded,
                   color: Colors.white, size: 24)),
+          IconButton(
+              onPressed: () => _showMoreActionsMenu(context),
+              icon: const Icon(Icons.more_vert_rounded,
+                  color: Colors.white, size: 24)),
         ],
         flexibleSpace: const PlantoIOTAppBarBackground());
+  }
+
+  void _showMoreActionsMenu(BuildContext context) {
+    final RenderBox appBarRenderBox = context.findRenderObject() as RenderBox;
+    final appBarHeight = appBarRenderBox.size.height;
+
+    final double topPadding = MediaQuery.of(context).padding.top;
+
+    final RenderBox overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox;
+    final RelativeRect position = RelativeRect.fromRect(
+      Rect.fromPoints(
+        appBarRenderBox.localToGlobal(Offset(10, appBarHeight + topPadding),
+            ancestor: overlay),
+        appBarRenderBox.localToGlobal(
+            appBarRenderBox.size.topRight(Offset.zero),
+            ancestor: overlay),
+      ),
+      Offset.zero & overlay.size,
+    );
+
+    showMenu<String>(
+      context: context,
+      position: position,
+      items: [
+        const PopupMenuItem<String>(
+          value: 'precadastrar',
+          child: Text('Pré-cadastrar sensor/atuador'),
+        ),
+      ],
+      elevation: 8,
+    ).then((value) {
+      if (value == 'precadastrar') {
+        // Handle the 'Editar cadastro' option
+        Navigator.of(context)
+            .push(MaterialPageRoute(
+                builder: (context) => const PrecadastrarSensoresScreen()))
+            .then((value) => setState(() {}));
+      }
+    });
   }
 
   void _showHelpDialog(BuildContext context) {
@@ -72,10 +117,10 @@ class _ConectarSensoresScreenState extends State<ConectarSensoresScreen> {
               'Sobre',
               style: TextStyle(fontFamily: "FredokaOne", fontSize: 24.0),
             ),
-            content: SingleChildScrollView(
+            content: const SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Text(
                     'Esta tela permite que você cadastre, monitore e controle seus sensores e atuadores para uso agrícola. Ainda está em construção. Volte em breve para novidades.',
                     textAlign: TextAlign.justify,
@@ -292,7 +337,7 @@ class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
               }
             },
             child: _isConnecting
-                ? Row(mainAxisSize: MainAxisSize.min, children: const [
+                ? const Row(mainAxisSize: MainAxisSize.min, children: [
                     SizedBox(
                       height: 24,
                       width: 24,
