@@ -326,6 +326,9 @@ class _PrecadastrarSensorAtuadorFormState
         } else {
           final tiposSensores = snapshot.data!;
 
+          // Atualizar o valor do tipo de sensor/atuador selecionado
+          _tipoSensorController.text = tiposSensores.first.idTipoSensor.toString();
+
           return Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: Column(
@@ -345,7 +348,9 @@ class _PrecadastrarSensorAtuadorFormState
                           color: Colors.white,
                         ),
                         child: DropdownButtonFormField<int>(
-                          value: tiposSensores.first.idTipoSensor,
+                          value: _tipoSensorController.text.isEmpty
+                              ? null
+                              : int.parse(_tipoSensorController.text),
                           hint: const Text(
                             'Selecione o tipo de sensor/atuador',
                             style: TextStyle(color: Colors.white),
@@ -372,6 +377,11 @@ class _PrecadastrarSensorAtuadorFormState
                             if (value == null) {
                               return 'Por favor, selecione o tipo de sensor';
                             }
+
+                            if (_tipoSensorController.text.isEmpty) {
+                              return 'Por favor, selecione o tipo de sensor';
+                            }
+
                             return null;
                           },
                         ),

@@ -5,6 +5,12 @@ class VersionInfoMain {
 
   static List<VersionInfo> versionHistory = [
     VersionInfo(
+        versionName: "0.10.2",
+        versionNumberPlayStore: "12",
+        date: "27/06/2023",
+        notes:
+        "Correção de bugs na tela de pré-cadastro, na seleção Dropdown de tipo de sensor. Correção de bug na parte de autorizações."),
+    VersionInfo(
         versionName: "0.10.1",
         versionNumberPlayStore: "11",
         date: "27/06/2023",

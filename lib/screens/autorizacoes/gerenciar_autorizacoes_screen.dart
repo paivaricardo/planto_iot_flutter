@@ -346,7 +346,7 @@ class _GerenciarAutorizacoesScreenState
       final Map<String, dynamic> criarAutorizacaoResponse =
           await BackendService.criarAutorizacao(
               idSensorAtuador: sensorAtuadorInfoModel!.idSensorAtuador,
-              emailUsuario: emailUsuario,
+              emailUsuario: emailUsuario.toLowerCase(),
               idPerfilAutorizacao: 1);
 
       if (criarAutorizacaoResponse['status'] == 0) {
