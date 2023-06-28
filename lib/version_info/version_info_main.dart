@@ -5,6 +5,12 @@ class VersionInfoMain {
 
   static List<VersionInfo> versionHistory = [
     VersionInfo(
+        versionName: "0.10.3",
+        versionNumberPlayStore: "13",
+        date: "27/06/2023",
+        notes:
+        "Acréscimo da funcionalidade de imprimir QR codes na tela de monitorar sensor/atuador específico. Acréscimo dos RefreshIndicatores na lista de sensores e também na tela de monitorar sensor/atuador específico."),
+    VersionInfo(
         versionName: "0.10.2",
         versionNumberPlayStore: "12",
         date: "27/06/2023",

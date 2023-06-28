@@ -49,61 +49,66 @@ class _SensoresScreenState extends State<SensoresScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(context),
-      body: Container(
-        width: double.infinity,
-        height: MediaQuery.of(context).size.height,
-        decoration: PlantoIoTBackgroundBuilder().buildPlantoIoTAppBackGround(
-            firstRadialColor: 0xFF0D6D0B, secondRadialColor: 0xFF0B3904),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: FutureBuilder(
-            future: _futureListarSensoresAtuadoresConectadosUsuario,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    CircularProgressIndicator(),
-                    Padding(
-                      padding: EdgeInsets.only(top: 16.0),
-                      child: Text(
-                        "Carregando dados de sensores...",
-                        style: TextStyle(
-                            fontFamily: 'Josefin Sans',
-                            fontSize: 16.0,
-                            color: Colors.white),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          reloadSensoresAtuadoresConectadosList();
+        },
+        child: Container(
+          width: double.infinity,
+          height: MediaQuery.of(context).size.height,
+          decoration: PlantoIoTBackgroundBuilder().buildPlantoIoTAppBackGround(
+              firstRadialColor: 0xFF0D6D0B, secondRadialColor: 0xFF0B3904),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: FutureBuilder(
+              future: _futureListarSensoresAtuadoresConectadosUsuario,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      CircularProgressIndicator(),
+                      Padding(
+                        padding: EdgeInsets.only(top: 16.0),
+                        child: Text(
+                          "Carregando dados de sensores...",
+                          style: TextStyle(
+                              fontFamily: 'Josefin Sans',
+                              fontSize: 16.0,
+                              color: Colors.white),
+                        ),
+                      )
+                    ],
+                  );
+                } else if (snapshot.hasError) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Erro ao carregar dados de sensores: ${snapshot.error}',
+                        style: const TextStyle(color: Colors.white),
                       ),
-                    )
-                  ],
-                );
-              } else if (snapshot.hasError) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Erro ao carregar dados de sensores: ${snapshot.error}',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ],
-                );
-              } else if (snapshot.hasData) {
-                final listaSensoresAtuadores = snapshot.data!;
-                return ListaSensoresAtuadores(
-                    reloadSensoresAtuadoresConectadosList:
-                        reloadSensoresAtuadoresConectadosList,
-                    listaSensoresAtuadores: listaSensoresAtuadores);
-              } else {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Erro ao carregar dados de sensores: ${snapshot.error}',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ],
-                );
-              }
-            },
+                    ],
+                  );
+                } else if (snapshot.hasData) {
+                  final listaSensoresAtuadores = snapshot.data!;
+                  return ListaSensoresAtuadores(
+                      reloadSensoresAtuadoresConectadosList:
+                          reloadSensoresAtuadoresConectadosList,
+                      listaSensoresAtuadores: listaSensoresAtuadores);
+                } else {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Erro ao carregar dados de sensores: ${snapshot.error}',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  );
+                }
+              },
+            ),
           ),
         ),
       ),
@@ -113,7 +118,7 @@ class _SensoresScreenState extends State<SensoresScreen> {
           Navigator.of(context)
               .push(MaterialPageRoute(
                   builder: (context) => const ConectarSensoresScreen()))
-              .then((value) => setState(() {}));
+              .then((value) => reloadSensoresAtuadoresConectadosList());
         },
         child: const Icon(Icons.add),
       ),
