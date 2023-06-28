@@ -192,6 +192,8 @@ class _PrecadastrarSensorAtuadorFormState
 
               if (_formKey.currentState!.validate() && !_isProcessing) {
                 try {
+                  String tipoSensorResult = _tipoSensorController.text;
+
                   setState(() {
                     _isProcessing = true;
                   });
@@ -202,13 +204,13 @@ class _PrecadastrarSensorAtuadorFormState
 
                     precadastrarFuture =
                         BackendService.precadastrarSensorAtuador(
-                            idSensorAtuador: _tipoSensorController.text,
+                            idSensorAtuador: tipoSensorResult,
                             uuid: uuid,
                             email: widget.loggedInUseremail);
                   } else {
                     precadastrarFuture =
                         BackendService.precadastrarSensorAtuador(
-                            idSensorAtuador: _tipoSensorController.text,
+                            idSensorAtuador: tipoSensorResult,
                             email: widget.loggedInUseremail);
                   }
                   // Use the 'uuid' variable for further processing
