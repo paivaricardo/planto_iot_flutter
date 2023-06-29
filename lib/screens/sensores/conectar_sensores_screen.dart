@@ -212,12 +212,16 @@ class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
             validator: _validateUuid,
             maxLength: 36,
             decoration: const InputDecoration(
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white),
+              ),
               labelText: 'UUID do sensor',
               hintText: 'Escaneie ou digite o UUID do sensor/atuador',
               labelStyle: TextStyle(
-                  fontFamily: "Josefin Sans",
-                  fontSize: 16.0,
-                  color: Colors.white),
+                fontFamily: "Josefin Sans",
+                fontSize: 16.0,
+                color: Colors.white,
+              ),
               hintStyle: TextStyle(
                   fontFamily: "Josefin Sans",
                   fontSize: 16.0,

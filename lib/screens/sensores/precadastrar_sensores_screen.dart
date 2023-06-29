@@ -127,6 +127,13 @@ class _PrecadastrarSensorAtuadorFormState
   late Future<List<TipoSensorModel>> _tipoSensorFuture;
 
   @override
+  void initState() {
+    // Atualizar o valor do tipo de sensor/atuador selecionado
+    _tipoSensorController.text = "10000";
+    super.initState();
+  }
+
+  @override
   void didChangeDependencies() {
     _tipoSensorFuture = _loadTipoSensoresFuture();
     super.didChangeDependencies();
@@ -327,10 +334,6 @@ class _PrecadastrarSensorAtuadorFormState
           return Text('Error: ${snapshot.error}');
         } else {
           final tiposSensores = snapshot.data!;
-
-          // Atualizar o valor do tipo de sensor/atuador selecionado
-          _tipoSensorController.text = tiposSensores.first.idTipoSensor.toString();
-
           return Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: Column(
@@ -373,7 +376,9 @@ class _PrecadastrarSensorAtuadorFormState
                           ),
                           onChanged: (value) {
                             // Alterar o valor do controlador tipo de sensor/atuador
-                            _tipoSensorController.text = value.toString();
+                            setState(() {
+                              _tipoSensorController.text = value.toString();
+                            });
                           },
                           validator: (value) {
                             if (value == null) {

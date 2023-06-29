@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:planto_iot_flutter/model/area_managing_model.dart';
 import 'package:planto_iot_flutter/model/cultura_managing_model.dart';
 import 'package:planto_iot_flutter/model/leitura_model.dart';
@@ -521,6 +523,42 @@ class BackendService {
       return jsonResponse;
     } else {
       throw Exception("Falha ao precadastrar sensor");
+    }
+  }
+
+  static Future<Uint8List?> gerarImagemRelatorioLeituraSensor({
+    required String uuidSensor,
+    required DateTime dataInicialTimestamp,
+    required DateTime dataFinalTimestamp,
+    int filtragemTipoSinal = 10000,
+  }) async {
+    final url = Uri.http(AppConfig.backendAuthority, "/gerar-imagem-relatorio-leitura-sensor", {
+      'uuid_sensor': uuidSensor,
+      'data_inicial_timestamp': '${DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+          .format(dataInicialTimestamp)}-03:00',
+      'data_final_timestamp': '${DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+          .format(dataFinalTimestamp)}-03:00',
+      'filtragem_tipo_sinal': filtragemTipoSinal.toString(),
+    });
+
+    final http.Response gerarImagemRelatorioLeituraSensorResponse =
+        await http.get(url);
+
+    if (gerarImagemRelatorioLeituraSensorResponse.statusCode == 200) {
+      final jsonResponse = jsonDecode(
+          utf8.decode(gerarImagemRelatorioLeituraSensorResponse.bodyBytes));
+
+      if (jsonResponse['relatorio_imagem'] == null) {
+        return null;
+      }
+
+      final encodedImage = jsonResponse['relatorio_imagem'];
+      final decodedBytes = base64.decode(encodedImage);
+      final imageBytes = Uint8List.fromList(decodedBytes);
+
+      return imageBytes;
+    } else {
+      throw Exception("Falha ao gerar imagem do relatório");
     }
   }
 }

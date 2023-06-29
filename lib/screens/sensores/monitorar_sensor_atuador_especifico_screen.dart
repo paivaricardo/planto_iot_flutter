@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:planto_iot_flutter/components/planto_iot_appbar_background.dart';
 import 'package:planto_iot_flutter/components/planto_iot_background_builder.dart';
 import 'package:planto_iot_flutter/components/planto_iot_title_component.dart';
@@ -10,13 +12,13 @@ import 'package:planto_iot_flutter/model/sensor_atuador_model.dart';
 import 'package:planto_iot_flutter/model/sensor_atuador_precadastrado_info_model.dart';
 import 'package:planto_iot_flutter/screens/autorizacoes/gerenciar_autorizacoes_screen.dart';
 import 'package:planto_iot_flutter/screens/sensores/cadastro_sensor_atuador_screen.dart';
+import 'package:planto_iot_flutter/screens/sensores/pdf_qr_relatorio_leitura_sensor_view.dart';
 import 'package:planto_iot_flutter/screens/sensores/qr_code_sensor_atuador_view.dart';
 import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
 import 'package:planto_iot_flutter/utils/google_maps_api_view_widget.dart';
 import 'package:planto_iot_flutter/utils/json_leitura_keys_parser.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:intl/intl.dart';
 
 import '../../model/leitura_model.dart';
 
@@ -58,7 +60,6 @@ class _MonitorarSensorAtuadorEspecificoScreenState
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: _buildAppBar(context),
       body: buildBody(context, loggedInUser),
@@ -142,7 +143,7 @@ class _MonitorarSensorAtuadorEspecificoScreenState
 
             // Definir a variável que define se se trata de um sensor ou atuador
             _isSensorOrAtuador =
-            sensorAtuadorModel!.tipoSensor.idTipoSensor < 20000 ? 1 : 2;
+                sensorAtuadorModel!.tipoSensor.idTipoSensor < 20000 ? 1 : 2;
 
             return MonitorarSensorAtuadorEspecificoCarregado(
               sensorAtuadorModel!,
@@ -184,7 +185,7 @@ class _MonitorarSensorAtuadorEspecificoScreenState
                   color: Colors.white, size: 24)),
           IconButton(
               onPressed: () =>
-              sensorAtuadorCarregado ? _showMoreActionsMenu(context) : null,
+                  sensorAtuadorCarregado ? _showMoreActionsMenu(context) : null,
               icon: const Icon(Icons.more_vert_rounded,
                   color: Colors.white, size: 24)),
         ],
@@ -209,7 +210,7 @@ class _MonitorarSensorAtuadorEspecificoScreenState
                     'Esta tela permite que você cadastre, monitore e controle seus sensores e atuadores para uso agrícola. Ainda está em construção. Volte em breve para novidades.',
                     textAlign: TextAlign.justify,
                     style:
-                    TextStyle(fontFamily: "Josefin Sans", fontSize: 16.0),
+                        TextStyle(fontFamily: "Josefin Sans", fontSize: 16.0),
                   )
                 ],
               ),
@@ -241,16 +242,10 @@ class _MonitorarSensorAtuadorEspecificoScreenState
     final RenderBox appBarRenderBox = context.findRenderObject() as RenderBox;
     final appBarHeight = appBarRenderBox.size.height;
 
-    final double topPadding = MediaQuery
-        .of(context)
-        .padding
-        .top;
+    final double topPadding = MediaQuery.of(context).padding.top;
 
     final RenderBox overlay =
-    Overlay
-        .of(context)
-        .context
-        .findRenderObject() as RenderBox;
+        Overlay.of(context).context.findRenderObject() as RenderBox;
     final RelativeRect position = RelativeRect.fromRect(
       Rect.fromPoints(
         appBarRenderBox.localToGlobal(Offset(10, appBarHeight + topPadding),
@@ -285,37 +280,37 @@ class _MonitorarSensorAtuadorEspecificoScreenState
         // Handle the 'Editar cadastro' option
         Navigator.of(context)
             .push(MaterialPageRoute(
-            builder: (context) =>
-                CadastroSensorAtuadorScreen(
-                  uuid: widget.uuid,
-                  loggedInUseremail: loggedInUser!.email!,
-                  isSensorOrAtuador: _isSensorOrAtuador,
-                  isUpdate: true,
-                )))
+                builder: (context) => CadastroSensorAtuadorScreen(
+                      uuid: widget.uuid,
+                      loggedInUseremail: loggedInUser!.email!,
+                      isSensorOrAtuador: _isSensorOrAtuador,
+                      isUpdate: true,
+                    )))
             .then((value) => setState(() {}));
       } else if (value == 'manage') {
         // Handle the 'Gerenciar autorizações' option
         Navigator.of(context)
             .push(MaterialPageRoute(
-            builder: (context) =>
-                GerenciarAutorizacoesScreen(
-                  uuidSensorAtuador: widget.uuid,
-                )))
+                builder: (context) => GerenciarAutorizacoesScreen(
+                      uuidSensorAtuador: widget.uuid,
+                    )))
             .then((value) => setState(() {}));
       } else if (value == 'print_qr_code') {
-        final sensorAtuadorPrecadastradoInfoModel = SensorAtuadorPrecadastradoInfoModel(
+        final sensorAtuadorPrecadastradoInfoModel =
+            SensorAtuadorPrecadastradoInfoModel(
           idSensorAtuador: sensorAtuadorModel!.idSensorAtuador,
           uuidSensorAtuador: sensorAtuadorModel!.uuidSensorAtuador,
           dataPrecadastroSensor: sensorAtuadorModel!.dataPrecadastroSensor,
           idTipoSensor: sensorAtuadorModel!.idTipoSensor,
-          nomeTipoSensor: sensorAtuadorModel!.tipoSensor.nomeTipoSensor,);
+          nomeTipoSensor: sensorAtuadorModel!.tipoSensor.nomeTipoSensor,
+        );
 
         Navigator.of(context)
             .push(MaterialPageRoute(
-            builder: (context) =>
-                QRCodeSensorAtuadorView(
-                  sensorAtuadorPrecadastradoInfoModel: sensorAtuadorPrecadastradoInfoModel,
-                )))
+                builder: (context) => QRCodeSensorAtuadorView(
+                      sensorAtuadorPrecadastradoInfoModel:
+                          sensorAtuadorPrecadastradoInfoModel,
+                    )))
             .then((value) => setState(() {}));
       }
     });
@@ -351,6 +346,7 @@ class _MonitorarSensorAtuadorEspecificoCarregadoState
         widget.isSensorOrAtuador == 1
             ? _buildUltimasLeiturasCard()
             : _buildUltimosAcionamentosCard(),
+        if (widget.isSensorOrAtuador == 1) _buildGerarRelatorioLeiturasSensor(),
         _buildCulturaCard(),
         _buildAreaCard(),
         _buildLocalizacaoCard(),
@@ -374,21 +370,17 @@ class _MonitorarSensorAtuadorEspecificoCarregadoState
         children: [
           ListTile(
             title: Text(
-                "Nome do ${widget.isSensorOrAtuador == 1
-                    ? 'sensor'
-                    : 'atuador'}"),
+                "Nome do ${widget.isSensorOrAtuador == 1 ? 'sensor' : 'atuador'}"),
             subtitle: SelectableText(widget.sensorAtuadorCarregado.nomeSensor),
           ),
           ListTile(
             title: const Text('UUID'),
             subtitle:
-            SelectableText(widget.sensorAtuadorCarregado.uuidSensorAtuador),
+                SelectableText(widget.sensorAtuadorCarregado.uuidSensorAtuador),
           ),
           ListTile(
             title: Text(
-                "Tipo de ${widget.sensorAtuadorCarregado == 1
-                    ? 'sensor'
-                    : 'atuador'}"),
+                "Tipo de ${widget.sensorAtuadorCarregado == 1 ? 'sensor' : 'atuador'}"),
             subtitle: SelectableText(
                 widget.sensorAtuadorCarregado.tipoSensor.nomeTipoSensor),
           ),
@@ -450,6 +442,8 @@ class _MonitorarSensorAtuadorEspecificoCarregadoState
     );
   }
 
+  // TODO: Implementar Card de Relatório de Leituras
+
   _buildCulturaCard() {
     return Card(
       child: Column(
@@ -472,7 +466,7 @@ class _MonitorarSensorAtuadorEspecificoCarregadoState
               leading: const Icon(Icons.area_chart_rounded),
               title: const Text('Área'),
               subtitle:
-              SelectableText(widget.sensorAtuadorCarregado.area.nomeArea)),
+                  SelectableText(widget.sensorAtuadorCarregado.area.nomeArea)),
         ],
       ),
     );
@@ -486,9 +480,7 @@ class _MonitorarSensorAtuadorEspecificoCarregadoState
               leading: const Icon(Icons.map_rounded),
               title: const Text('Latitude e Longitude'),
               subtitle: Text(
-                  "Latitude: ${widget.sensorAtuadorCarregado
-                      .latitude}, Longitude: ${widget.sensorAtuadorCarregado
-                      .longitude}")),
+                  "Latitude: ${widget.sensorAtuadorCarregado.latitude}, Longitude: ${widget.sensorAtuadorCarregado.longitude}")),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: SizedBox(
@@ -592,107 +584,101 @@ class _MonitorarSensorAtuadorEspecificoCarregadoState
           onPressed: _desconectarButtonProcessing
               ? () {}
               : () async {
-            // Desconectar o sensor
-            setState(() {
-              _desconectarButtonProcessing = true;
-            });
+                  // Desconectar o sensor
+                  setState(() {
+                    _desconectarButtonProcessing = true;
+                  });
 
-            try {
-              Map<String, dynamic> desconectarSensoresAtuadoresResposta =
-              await BackendService.desconectarSensorAtuadorUsuario(
-                  uuid:
-                  widget.sensorAtuadorCarregado.uuidSensorAtuador,
-                  email: loggedInUser!.email!);
+                  try {
+                    Map<String, dynamic> desconectarSensoresAtuadoresResposta =
+                        await BackendService.desconectarSensorAtuadorUsuario(
+                            uuid:
+                                widget.sensorAtuadorCarregado.uuidSensorAtuador,
+                            email: loggedInUser!.email!);
 
-              if (desconectarSensoresAtuadoresResposta['cod_status_desconexao'] ==
-                  1) {
-                // Sensor desconectado com sucesso
-                setState(() {
-                  _desconectarButtonProcessing = false;
-                });
+                    if (desconectarSensoresAtuadoresResposta[
+                            'cod_status_desconexao'] ==
+                        1) {
+                      // Sensor desconectado com sucesso
+                      setState(() {
+                        _desconectarButtonProcessing = false;
+                      });
 
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                        "Sensor ${widget.sensorAtuadorCarregado
-                            .nomeSensor} desconectado com sucesso."),
-                  ),
-                );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              "Sensor ${widget.sensorAtuadorCarregado.nomeSensor} desconectado com sucesso."),
+                        ),
+                      );
 
-                // Voltar para a tela anterior
-                Navigator.pop(context);
-              } else {
-                // Erro ao desconectar o sensor
-                setState(() {
-                  _desconectarButtonProcessing = false;
-                });
+                      // Voltar para a tela anterior
+                      Navigator.pop(context);
+                    } else {
+                      // Erro ao desconectar o sensor
+                      setState(() {
+                        _desconectarButtonProcessing = false;
+                      });
 
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                        "Erro ao desconectar o sensor ${widget
-                            .sensorAtuadorCarregado.nomeSensor}!"),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-              }
-            } catch (e) {
-              print(e);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              "Erro ao desconectar o sensor ${widget.sensorAtuadorCarregado.nomeSensor}!"),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    print(e);
 
-              setState(() {
-                _desconectarButtonProcessing = false;
-              });
+                    setState(() {
+                      _desconectarButtonProcessing = false;
+                    });
 
-              // Erro ao desconectar o sensor - Exceção lançada
+                    // Erro ao desconectar o sensor - Exceção lançada
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                      "Erro (exceção) ao desconectar o sensor ${widget
-                          .sensorAtuadorCarregado.nomeSensor}."),
-                ),
-              );
-            }
-          },
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                            "Erro (exceção) ao desconectar o sensor ${widget.sensorAtuadorCarregado.nomeSensor}."),
+                      ),
+                    );
+                  }
+                },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.red,
           ),
           child: _desconectarButtonProcessing
               ? Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(
-                height: 24,
-                width: 24,
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(
-                width: 8,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 16.0),
-                child: Text(
-                    "Desconectando ${widget.isSensorOrAtuador == 1
-                        ? 'sensor'
-                        : 'atuador'}"),
-              )
-            ],
-          )
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16.0),
+                      child: Text(
+                          "Desconectando ${widget.isSensorOrAtuador == 1 ? 'sensor' : 'atuador'}"),
+                    )
+                  ],
+                )
               : Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.sensors_off_rounded),
-              Padding(
-                padding: const EdgeInsets.only(left: 16.0),
-                child: Text(
-                    "Desconectar ${widget.isSensorOrAtuador == 1
-                        ? 'sensor'
-                        : 'atuador'}"),
-              ),
-            ],
-          )),
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.sensors_off_rounded),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16.0),
+                      child: Text(
+                          "Desconectar ${widget.isSensorOrAtuador == 1 ? 'sensor' : 'atuador'}"),
+                    ),
+                  ],
+                )),
     );
   }
 
@@ -705,6 +691,23 @@ class _MonitorarSensorAtuadorEspecificoCarregadoState
               title: Text('Acionar atuador')),
           AcionarAtuadorWidget(
               sensorAtuadorModel: widget.sensorAtuadorCarregado),
+        ],
+      ),
+    );
+  }
+
+  _buildGerarRelatorioLeiturasSensor() {
+    return Card(
+      child: Column(
+        children: [
+          const ListTile(
+              leading: Icon(Icons.show_chart_rounded),
+              title: Text('Gerar relatórios')),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GerarRelatorioLeiturasSensorWidget(
+                sensorAtuadorModel: widget.sensorAtuadorCarregado),
+          ),
         ],
       ),
     );
@@ -829,7 +832,7 @@ class _UltimasLeiturasStatefulWidgetState
     final jsonLeituraKeys = firstLeitura.jsonLeitura.keys.toList();
 
     final jsonLeituraKeysParsed =
-    JsonLeituraKeysParser.parseJsonLeituraKeys(jsonLeituraKeys);
+        JsonLeituraKeysParser.parseJsonLeituraKeys(jsonLeituraKeys);
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -918,60 +921,59 @@ class _AcionarAtuadorWidgetState extends State<AcionarAtuadorWidget> {
             width: double.infinity,
             child: _isProcessing
                 ? ElevatedButton(
-                onPressed: () {},
-                child: const Row(
-                  children: [
-                    CircularProgressIndicator(
-                      color: Colors.white,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text("Processando..."),
-                    ),
-                  ],
-                ))
+                    onPressed: () {},
+                    child: const Row(
+                      children: [
+                        CircularProgressIndicator(
+                          color: Colors.white,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text("Processando..."),
+                        ),
+                      ],
+                    ))
                 : ElevatedButton.icon(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    setState(() {
-                      _isProcessing = true;
-                    });
-                    try {
-                      // Arredondar o valor numérico encontrado para o inteiro mais próximo
-                      final int fatorAcionamento =
-                      double.parse(_fatorAcionamentoController.text)
-                          .round();
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        setState(() {
+                          _isProcessing = true;
+                        });
+                        try {
+                          // Arredondar o valor numérico encontrado para o inteiro mais próximo
+                          final int fatorAcionamento =
+                              double.parse(_fatorAcionamentoController.text)
+                                  .round();
 
-                      // Se o formulário for válido, acionar o atuador
-                      final Map<String, dynamic> responseAtivarAtuador =
-                      await _acionarAtuador(fatorAcionamento);
+                          // Se o formulário for válido, acionar o atuador
+                          final Map<String, dynamic> responseAtivarAtuador =
+                              await _acionarAtuador(fatorAcionamento);
 
-                      // Se o atuador foi acionado com sucesso, mostrar uma mensagem de sucesso
-                      if (responseAtivarAtuador['status'] == 'success') {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content:
-                                Text('Atuador acionado com sucesso!')));
-                      } else {
-                        throw Exception(responseAtivarAtuador['message']);
+                          // Se o atuador foi acionado com sucesso, mostrar uma mensagem de sucesso
+                          if (responseAtivarAtuador['status'] == 'success') {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                        Text('Atuador acionado com sucesso!')));
+                          } else {
+                            throw Exception(responseAtivarAtuador['message']);
+                          }
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                  'Erro ao tentar acionar o atuador: ${e.toString()})')));
+                        } finally {
+                          setState(() {
+                            _isProcessing = false;
+                          });
+                        }
                       }
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                              'Erro ao tentar acionar o atuador: ${e
-                                  .toString()})')));
-                    } finally {
-                      setState(() {
-                        _isProcessing = false;
-                      });
-                    }
-                  }
-                },
-                icon: const Icon(Icons.settings_remote_rounded),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                ),
-                label: const Text("Acionar atuador")),
+                    },
+                    icon: const Icon(Icons.settings_remote_rounded),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                    ),
+                    label: const Text("Acionar atuador")),
           ),
         ]),
       ),
@@ -982,5 +984,439 @@ class _AcionarAtuadorWidgetState extends State<AcionarAtuadorWidget> {
     // Acionar o atuador
     return BackendService.ativarAtuador(
         widget.sensorAtuadorModel.uuidSensorAtuador, fatorAcionamento);
+  }
+}
+
+class GerarRelatorioLeiturasSensorWidget extends StatefulWidget {
+  final SensorAtuadorModel sensorAtuadorModel;
+
+  const GerarRelatorioLeiturasSensorWidget(
+      {required this.sensorAtuadorModel, super.key});
+
+  @override
+  State<GerarRelatorioLeiturasSensorWidget> createState() =>
+      _GerarRelatorioLeiturasSensorWidgetState();
+}
+
+class _GerarRelatorioLeiturasSensorWidgetState
+    extends State<GerarRelatorioLeiturasSensorWidget> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _dataInicialController = TextEditingController();
+  final TextEditingController _dataFinalController = TextEditingController();
+  final TextEditingController _horaInicialController = TextEditingController();
+  final TextEditingController _horaFinalController = TextEditingController();
+
+  bool _imageRelatorioDisplay = false;
+  Uint8List? _imageRelatorio;
+
+  DateTime? _dataInicial;
+  DateTime? _dataFinal;
+  TimeOfDay? _horaInicial;
+  TimeOfDay? _horaFinal;
+
+  bool _isProcessingRelatorio = false;
+
+  // Future de imagens de relatório
+  Future<Uint8List?>? _imageRelatorioFuture;
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _dataInicialController,
+                    keyboardType: TextInputType.datetime,
+                    maxLength: 10,
+                    decoration: const InputDecoration(
+                      icon: Icon(Icons.calendar_today_rounded),
+                      labelText: 'Data inicial',
+                      errorMaxLines: 3,
+                      errorStyle: TextStyle(overflow: TextOverflow.visible),
+                    ),
+                    onTap: () async {
+                      final DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: _dataFinal ?? DateTime.now(),
+                        firstDate: DateTime(2023, 6, 10),
+                        lastDate: _dataFinal ?? DateTime.now(),
+                      );
+                      if (picked != null) {
+                        setState(() {
+                          _dataInicialController.text =
+                              DateFormat('dd/MM/yyyy').format(picked);
+                          _dataInicial = picked;
+
+                          _horaInicialController.text = '00:00';
+                          _horaInicial = const TimeOfDay(hour: 0, minute: 0);
+                        });
+                      }
+                    },
+                    validator: (value) {
+                      try {
+                        _dataInicial = DateFormat("dd/MM/yyyy'T'HH:mm").parse(
+                            "${_dataInicialController.text}T${_horaInicialController.text}");
+                        _dataFinal = DateFormat("dd/MM/yyyy'T'HH:mm").parse(
+                            "${_dataFinalController.text}T${_horaFinalController.text}");
+
+                        setState(() {
+                          _dataInicial = DateFormat("dd/MM/yyyy'T'HH:mm").parse(
+                              "${_dataInicialController.text}T${_horaInicialController.text}");
+                          _dataFinal = DateFormat("dd/MM/yyyy'T'HH:mm").parse(
+                              "${_dataFinalController.text}T${_horaFinalController.text}");
+                        });
+
+                        if (_dataInicial == null) {
+                          return 'Por favor, insira uma data inicial.';
+                        }
+
+                        if (_dataInicial!.isAfter(DateTime.now())) {
+                          return 'Por favor, insira uma data inicial anterior à data atual.';
+                        }
+
+                        if (_dataInicial!.isBefore(DateTime(2023, 6, 10))) {
+                          return 'Por favor, insira uma data inicial posterior ou igual à data de início do projeto (10/06/2023.';
+                        }
+
+                        if (_dataInicial!.isAfter(_dataFinal!)) {
+                          return 'Por favor, insira uma data inicial anterior à data final.';
+                        }
+
+                        return null;
+                      } catch (e) {
+                        return 'Por favor, insira uma data válida (formato dd/MM/AAAA).';
+                      }
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: TextFormField(
+                    controller: _horaInicialController,
+                    keyboardType: TextInputType.datetime,
+                    maxLength: 5,
+                    decoration: const InputDecoration(
+                      icon: Icon(Icons.access_time_rounded),
+                      labelText: 'Hora inicial',
+                      errorMaxLines: 3,
+                      errorStyle: TextStyle(overflow: TextOverflow.visible),
+                    ),
+                    onTap: () async {
+                      final TimeOfDay? picked = await showTimePicker(
+                        context: context,
+                        initialTime: _horaInicial ?? TimeOfDay.now(),
+                      );
+                      if (picked != null) {
+                        setState(() {
+                          _horaInicialController.text =
+                              picked.format(context).toString();
+                          _horaInicial = picked;
+                        });
+                      }
+                    },
+                    validator: (value) {
+                      try {
+                        _horaInicial = TimeOfDay(
+                            hour: int.parse(
+                                _horaInicialController.text.split(":")[0]),
+                            minute: int.parse(
+                                _horaInicialController.text.split(":")[1]));
+
+                        setState(() {
+                          _horaInicial = TimeOfDay(
+                              hour: int.parse(
+                                  _horaInicialController.text.split(":")[0]),
+                              minute: int.parse(
+                                  _horaInicialController.text.split(":")[1]));
+                        });
+
+                        if (_horaInicial == null) {
+                          return 'Por favor, insira uma hora inicial.';
+                        }
+
+                        if (_dataInicial!.isAfter(DateTime.now())) {
+                          return 'Por favor, insira uma data inicial anterior à data atual.';
+                        }
+
+                        if (_dataInicial!.isBefore(DateTime(2023, 6, 10))) {
+                          return 'Por favor, insira uma data inicial posterior ou igual à data de início do projeto (10/06/2023.';
+                        }
+
+                        if (_dataInicial!.isAfter(_dataFinal!)) {
+                          return 'Por favor, insira uma data inicial anterior à data final.';
+                        }
+
+                        return null;
+                      } catch (e) {
+                        return 'Por favor, insira uma hora inicial válida (formato HH:mm).';
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _dataFinalController,
+                    keyboardType: TextInputType.datetime,
+                    maxLength: 10,
+                    decoration: const InputDecoration(
+                      icon: Icon(Icons.calendar_today_rounded),
+                      labelText: 'Data final',
+                      errorMaxLines: 3,
+                      errorStyle: TextStyle(overflow: TextOverflow.visible),
+                    ),
+                    onTap: () async {
+                      final DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: _dataFinal ?? DateTime.now(),
+                        firstDate: _dataInicial ?? DateTime(2023, 6, 10),
+                        lastDate: DateTime.now(),
+                      );
+                      if (picked != null) {
+                        setState(() {
+                          _dataFinalController.text =
+                              DateFormat('dd/MM/yyyy').format(picked);
+                          _dataFinal = picked;
+
+                          if (DateTime(
+                                  picked.year, picked.month, picked.day, 23, 59)
+                              .isAfter(DateTime.now())) {
+                            _horaFinalController.text =
+                                DateFormat('HH:mm').format(DateTime.now());
+                            _horaFinal = TimeOfDay(
+                                hour: DateTime.now().hour,
+                                minute: DateTime.now().minute);
+                          } else {
+                            _horaFinalController.text = '23:59';
+                            _horaFinal = const TimeOfDay(hour: 23, minute: 59);
+                          }
+                        });
+                      }
+                    },
+                    validator: (value) {
+                      try {
+                        _dataInicial = DateFormat("dd/MM/yyyy'T'HH:mm").parse(
+                            "${_dataInicialController.text}T${_horaInicialController.text}");
+                        _dataFinal = DateFormat("dd/MM/yyyy'T'HH:mm").parse(
+                            "${_dataFinalController.text}T${_horaFinalController.text}");
+
+                        setState(() {
+                          _dataInicial = DateFormat("dd/MM/yyyy'T'HH:mm").parse(
+                              "${_dataInicialController.text}T${_horaInicialController.text}");
+                          _dataFinal = DateFormat("dd/MM/yyyy'T'HH:mm").parse(
+                              "${_dataFinalController.text}T${_horaFinalController.text}");
+                        });
+
+                        if (_dataFinal == null) {
+                          return 'Por favor, insira uma data final.';
+                        }
+
+                        if (_dataFinal!.isAfter(DateTime.now())) {
+                          return 'Por favor, insira uma data final anterior à data atual.';
+                        }
+
+                        if (_dataFinal!.isBefore(DateTime(2023, 6, 10))) {
+                          return 'Por favor, insira uma data final posterior ou igual à data de início do projeto (10/06/2023.';
+                        }
+
+                        return null;
+                      } catch (e) {
+                        return 'Por favor, insira uma data válida (formato dd/MM/AAAA).';
+                      }
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: TextFormField(
+                    controller: _horaFinalController,
+                    keyboardType: TextInputType.datetime,
+                    maxLength: 5,
+                    decoration: const InputDecoration(
+                      icon: Icon(Icons.access_time_rounded),
+                      labelText: 'Hora final',
+                      errorMaxLines: 3,
+                      errorStyle: TextStyle(overflow: TextOverflow.visible),
+                    ),
+                    onTap: () async {
+                      final TimeOfDay? picked = await showTimePicker(
+                        context: context,
+                        initialTime: _horaFinal ?? TimeOfDay.now(),
+                      );
+                      if (picked != null) {
+                        setState(() {
+                          _dataFinal ??= DateTime.now();
+                          _dataFinalController.text =
+                              DateFormat('dd/MM/yyyy').format(_dataFinal!);
+
+                          _horaFinalController.text =
+                              picked.format(context).toString();
+                          _horaFinal = picked;
+                        });
+                      }
+                    },
+                    validator: (value) {
+                      try {
+                        _horaFinal = TimeOfDay(
+                            hour: int.parse(
+                                _horaFinalController.text.split(":")[0]),
+                            minute: int.parse(
+                                _horaFinalController.text.split(":")[1]));
+
+                        setState(() {
+                          _horaFinal = TimeOfDay(
+                              hour: int.parse(
+                                  _horaFinalController.text.split(":")[0]),
+                              minute: int.parse(
+                                  _horaFinalController.text.split(":")[1]));
+                        });
+
+                        if (_horaFinal == null) {
+                          return 'Por favor, insira uma hora final.';
+                        }
+
+                        if (_dataFinal!.isAfter(DateTime.now())) {
+                          return 'Por favor, insira uma data final anterior à data atual.';
+                        }
+
+                        if (_dataFinal!.isBefore(DateTime(2023, 6, 10))) {
+                          return 'Por favor, insira uma data final posterior ou igual à data de início do projeto (10/06/2023.';
+                        }
+
+                        return null;
+                      } catch (e) {
+                        return 'Por favor, insira uma hora final válida (formato HH:mm).';
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+            _isProcessingRelatorio
+                ? ElevatedButton(
+                    onPressed: () {},
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(child: CircularProgressIndicator()),
+                        Padding(
+                          padding: EdgeInsets.only(left: 8.0),
+                          child: Text('Gerando relatório...'),
+                        )
+                      ],
+                    ))
+                : ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        setState(() {
+                          _isProcessingRelatorio = true;
+                          _imageRelatorioDisplay = true;
+
+                          _imageRelatorioFuture =
+                              BackendService.gerarImagemRelatorioLeituraSensor(
+                            uuidSensor:
+                                widget.sensorAtuadorModel.uuidSensorAtuador,
+                            dataInicialTimestamp: _dataInicial!,
+                            dataFinalTimestamp: _dataFinal!,
+                            filtragemTipoSinal: 10000,
+                          );
+                        });
+
+                        setState(() {
+                          _isProcessingRelatorio = false;
+                        });
+                      }
+                    },
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.show_chart_rounded),
+                        Padding(
+                          padding: EdgeInsets.only(left: 8.0),
+                          child: Text('Gerar relatório'),
+                        )
+                      ],
+                    )),
+            if (_imageRelatorioDisplay && _imageRelatorioFuture != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: FutureBuilder(
+                  future: _imageRelatorioFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator(
+                        color: Colors.green,
+                      );
+                    } else if (snapshot.connectionState ==
+                        ConnectionState.done) {
+                      _imageRelatorio = snapshot.data;
+                      if (_imageRelatorio == null) {
+                        _isProcessingRelatorio = false;
+                        return const Text(
+                            'Não há leituras para o perído informado.');
+                      } else {
+                        _isProcessingRelatorio = false;
+                        return Column(
+                          children: [
+                            FittedBox(child: Image.memory(_imageRelatorio!)),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.redAccent,
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          PDFRelatorioLeituraSensorView(
+                                            sensorAtuadorModel:
+                                                widget.sensorAtuadorModel,
+                                            relatorioImagebytes:
+                                                _imageRelatorio!,
+                                            dataInicialLeitura: _dataInicial!,
+                                            dataFinalLeitura: _dataFinal!,
+                                          )));
+                                },
+                                child: const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.picture_as_pdf_rounded,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 8.0),
+                                      child: Text(
+                                        'Gerar PDF',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                    } else if (snapshot.hasError) {
+                      _isProcessingRelatorio = false;
+                      return const Text('Erro ao gerar relatório.');
+                    } else {
+                      _isProcessingRelatorio = false;
+                      return const Text(
+                          'Erro desconhecido ao gerar relatório.');
+                    }
+                  },
+                ),
+              ),
+          ],
+        ));
   }
 }

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:planto_iot_flutter/components/auth_wrapper/auth_wrapper_component.dart';
 import 'package:planto_iot_flutter/screens/configuracoes/configuracoes_screen.dart';
 import 'package:planto_iot_flutter/screens/dashboard/dashboard_screen.dart';
@@ -30,6 +31,10 @@ class _PlantoIoTAppState extends State<PlantoIoTApp> {
           ),
           debugShowCheckedModeBanner: false,
           home: const AuthWrapperComponent(),
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
+          supportedLocales: const [
+            Locale('pt', 'BR'),
+          ],
           routes: {
             '/dashboard': (context) => const DashboardScreen(),
             '/sensores': (context) => const SensoresScreen(),
