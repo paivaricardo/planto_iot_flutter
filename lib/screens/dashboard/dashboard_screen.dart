@@ -7,6 +7,7 @@ import 'package:planto_iot_flutter/services/firebase_auth_service.dart';
 import 'package:planto_iot_flutter/services/planto_iot_backend_service.dart';
 import 'package:planto_iot_flutter/version_info/version_info_main.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../components/dashboard_button.dart';
 
@@ -18,6 +19,9 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  final Uri _tutorialUrl =
+      Uri.parse('https://www.youtube.com/watch?v=90lQDB7AoPE');
+
   @override
   void initState() {
     super.initState();
@@ -65,6 +69,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -109,9 +114,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         onPressed: () {
                           Navigator.pushNamed(context, '/configuracoes');
                         },
-                        title: 'Configurações' ,
+                        title: 'Configurações',
                         icon: Icons.settings_rounded),
-
                     DashboardButton(
                         onPressed: () => FirebaseAuthService.signOut(),
                         onLongPress: () =>
@@ -119,6 +123,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         title: 'Sair',
                         icon: Icons.logout_rounded),
                   ]),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: TextButton(
+                      child: const Text(
+                        'Ver vídeo com instruções de uso',
+                        style: TextStyle(
+                            fontFamily: 'Josefin Sans',
+                            color: Colors.white,
+                            decoration: TextDecoration.underline,
+                            fontSize: 18.0),
+                      ),
+                      onPressed: () {
+                        try {
+                          _launchTutorialURL();
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text(
+                                  'Não foi possível acessar o link para o tutorial.')));
+                        }
+                      },
+                    ),
+                  )
                 ],
               ),
             ),
@@ -126,7 +152,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
               padding: const EdgeInsets.all(8.0),
               child: Align(
                   alignment: Alignment.bottomRight,
-                  child: Text("Versão ${VersionInfoMain.currentVersion.versionName} ${VersionInfoMain.currentVersion.date}",
+                  child: Text(
+                      "Versão ${VersionInfoMain.currentVersion.versionName} ${VersionInfoMain.currentVersion.date}",
                       style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18.0,
@@ -144,19 +171,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
         builder: (BuildContext context) {
           return AlertDialog(
             alignment: Alignment.center,
-            title: const Text('Dashboard', style: TextStyle(fontFamily: "FredokaOne", fontSize: 24.0),),
-            content: SingleChildScrollView(
+            title: const Text(
+              'Dashboard',
+              style: TextStyle(fontFamily: "FredokaOne", fontSize: 24.0),
+            ),
+            content: const SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Text(
-                    'Bem-vindo ao Planto IoT! Esta é a tela inicial do aplicativo, na qual você poderá acessar as principais funcionalidades da aplicação. A seção "sensores" permite você cadastrar novos sensores, bem como monitorar e controlar os existentes. A seção "sobre" contém informações gerais sobre o aplicativo e o projeto Planto IoT, assim como sobre a equipe de desenvolvimento. A seção "configurações" permite que você altere as configurações do aplicativo, como notificações. A seção "sair" permite que você encerre a sua sessão e retorne à tela de login.',
+                    'Bem-vindo ao Planto IoT! Esta é a tela inicial do aplicativo, na qual você poderá acessar as principais funcionalidades da aplicação. A seção "sensores" permite você conectar e cadastrar novos sensores e atuadores, bem como monitorar e controlar os existentes. A seção "sobre" contém informações gerais sobre o aplicativo e o projeto Planto IoT, assim como sobre a equipe de desenvolvimento. A seção "configurações" permite que você altere as configurações do aplicativo, como notificações (em implementação). A seção "sair" permite que você encerre a sua sessão e retorne à tela de login.',
                     textAlign: TextAlign.justify,
-                    style: TextStyle(fontFamily: "Josefin Sans", fontSize: 16.0),
+                    style:
+                        TextStyle(fontFamily: "Josefin Sans", fontSize: 16.0),
                   ),
                   Text(
                     'Dica: pressione longamente o botão "sair" para que você encerre a sua sessão em todas as plataformas de redes sociais.',
-                    style: TextStyle(fontFamily: "Josefin Sans", fontSize: 16.0),
+                    style:
+                        TextStyle(fontFamily: "Josefin Sans", fontSize: 16.0),
                   ),
                 ],
               ),
@@ -170,5 +202,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ],
           );
         });
+  }
+
+  Future<void> _launchTutorialURL() async {
+    if (!await launchUrl(_tutorialUrl, mode: LaunchMode.externalApplication,)) {
+      throw Exception('Não foi possível carregar a URL $_tutorialUrl');
+    }
   }
 }

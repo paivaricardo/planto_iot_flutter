@@ -30,7 +30,7 @@ Com o Planto IoT, você terá controle total sobre o monitoramento agrícola, pe
 
 # Notas das versões
 
-**
+**0.13.1 (16) 30/06/2023**: Atualização do link para visualização do vídeo instrucional na tela de dashboard.
 
 **0.11.0 (13) 27/06/2023**: Acréscimo da funcionalidade de imprimir QR codes na tela de monitorar sensor/atuador específico. Acréscimo dos RefreshIndicatores na lista de sensores e também na tela de monitorar sensor/atuador específico. Correção de bug ao pré-cadastrar sensor, que sempre alterava o tipo de sensor para sensor de umidade do solo.
 
