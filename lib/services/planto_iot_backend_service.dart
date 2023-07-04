@@ -28,7 +28,7 @@ class BackendService {
       }
 
       final url =
-          Uri.http(AppConfig.backendAuthority, "/verificar-cadastrar-usuario");
+          Uri.https(AppConfig.backendAuthority, "/verificar-cadastrar-usuario");
 
       final requestBody = jsonEncode({
         'email_usuario': firebaseUser.email,
@@ -55,7 +55,7 @@ class BackendService {
 
   static Future<List<SensorAtuadorModel>>
       listarSensoresAtuadoresConectadosUsuario(String emailUsuario) async {
-    final url = Uri.http(
+    final url = Uri.https(
         AppConfig.backendAuthority,
         "/listar-sensores-atuadores-conectados",
         {"email_usuario": emailUsuario});
@@ -78,8 +78,8 @@ class BackendService {
 
   static Future<Map<String, dynamic>> verificarSensorAtuador(
       {required uuid, required String email}) async {
-    final url =
-        Uri.http(AppConfig.backendAuthority, "/verificar-sensor-atuador/$uuid");
+    final url = Uri.https(
+        AppConfig.backendAuthority, "/verificar-sensor-atuador/$uuid");
 
     final response = await http.get(url);
 
@@ -153,7 +153,7 @@ class BackendService {
 
   static Future<Map<String, dynamic>> conectarSensorAtuadorUsuario(
       {required String uuid, required String email}) async {
-    final url = Uri.http(AppConfig.backendAuthority,
+    final url = Uri.https(AppConfig.backendAuthority,
         "/conectar-sensor-atuador/$uuid", {"email_usuario": email});
 
     final response = await http.put(url);
@@ -168,7 +168,7 @@ class BackendService {
 
   static Future<Map<String, dynamic>> desconectarSensorAtuadorUsuario(
       {required String uuid, required String email}) async {
-    final url = Uri.http(AppConfig.backendAuthority,
+    final url = Uri.https(AppConfig.backendAuthority,
         "/desconectar-sensor-atuador/$uuid", {"email_usuario": email});
 
     final response = await http.put(url);
@@ -182,7 +182,7 @@ class BackendService {
   }
 
   static Future<List<CulturaModel>> obterTodasCulturas() async {
-    final url = Uri.http(AppConfig.backendAuthority, "/culturas");
+    final url = Uri.https(AppConfig.backendAuthority, "/culturas");
 
     final response = await http.get(url);
 
@@ -200,7 +200,7 @@ class BackendService {
   }
 
   static Future<List<AreaModel>> obterTodasAreas() async {
-    final url = Uri.http(AppConfig.backendAuthority, "/areas");
+    final url = Uri.https(AppConfig.backendAuthority, "/areas");
 
     final response = await http.get(url);
 
@@ -218,7 +218,7 @@ class BackendService {
 
   static Future<List<CulturaManagingModel>>
       obterTodasCulturasGerenciar() async {
-    final url = Uri.http(
+    final url = Uri.https(
         AppConfig.backendAuthority, "/culturas", {"retrieve_status": "True"});
 
     final response = await http.get(url);
@@ -237,7 +237,7 @@ class BackendService {
   }
 
   static Future<List<AreaManagingModel>> obterTodasAreasGerenciar() async {
-    final url = Uri.http(
+    final url = Uri.https(
         AppConfig.backendAuthority, "/areas", {"retrieve_status": "True"});
 
     final response = await http.get(url);
@@ -259,7 +259,7 @@ class BackendService {
       SensorAtuadorCadastroCompletoModel
           sensorAtuadorCadastroCompletoModel) async {
     final url =
-        Uri.http(AppConfig.backendAuthority, "/cadastrar-sensor-atuador");
+        Uri.https(AppConfig.backendAuthority, "/cadastrar-sensor-atuador");
 
     final requestBody = jsonEncode(sensorAtuadorCadastroCompletoModel.toJson());
 
@@ -280,7 +280,7 @@ class BackendService {
       required int numLeituras,
       required int filtragemTipoSinal}) async {
     try {
-      final url = Uri.http(AppConfig.backendAuthority,
+      final url = Uri.https(AppConfig.backendAuthority,
           "/listar-ultimas-leituras-sensor-atuador/$uuidSensorAtuador", {
         "num_leituras": numLeituras.toString(),
         "filtragem_tipo_sinal": filtragemTipoSinal.toString()
@@ -313,7 +313,7 @@ class BackendService {
   static Future<Map<String, dynamic>> ativarAtuador(
       String uuidSensorAtuador, int fatorAcionamento) async {
     try {
-      final url = Uri.http(
+      final url = Uri.https(
           AppConfig.backendAuthority, "/ativar-atuador/$uuidSensorAtuador", {
         "quantidade_atuacao": fatorAcionamento.toString(),
       });
@@ -334,7 +334,7 @@ class BackendService {
   }
 
   static criarArea(String nomeArea) async {
-    final url = Uri.http(AppConfig.backendAuthority, "/areas");
+    final url = Uri.https(AppConfig.backendAuthority, "/areas");
 
     final requestBody = jsonEncode({
       'nome_area': nomeArea,
@@ -353,7 +353,7 @@ class BackendService {
 
   static Future<Map<String, dynamic>> atualizarArea(
       String nomeArea, int idArea) async {
-    final url = Uri.http(AppConfig.backendAuthority, "/areas/$idArea");
+    final url = Uri.https(AppConfig.backendAuthority, "/areas/$idArea");
 
     final requestBody = jsonEncode({
       'nome_area': nomeArea,
@@ -372,7 +372,7 @@ class BackendService {
   }
 
   static Future<Map<String, dynamic>> deletarArea(int idArea) async {
-    final url = Uri.http(AppConfig.backendAuthority, "/areas/$idArea");
+    final url = Uri.https(AppConfig.backendAuthority, "/areas/$idArea");
 
     final deletarAreaReponse = await http.delete(url);
 
@@ -386,7 +386,7 @@ class BackendService {
   }
 
   static criarCultura(String nomeCultura) async {
-    final url = Uri.http(AppConfig.backendAuthority, "/culturas");
+    final url = Uri.https(AppConfig.backendAuthority, "/culturas");
 
     final requestBody = jsonEncode({
       'nome_cultura': nomeCultura,
@@ -406,7 +406,7 @@ class BackendService {
 
   static Future<Map<String, dynamic>> atualizarCultura(
       String nomeCultura, int idCultura) async {
-    final url = Uri.http(AppConfig.backendAuthority, "/culturas/$idCultura");
+    final url = Uri.https(AppConfig.backendAuthority, "/culturas/$idCultura");
 
     final requestBody = jsonEncode({
       'nome_cultura': nomeCultura,
@@ -425,7 +425,7 @@ class BackendService {
   }
 
   static Future<Map<String, dynamic>> deletarCultura(int idCultura) async {
-    final url = Uri.http(AppConfig.backendAuthority, "/culturas/$idCultura");
+    final url = Uri.https(AppConfig.backendAuthority, "/culturas/$idCultura");
 
     final deletarCulturaReponse = await http.delete(url);
 
@@ -440,7 +440,7 @@ class BackendService {
 
   static Future<Map<String, dynamic>> deletarAutorizacao(
       int idAutorizacaoSensor) async {
-    final url = Uri.http(
+    final url = Uri.https(
         AppConfig.backendAuthority, "/autorizacoes/$idAutorizacaoSensor");
 
     final deletarAutorizacaoResponse = await http.delete(url);
@@ -459,7 +459,7 @@ class BackendService {
       required String emailUsuario,
       required int idPerfilAutorizacao,
       bool conectar = false}) async {
-    final url = Uri.http(AppConfig.backendAuthority, "/autorizacoes");
+    final url = Uri.https(AppConfig.backendAuthority, "/autorizacoes");
 
     final requestBody = jsonEncode({
       'id_sensor_atuador': idSensorAtuador,
@@ -481,7 +481,7 @@ class BackendService {
   }
 
   static Future<List<TipoSensorModel>> getTiposSensores() async {
-    final url = Uri.http(AppConfig.backendAuthority, "/tipos-sensores");
+    final url = Uri.https(AppConfig.backendAuthority, "/tipos-sensores");
 
     final http.Response tiposSensoresResponse = await http.get(url);
 
@@ -502,12 +502,12 @@ class BackendService {
       String? uuid,
       required String email}) async {
     final url = uuid == null
-        ? Uri.http(
+        ? Uri.https(
             AppConfig.backendAuthority, "/pre-cadastrar-sensor-atuador", {
             'id_tipo_sensor': idSensorAtuador.toString(),
             'email_usuario': email,
           })
-        : Uri.http(
+        : Uri.https(
             AppConfig.backendAuthority, "/pre-cadastrar-sensor-atuador", {
             'id_tipo_sensor': idSensorAtuador.toString(),
             'uuid_selecionado': uuid,
@@ -532,12 +532,13 @@ class BackendService {
     required DateTime dataFinalTimestamp,
     int filtragemTipoSinal = 10000,
   }) async {
-    final url = Uri.http(AppConfig.backendAuthority, "/gerar-imagem-relatorio-leitura-sensor", {
+    final url = Uri.https(
+        AppConfig.backendAuthority, "/gerar-imagem-relatorio-leitura-sensor", {
       'uuid_sensor': uuidSensor,
-      'data_inicial_timestamp': '${DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
-          .format(dataInicialTimestamp)}-03:00',
-      'data_final_timestamp': '${DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
-          .format(dataFinalTimestamp)}-03:00',
+      'data_inicial_timestamp':
+          '${DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS").format(dataInicialTimestamp)}-03:00',
+      'data_final_timestamp':
+          '${DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS").format(dataFinalTimestamp)}-03:00',
       'filtragem_tipo_sinal': filtragemTipoSinal.toString(),
     });
 

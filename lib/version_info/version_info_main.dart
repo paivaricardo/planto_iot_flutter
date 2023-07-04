@@ -5,6 +5,12 @@ class VersionInfoMain {
 
   static List<VersionInfo> versionHistory = [
     VersionInfo(
+        versionName: "0.14.0",
+        versionNumberPlayStore: "17",
+        date: "03/07/2023",
+        notes:
+        "Atualização do link para acesso ao backend para um endereço seguro (https)."),
+    VersionInfo(
         versionName: "0.13.1",
         versionNumberPlayStore: "16",
         date: "30/06/2023",
