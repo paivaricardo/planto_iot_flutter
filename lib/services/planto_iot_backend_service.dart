@@ -102,33 +102,27 @@ class BackendService {
         }
       }
 
+      final sensorAtuadorFoiCadastrado =
+          jsonResponse['sensor_atuador_foi_cadastrado'];
+
       // Status 2 - Usuário não tem autorização para acessar o sensor
-      if (!hasAuthorization) {
+      if (sensorAtuadorFoiCadastrado && !hasAuthorization) {
         return {
           "status": 2,
           "content": jsonResponse,
         };
       }
 
-      // Status 3 - Sensor/atuador não foi cadastrado, e o usuário não é administrador
-      final sensorAtuadorFoiCadastrado =
-          jsonResponse['sensor_atuador_foi_cadastrado'];
-      if (sensorAtuadorFoiCadastrado == false && idPerfilAutorizacao == 2) {
+      // Status 3 - Sensor/atuador foi encontrado, mas não foi cadastrado ainda -> redireciona para a tela de cadastro. O usuário cadastrante ganhará permissão de administrador sobre o sensor
+      if (!sensorAtuadorFoiCadastrado) {
         return {
           "status": 3,
           "content": jsonResponse,
         };
-      } else if (sensorAtuadorFoiCadastrado == false &&
-          idPerfilAutorizacao == 1) {
-        // Status 4 - Sensor/atuador não foi cadastrado e usuário é administrador
+      } else {
+        // Status 4 - Sensor/atuador foi cadastrado corretamente, e o usuário tem autorização para acessá-lo -> conecta imediatamente
         return {
           "status": 4,
-          "content": jsonResponse,
-        };
-      } else {
-        // Status 5 - Sensor/atuador foi cadastrado corretamente, e o usuário tem autorização para acessá-lo
-        return {
-          "status": 5,
           "content": jsonResponse,
         };
       }

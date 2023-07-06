@@ -134,7 +134,7 @@ class _MonitorarSensorAtuadorEspecificoScreenState
           // Carregar os dados do sensor cadastrado
           final sensorAtuadorBackendInfo = snapshot.data!;
 
-          if (sensorAtuadorBackendInfo['status'] == 5) {
+          if (sensorAtuadorBackendInfo['status'] == 4) {
             // Carregar as informações do sensor no modelo de dados
             sensorAtuadorModel = SensorAtuadorModel.fromJson(
                 sensorAtuadorBackendInfo['content']['sensor_atuador_info']);

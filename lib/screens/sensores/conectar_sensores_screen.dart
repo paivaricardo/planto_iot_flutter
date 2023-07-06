@@ -269,16 +269,8 @@ class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
                             'O sensor ou atuador existe na nossa base de dados, mas o usuário não possui permissão para acessá-lo. No caso, é necessário que o administrador do sensor/atuador habilite seu e-mail para acesso ao dispositivo.');
                     break;
 
-                  // 3 - Sensor/atuador encontrado e o usuário possui NÃO permissão de administrador sobre o sensor, mas o cadastro não está completo. Redireciona para completar o cadastro do sensor
+                  // 3 - Sensor/atuador encontrado, mas o cadastro não está completo. Redireciona para completar o cadastro do sensor. O usuário ganhará permissão de administração sobre o sensor.
                   case 3:
-                    mostraDialogoInfo(context,
-                        titleMessage: 'Sensor/Atuador não cadastrado',
-                        contentMessage:
-                            'O sensor ou atuador existe na nossa base de dados e você possui permissão para acessá-lo, mas é necessário que o cadastro do sensor/atuador seja concluído por uma pessoa com poderes de administrador. No caso, contacte o administrador do sensor para concluir o cadastro.');
-                    break;
-
-                  // 4 - Sensor/atuador encontrado e o usuário possui permissão de ADMINISTRADOR sobre o sensor, mas o cadastro não está completo. Redireciona para completar o cadastro do sensor
-                  case 4:
                     int isSensorOrAtuador = result['content']
                                 ['sensor_atuador_info']['id_tipo_sensor'] <
                             20000
@@ -300,7 +292,7 @@ class _ConectarSensorAtuadorFormState extends State<ConectarSensorAtuadorForm> {
                                 )));
                     break;
 
-                  // 5 - Sensor/atuador encontrado e o usuário possui permissão para acessá-lo, e o cadastro está completo. Realiza a conexão com o sensor imediatamente. Se uma conexão com o sensor já existe, não haverá alterações na aplicação.
+                  // 4 - Sensor/atuador encontrado e o usuário possui permissão para acessá-lo, e o cadastro está completo. Realiza a conexão com o sensor imediatamente. Se uma conexão com o sensor já existe, não haverá alterações na aplicação.
                   default:
                     Map<String, dynamic> conectarSensoresAtuadoresResposta =
                         await BackendService.conectarSensorAtuadorUsuario(
